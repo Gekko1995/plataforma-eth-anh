@@ -1,659 +1,465 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
-// ─── SIMULATED AUTH (en produccion se reemplaza por Firebase Auth) ────────────
-const MOCK_USERS = [
-  { email: "admin@sinapsis3d.com", password: "admin2026", role: "admin", name: "Administrador" },
-  { email: "coordinador@fwrts.org", password: "coord2026", role: "coordinador", name: "Coordinador ETH" },
-  { email: "profesional@convenio.com", password: "prof2026", role: "profesional", name: "Profesional Campo" },
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = "";
+const LOCAL_USERS = [
+  { email: "admin@sinapsis3d.com", password: "admin2026", rol: "admin", nombre: "Administrador S3D" },
+  { email: "coordinador@fwrts.org", password: "coord2026", rol: "coordinador", nombre: "Coordinador ETH" },
+  { email: "profesional@convenio.com", password: "prof2026", rol: "profesional", nombre: "Prof. Campo" },
 ];
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+async function authUser(email, password) {
+  if (APPS_SCRIPT_URL) {
+    try {
+      const r = await fetch(`${APPS_SCRIPT_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+      const d = await r.json();
+      return d.success ? { ok: true, user: d.user } : { ok: false, error: d.error || "Credenciales incorrectas" };
+    } catch { return { ok: false, error: "Error de conexion" }; }
+  }
+  const f = LOCAL_USERS.find(u => u.email === email && u.password === password);
+  return f ? { ok: true, user: { email: f.email, nombre: f.nombre, rol: f.rol } } : { ok: false, error: "Email o contrasena incorrectos" };
+}
+
+function addLog(user, mod) {
+  const log = JSON.parse(localStorage.getItem("eth_log") || "[]");
+  log.unshift({ user: user.email, nombre: user.nombre, rol: user.rol, modulo: mod, ts: new Date().toISOString() });
+  localStorage.setItem("eth_log", JSON.stringify(log.slice(0, 300)));
+}
+
+// ── MODULES DATA ─────────────────────────────────────────────────────────────
 const GROUPS = [
-  {
-    id: "A", name: "Diagnostico y Territorio", color: "#1B6B4A", icon: "\u{1F30D}",
-    modules: [
-      { id: 1, name: "Linea diagnostica territorial", desc: "Caracterizacion socioeconomica y ambiental. Mapeo actores.", stack: "Sheets + Forms + Looker", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-      { id: 2, name: "Lineas base y evaluacion de impacto", desc: "Indicadores medibles inicio/medio/cierre. KPIs cadena valor DNP.", stack: "Sheets + Looker", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-      { id: 3, name: "Georeferenciacion y mapeo", desc: "Google Maps + Looker. Capas E&P, CARs, PDET, ZOMAC.", stack: "Looker + Maps API", status: "adaptar", url: "https://lookerstudio.google.com" },
-      { id: 4, name: "Caracterizacion cluster productivo", desc: "Estudio mercado, productos exportables, TLC, vocacion productiva.", stack: "Sheets + Forms", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 5, name: "Recabo informacion campo", desc: "Fichas producto, encuestas productores, requisitos fitosanitarios.", stack: "Forms + Sheets", status: "nuevo", url: "https://docs.google.com/forms" },
-    ],
-  },
-  {
-    id: "B", name: "Nucleo Estrategico ANH", color: "#B45309", icon: "\u26A1",
-    modules: [
-      { id: 6, name: "Lineamientos tecnicos ambientales", desc: "Planes trabajo CARs. Estudios tecnicos E&P.", stack: "Sheets + Drive + Looker", status: "adaptar", url: "https://drive.google.com" },
-      { id: 7, name: "Inversion social territorial", desc: "Formulacion iniciativas. Implementacion con actas/fotos.", stack: "Sheets + Forms + Looker", status: "reutilizar", url: "https://docs.google.com/spreadsheets" },
-      { id: 8, name: "Gestion conflictividad y dialogo", desc: "Alertas tempranas SLA. 4 lineas ETH. Espacios dialogo.", stack: "Sheets + Looker", status: "adaptar", url: "https://lookerstudio.google.com" },
-      { id: 9, name: "Formulacion proyectos marco logico", desc: "Arbol problemas/objetivos. Matriz marco logico. MGA-DNP.", stack: "Sheets + Forms", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-    ],
-  },
-  {
-    id: "C", name: "Formacion y Capacitacion", color: "#9333EA", icon: "\u{1F393}",
-    modules: [
-      { id: 10, name: "Moodle \u2014 Capacitacion beneficiarios", desc: "Cursos productivos, emprendimiento, exportacion. Certificaciones.", stack: "Moodle LMS", status: "adaptar", url: "https://moodle.org" },
-      { id: 11, name: "Moodle \u2014 Capacitacion comunidades", desc: "Derechos, participacion, dialogo social, medio ambiente.", stack: "Moodle LMS", status: "nuevo", url: "https://moodle.org" },
-      { id: 12, name: "Moodle \u2014 Formacion personal convenio", desc: "Induccion ETH, protocolos, HSE, marco normativo.", stack: "Moodle LMS", status: "adaptar", url: "https://moodle.org" },
-      { id: 13, name: "Planeacion cluster y exportacion", desc: "Fases 4-9 FWRTS: planes negocio, ferias internacionales.", stack: "Sheets + Forms + Drive", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-    ],
-  },
-  {
-    id: "D", name: "Gestion Actores y Talento", color: "#0369A1", icon: "\u{1F465}",
-    modules: [
-      { id: 14, name: "Gestion de beneficiarios", desc: "Registro, consentimientos, dashboard, segmentacion.", stack: "Sheets + Forms + Looker", status: "reutilizar", url: "https://docs.google.com/spreadsheets" },
-      { id: 15, name: "Directorio integral de actores", desc: "Operadoras, comunidades, autoridades, etnias, gremios.", stack: "Sheets + Looker", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-      { id: 16, name: "Enfoque diferencial y consulta previa", desc: "Protocolos etnicos. Tracking consulta previa.", stack: "Sheets + Forms + Drive", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 17, name: "Seleccion hojas de vida", desc: "Recepcion CVs. Evaluacion perfiles. Matriz calificacion.", stack: "Forms + Sheets", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 18, name: "Gestion de personal", desc: "Equipo vinculado. Seguridad social. Salarios/prestaciones.", stack: "Sheets + Looker", status: "adaptar", url: "https://docs.google.com/spreadsheets" },
-      { id: 19, name: "Entidades aliadas y corporaciones", desc: "Seguimiento CARs 8 regiones. Estado alianzas.", stack: "Sheets + Looker", status: "nuevo", url: "https://lookerstudio.google.com" },
-    ],
-  },
-  {
-    id: "E", name: "Control Financiero y Gobernanza", color: "#DC2626", icon: "\u{1F4B0}",
-    modules: [
-      { id: 20, name: "Administracion y seguridad", desc: "Usuarios, roles, permisos, auditoria, logs, MFA.", stack: "Apps Script + Sheets", status: "reutilizar", url: "https://script.google.com" },
-      { id: 21, name: "Seguimiento y monitoreo", desc: "Plan operativo, hitos, % avance, semaforos.", stack: "Sheets + Looker", status: "reutilizar", url: "https://lookerstudio.google.com" },
-      { id: 22, name: "Gestion financiera", desc: "Ejecucion presupuestal 3 items + contrapartida.", stack: "Sheets + Looker", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-      { id: 23, name: "Cuentas de cobro funcionarios", desc: "Radicacion mensual. Verificacion SS. Flujo aprobacion.", stack: "Forms + Sheets + Script", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 24, name: "Comite de coordinacion", desc: "Sesiones mensuales 3+2. Actas. Secretaria tecnica.", stack: "Sheets + Drive", status: "nuevo", url: "https://drive.google.com" },
-      { id: 25, name: "Contratacion y adquisiciones ESAL", desc: "Subcontratos, proveedores, TdR internos.", stack: "Sheets + Drive", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-      { id: 26, name: "Gestion de riesgos del convenio", desc: "Matriz CONPES 3714. Riesgos operacionales. Alertas.", stack: "Sheets + Looker", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-    ],
-  },
-  {
-    id: "F", name: "Informes y Rendicion", color: "#0891B2", icon: "\u{1F4C4}",
-    modules: [
-      { id: 27, name: "Recepcion informes funcionarios", desc: "Informe periodico. Flujo radicacion > revision > aprobacion.", stack: "Forms + Sheets + Drive", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 28, name: "Generacion informes ANH", desc: "Compilador automatico 4 desembolsos.", stack: "Apps Script + Sheets", status: "nuevo", url: "https://script.google.com" },
-      { id: 29, name: "Gestion conocimiento y lecciones", desc: "Repositorio metodologias, casos exito, buenas practicas.", stack: "Drive + Sheets + Moodle", status: "nuevo", url: "https://drive.google.com" },
-    ],
-  },
-  {
-    id: "G", name: "Operacion Territorial", color: "#059669", icon: "\u{1F4CD}",
-    modules: [
-      { id: 30, name: "Gestion eventos y agenda", desc: "Talleres, foros, ferias. Convocatoria. Asistencia.", stack: "Forms + Sheets + Looker", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 31, name: "Logistica territorial", desc: "Transporte, alojamiento, refrigerios por evento/region.", stack: "Forms + Sheets", status: "nuevo", url: "https://docs.google.com/forms" },
-      { id: 32, name: "Comunicaciones y visibilidad", desc: "Piezas por iniciativa. Presencia digital. Metricas.", stack: "Drive + Sheets", status: "nuevo", url: "https://drive.google.com" },
-      { id: 33, name: "HSE \u2014 Seguridad y salud", desc: "Protocolos campo. Reportes incidentes. Plan emergencias.", stack: "Forms + Sheets", status: "nuevo", url: "https://docs.google.com/forms" },
-    ],
-  },
-  {
-    id: "H", name: "Soporte y Documentacion", color: "#6D28D9", icon: "\u{1F5C4}\uFE0F",
-    modules: [
-      { id: 34, name: "Gestion documental", desc: "Drive jerarquico. Alertas vencimiento. Validacion Gemini API.", stack: "Drive + Apps Script + Gemini", status: "reutilizar", url: "https://drive.google.com" },
-      { id: 35, name: "Control inventarios y bienes", desc: "Bienes ANH. Trazabilidad maquinaria/equipos.", stack: "Sheets + Looker", status: "adaptar", url: "https://docs.google.com/spreadsheets" },
-      { id: 36, name: "Control polizas y garantias", desc: "Cumplimiento 20%, calidad 10%, salarios 5%. Vigencias.", stack: "Sheets", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-      { id: 37, name: "Liquidacion y cierre del convenio", desc: "Checklist productos. Acta liquidacion. Balance final.", stack: "Sheets + Drive", status: "nuevo", url: "https://docs.google.com/spreadsheets" },
-    ],
-  },
-  {
-    id: "I", name: "Infraestructura y Soporte TI", color: "#475569", icon: "\u{1F6E0}\uFE0F",
-    modules: [
-      { id: 38, name: "Mesa de ayuda y soporte", desc: "Tickets SLA. FAQ. Multicanal. Soporte 24/7.", stack: "Forms + Sheets + Looker", status: "reutilizar", url: "https://docs.google.com/forms" },
-      { id: 39, name: "Infraestructura y continuidad", desc: "Cloud Google Workspace. Backups. Disponibilidad 99.5%.", stack: "Google Workspace", status: "adaptar", url: "https://workspace.google.com" },
-    ],
-  },
+  { id:"A", name:"Diagnostico y Territorio", color:"#1B6B4A", icon:"\u{1F30D}", modules:[
+    { id:1, name:"Linea diagnostica territorial", desc:"Caracterizacion socioeconomica y ambiental", stack:"Sheets+Forms+Looker", status:"nuevo", url:"#" },
+    { id:2, name:"Lineas base e impacto", desc:"KPIs cadena valor DNP. Medicion brechas", stack:"Sheets+Looker", status:"nuevo", url:"#" },
+    { id:3, name:"Georeferenciacion y mapeo", desc:"Google Maps + Looker. Capas E&P, CARs, PDET", stack:"Looker+Maps", status:"adaptar", url:"#" },
+    { id:4, name:"Cluster productivo", desc:"Mercado, exportables, TLC, vocacion productiva", stack:"Sheets+Forms", status:"nuevo", url:"#" },
+    { id:5, name:"Recabo info campo", desc:"Fichas producto, encuestas, fitosanitarios", stack:"Forms+Sheets", status:"nuevo", url:"#" },
+  ]},
+  { id:"B", name:"Nucleo Estrategico ANH", color:"#B45309", icon:"\u26A1", modules:[
+    { id:6, name:"Lineamientos ambientales", desc:"Planes CARs. Estudios E&P. Repositorio", stack:"Sheets+Drive+Looker", status:"adaptar", url:"#" },
+    { id:7, name:"Inversion social territorial", desc:"Iniciativas. Actas/fotos. Diversificacion", stack:"Sheets+Forms+Looker", status:"reutilizar", url:"#" },
+    { id:8, name:"Conflictividad y dialogo", desc:"Alertas SLA. 4 lineas ETH. Acuerdos", stack:"Sheets+Looker", status:"adaptar", url:"#" },
+    { id:9, name:"Marco logico proyectos", desc:"Arbol problemas. MGA-DNP. Gantt", stack:"Sheets+Forms", status:"nuevo", url:"#" },
+  ]},
+  { id:"C", name:"Formacion y Capacitacion", color:"#7C3AED", icon:"\u{1F393}", modules:[
+    { id:10, name:"Moodle — Beneficiarios", desc:"Cursos productivos, emprendimiento, certificaciones", stack:"Moodle LMS", status:"adaptar", url:"#" },
+    { id:11, name:"Moodle — Comunidades", desc:"Derechos, participacion, medio ambiente", stack:"Moodle LMS", status:"nuevo", url:"#" },
+    { id:12, name:"Moodle — Personal convenio", desc:"Induccion ETH, protocolos, HSE", stack:"Moodle LMS", status:"adaptar", url:"#" },
+    { id:13, name:"Cluster exportacion", desc:"Planes negocio, ferias internacionales", stack:"Sheets+Forms+Drive", status:"nuevo", url:"#" },
+  ]},
+  { id:"D", name:"Actores y Talento Humano", color:"#0369A1", icon:"\u{1F465}", modules:[
+    { id:14, name:"Gestion beneficiarios", desc:"Registro, consentimientos, segmentacion", stack:"Sheets+Forms+Looker", status:"reutilizar", url:"#" },
+    { id:15, name:"Directorio actores", desc:"Operadoras, comunidades, autoridades", stack:"Sheets+Looker", status:"nuevo", url:"#" },
+    { id:16, name:"Enfoque diferencial", desc:"Protocolos etnicos. Consulta previa", stack:"Sheets+Forms+Drive", status:"nuevo", url:"#" },
+    { id:17, name:"Seleccion hojas de vida", desc:"CVs. Evaluacion perfiles. Calificacion", stack:"Forms+Sheets", status:"nuevo", url:"#" },
+    { id:18, name:"Gestion personal", desc:"Equipo, seguridad social, salarios", stack:"Sheets+Looker", status:"adaptar", url:"#" },
+    { id:19, name:"Entidades aliadas", desc:"CARs 8 regiones. Estado alianzas", stack:"Sheets+Looker", status:"nuevo", url:"#" },
+  ]},
+  { id:"E", name:"Financiero y Gobernanza", color:"#DC2626", icon:"\u{1F4B0}", modules:[
+    { id:20, name:"Admin y seguridad", desc:"Roles, permisos, auditoria, MFA", stack:"Script+Sheets", status:"reutilizar", url:"#" },
+    { id:21, name:"Seguimiento y monitoreo", desc:"Hitos, % avance, semaforos", stack:"Sheets+Looker", status:"reutilizar", url:"#" },
+    { id:22, name:"Gestion financiera", desc:"Presupuesto, desembolsos 20/30/40/10", stack:"Sheets+Looker", status:"nuevo", url:"#" },
+    { id:23, name:"Cuentas de cobro", desc:"Radicacion, verificacion SS, aprobacion", stack:"Forms+Sheets+Script", status:"nuevo", url:"#" },
+    { id:24, name:"Comite coordinacion", desc:"Sesiones mensuales. Actas. Quorum", stack:"Sheets+Drive", status:"nuevo", url:"#" },
+    { id:25, name:"Contratacion ESAL", desc:"Subcontratos, TdR, minutas", stack:"Sheets+Drive", status:"nuevo", url:"#" },
+    { id:26, name:"Gestion riesgos", desc:"CONPES 3714. Alertas. Mitigacion", stack:"Sheets+Looker", status:"nuevo", url:"#" },
+  ]},
+  { id:"F", name:"Informes y Rendicion", color:"#0891B2", icon:"\u{1F4C4}", modules:[
+    { id:27, name:"Informes funcionarios", desc:"Radicacion > revision > aprobacion", stack:"Forms+Sheets+Drive", status:"nuevo", url:"#" },
+    { id:28, name:"Informes ANH", desc:"Compilador 4 desembolsos automatico", stack:"Script+Sheets", status:"nuevo", url:"#" },
+    { id:29, name:"Gestion conocimiento", desc:"Metodologias, casos exito, lecciones", stack:"Drive+Sheets+Moodle", status:"nuevo", url:"#" },
+  ]},
+  { id:"G", name:"Operacion Territorial", color:"#059669", icon:"\u{1F4CD}", modules:[
+    { id:30, name:"Eventos y agenda", desc:"Talleres, foros, convocatoria, asistencia", stack:"Forms+Sheets+Looker", status:"nuevo", url:"#" },
+    { id:31, name:"Logistica territorial", desc:"Transporte, alojamiento, refrigerios", stack:"Forms+Sheets", status:"nuevo", url:"#" },
+    { id:32, name:"Comunicaciones", desc:"Piezas, campanas, presencia digital", stack:"Drive+Sheets", status:"nuevo", url:"#" },
+    { id:33, name:"HSE seguridad y salud", desc:"Protocolos, incidentes, emergencias", stack:"Forms+Sheets", status:"nuevo", url:"#" },
+  ]},
+  { id:"H", name:"Documentacion y Cierre", color:"#6D28D9", icon:"\u{1F5C4}\uFE0F", modules:[
+    { id:34, name:"Gestion documental", desc:"Drive jerarquico. Alertas. Gemini API", stack:"Drive+Script+Gemini", status:"reutilizar", url:"#" },
+    { id:35, name:"Inventarios y bienes", desc:"Res. 0532/2024. Trazabilidad equipos", stack:"Sheets+Looker", status:"adaptar", url:"#" },
+    { id:36, name:"Polizas y garantias", desc:"Cumplimiento, calidad, salarios. Vigencias", stack:"Sheets", status:"nuevo", url:"#" },
+    { id:37, name:"Liquidacion y cierre", desc:"Checklist, acta, balance, paz y salvo", stack:"Sheets+Drive", status:"nuevo", url:"#" },
+  ]},
+  { id:"I", name:"Infraestructura TI", color:"#475569", icon:"\u{1F6E0}\uFE0F", modules:[
+    { id:38, name:"Mesa de ayuda", desc:"Tickets SLA. FAQ. Soporte 24/7", stack:"Forms+Sheets+Looker", status:"reutilizar", url:"#" },
+    { id:39, name:"Infraestructura cloud", desc:"Workspace. Backups. 99.5% SLA", stack:"Google Workspace", status:"adaptar", url:"#" },
+  ]},
 ];
 
-const STATUS_MAP = {
-  nuevo: { label: "Nuevo", bg: "#DBEAFE", color: "#1E40AF", dot: "#3B82F6" },
-  adaptar: { label: "Adaptar", bg: "#FEF3C7", color: "#92400E", dot: "#F59E0B" },
-  reutilizar: { label: "Reutilizar", bg: "#D1FAE5", color: "#065F46", dot: "#10B981" },
-};
+const ST = { nuevo:{l:"Nuevo",bg:"#EFF6FF",c:"#1E40AF",d:"#3B82F6"}, adaptar:{l:"Adaptar",bg:"#FFFBEB",c:"#92400E",d:"#F59E0B"}, reutilizar:{l:"Reutilizar",bg:"#ECFDF5",c:"#065F46",d:"#10B981"} };
+const total = GROUPS.reduce((a,g)=>a+g.modules.length,0);
+const countSt = s => GROUPS.reduce((a,g)=>a+g.modules.filter(m=>m.status===s).length,0);
 
-const totalModules = GROUPS.reduce((a, g) => a + g.modules.length, 0);
-const countByStatus = (s) => GROUPS.reduce((a, g) => a + g.modules.filter(m => m.status === s).length, 0);
-
-// ─── LOGIN SCREEN ────────────────────────────────────────────────────────────
-
-const LoginScreen = ({ onLogin, error }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onLogin(email, password);
-  };
-
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+const Login = ({ onLogin, error, loading }) => {
+  const [em,setEm]=useState(""); const [pw,setPw]=useState(""); const [show,setShow]=useState(false);
   return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      background: "#0F1118",
-      fontFamily: "'Outfit', sans-serif",
-      position: "relative", overflow: "hidden",
-    }}>
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(135deg,#0F1729 0%,#1a1f3a 50%,#0F1729 100%)",fontFamily:"'Bricolage Grotesque',sans-serif"}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes pulse { 0%,100% { opacity:0.4; } 50% { opacity:0.8; } }
-        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
-        * { box-sizing:border-box; }
-        input::placeholder { color:#5A6175; }
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+        @keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        *{box-sizing:border-box} input::placeholder{color:#4a5280}
       `}</style>
-
-      {/* Ambient bg shapes */}
-      <div style={{ position:"absolute", top:"-20%", right:"-10%", width:500, height:500, borderRadius:"50%", background:"radial-gradient(circle, #1B6B4A22 0%, transparent 70%)", animation:"float 8s ease-in-out infinite" }} />
-      <div style={{ position:"absolute", bottom:"-15%", left:"-5%", width:400, height:400, borderRadius:"50%", background:"radial-gradient(circle, #9333EA18 0%, transparent 70%)", animation:"float 10s ease-in-out infinite 2s" }} />
-
-      <div style={{
-        width: "100%", maxWidth: 420, padding: "0 20px",
-        animation: "fadeUp 0.6s ease both",
-        position: "relative", zIndex: 1,
-      }}>
-        {/* Logo */}
-        <div style={{ textAlign:"center", marginBottom: 36 }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 14,
-            background: "linear-gradient(135deg, #1B6B4A, #059669)",
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            fontSize: 22, fontWeight: 800, color: "#fff",
-            boxShadow: "0 8px 32px #1B6B4A44",
-            marginBottom: 16,
-          }}>S3D</div>
-          <h1 style={{ margin:"0 0 4px", fontSize: 22, fontWeight: 700, color: "#fff", letterSpacing:"-0.02em" }}>
-            Plataforma ETH-ANH
-          </h1>
-          <p style={{ margin:0, fontSize: 13, color: "#5A6175", fontFamily:"'IBM Plex Mono', monospace" }}>
-            Convenio 2026 \u2014 Acceso seguro
-          </p>
+      <div style={{width:"100%",maxWidth:400,padding:"0 20px",animation:"fadeIn .6s ease both"}}>
+        <div style={{textAlign:"center",marginBottom:32}}>
+          <div style={{width:64,height:64,borderRadius:16,background:"linear-gradient(135deg,#4F6EF7,#7C3AED)",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:26,fontWeight:800,color:"#fff",marginBottom:16,boxShadow:"0 12px 40px #4F6EF744"}}>S3D</div>
+          <h1 style={{margin:"0 0 4px",fontSize:24,fontWeight:700,color:"#fff"}}>Plataforma ETH-ANH</h1>
+          <p style={{margin:0,fontSize:13,color:"#6B7194",fontFamily:"'IBM Plex Mono',monospace"}}>Convenio 2026 — Gestion Integrada</p>
         </div>
-
-        {/* Login form */}
-        <form onSubmit={handleSubmit} style={{
-          background: "#181B25",
-          borderRadius: 16,
-          padding: "32px 28px",
-          border: "1px solid #2A2D3A",
-        }}>
-          {error && (
-            <div style={{
-              background: "#DC262618", border: "1px solid #DC262644",
-              borderRadius: 8, padding: "10px 14px", marginBottom: 16,
-              fontSize: 13, color: "#F87171",
-            }}>{error}</div>
-          )}
-
-          <label style={{ display:"block", marginBottom: 16 }}>
-            <span style={{ fontSize: 12, fontWeight: 500, color: "#8890A5", display:"block", marginBottom: 6, fontFamily:"'IBM Plex Mono', monospace", textTransform:"uppercase", letterSpacing:"0.05em" }}>
-              Correo electronico
-            </span>
-            <input
-              type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="tu@correo.com" required
-              style={{
-                width:"100%", padding:"12px 14px", borderRadius:10,
-                border:"1px solid #2A2D3A", background:"#0F1118",
-                color:"#fff", fontSize:14, fontFamily:"'Outfit', sans-serif",
-                outline:"none", transition:"border-color 0.2s",
-              }}
-              onFocus={e => e.target.style.borderColor = "#1B6B4A"}
-              onBlur={e => e.target.style.borderColor = "#2A2D3A"}
-            />
+        {!APPS_SCRIPT_URL && <div style={{background:"#F59E0B14",border:"1px solid #F59E0B33",borderRadius:10,padding:"8px 14px",marginBottom:14,fontSize:12,color:"#FCD34D",textAlign:"center"}}>Modo demo — Usa las cuentas de prueba</div>}
+        <div style={{background:"#171C32",borderRadius:20,padding:"28px 24px",border:"1px solid #252B45"}}>
+          {error && <div style={{background:"#DC262612",border:"1px solid #DC262633",borderRadius:8,padding:"8px 12px",marginBottom:14,fontSize:13,color:"#F87171"}}>{error}</div>}
+          <label style={{display:"block",marginBottom:14}}>
+            <span style={{fontSize:11,fontWeight:600,color:"#6B7194",display:"block",marginBottom:5,fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".06em"}}>Email</span>
+            <input type="email" value={em} onChange={e=>setEm(e.target.value)} placeholder="tu@correo.com" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid #252B45",background:"#0F1729",color:"#fff",fontSize:14,fontFamily:"inherit",outline:"none"}} onFocus={e=>e.target.style.borderColor="#4F6EF7"} onBlur={e=>e.target.style.borderColor="#252B45"} />
           </label>
-
-          <label style={{ display:"block", marginBottom: 24 }}>
-            <span style={{ fontSize: 12, fontWeight: 500, color: "#8890A5", display:"block", marginBottom: 6, fontFamily:"'IBM Plex Mono', monospace", textTransform:"uppercase", letterSpacing:"0.05em" }}>
-              Contrasena
-            </span>
-            <div style={{ position:"relative" }}>
-              <input
-                type={showPass ? "text" : "password"} value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" required
-                style={{
-                  width:"100%", padding:"12px 44px 12px 14px", borderRadius:10,
-                  border:"1px solid #2A2D3A", background:"#0F1118",
-                  color:"#fff", fontSize:14, fontFamily:"'Outfit', sans-serif",
-                  outline:"none", transition:"border-color 0.2s",
-                }}
-                onFocus={e => e.target.style.borderColor = "#1B6B4A"}
-                onBlur={e => e.target.style.borderColor = "#2A2D3A"}
-              />
-              <button type="button" onClick={() => setShowPass(!showPass)}
-                style={{
-                  position:"absolute", right:12, top:"50%", transform:"translateY(-50%)",
-                  background:"none", border:"none", color:"#5A6175", cursor:"pointer",
-                  fontSize:13, padding:4,
-                }}>
-                {showPass ? "Ocultar" : "Ver"}
-              </button>
+          <label style={{display:"block",marginBottom:22}}>
+            <span style={{fontSize:11,fontWeight:600,color:"#6B7194",display:"block",marginBottom:5,fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".06em"}}>Contrasena</span>
+            <div style={{position:"relative"}}>
+              <input type={show?"text":"password"} value={pw} onChange={e=>setPw(e.target.value)} placeholder="••••••••" style={{width:"100%",padding:"11px 42px 11px 14px",borderRadius:10,border:"1px solid #252B45",background:"#0F1729",color:"#fff",fontSize:14,fontFamily:"inherit",outline:"none"}} onFocus={e=>e.target.style.borderColor="#4F6EF7"} onBlur={e=>e.target.style.borderColor="#252B45"} />
+              <button type="button" onClick={()=>setShow(!show)} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:"#6B7194",cursor:"pointer",fontSize:12}}>{show?"Ocultar":"Ver"}</button>
             </div>
           </label>
-
-          <button type="submit" style={{
-            width:"100%", padding:"13px", borderRadius:10,
-            background:"linear-gradient(135deg, #1B6B4A, #059669)",
-            color:"#fff", fontSize:15, fontWeight:600, border:"none",
-            cursor:"pointer", fontFamily:"'Outfit', sans-serif",
-            boxShadow:"0 4px 16px #1B6B4A44",
-            transition:"transform 0.15s, box-shadow 0.15s",
-          }}
-          onMouseDown={e => { e.target.style.transform = "scale(0.98)"; }}
-          onMouseUp={e => { e.target.style.transform = "scale(1)"; }}
-          >
-            Iniciar sesion
-          </button>
-
-          <div style={{ textAlign:"center", marginTop:16 }}>
-            <button type="button" style={{
-              background:"none", border:"1px solid #2A2D3A", borderRadius:10,
-              padding:"10px 20px", color:"#8890A5", fontSize:13,
-              cursor:"pointer", fontFamily:"'Outfit', sans-serif",
-              width:"100%", transition:"border-color 0.2s",
-            }}
-            onMouseEnter={e => e.target.style.borderColor = "#4285F4"}
-            onMouseLeave={e => e.target.style.borderColor = "#2A2D3A"}
-            >
-              Continuar con Google
-            </button>
-          </div>
-        </form>
-
-        {/* Demo credentials */}
-        <div style={{
-          marginTop: 20, padding: "14px 18px",
-          background: "#181B25", borderRadius: 12,
-          border: "1px solid #2A2D3A",
-        }}>
-          <p style={{ margin:"0 0 8px", fontSize: 11, color: "#5A6175", fontFamily:"'IBM Plex Mono', monospace", textTransform:"uppercase", letterSpacing:"0.05em" }}>
-            Cuentas de prueba:
-          </p>
-          {MOCK_USERS.map(u => (
-            <div key={u.email} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
-              <span style={{ fontSize:12, color:"#8890A5", fontFamily:"'IBM Plex Mono', monospace" }}>
-                {u.email}
-              </span>
-              <button onClick={() => { setEmail(u.email); setPassword(u.password); }}
-                style={{
-                  background:"#1B6B4A22", border:"none", borderRadius:6,
-                  padding:"3px 10px", fontSize:10, color:"#1B9E6A",
-                  cursor:"pointer", fontWeight:600,
-                }}>
-                Usar
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ─── COMPONENTS ──────────────────────────────────────────────────────────────
-
-const StatusBadge = ({ status }) => {
-  const s = STATUS_MAP[status];
-  return (
-    <span style={{
-      display:"inline-flex", alignItems:"center", gap:5,
-      padding:"3px 10px", borderRadius:6, fontSize:11, fontWeight:600,
-      background:s.bg, color:s.color, fontFamily:"var(--mono)",
-      letterSpacing:"0.02em", textTransform:"uppercase",
-    }}>
-      <span style={{ width:6, height:6, borderRadius:"50%", background:s.dot }} />
-      {s.label}
-    </span>
-  );
-};
-
-const ModuleRow = ({ mod, groupColor, delay, user }) => {
-  const [hovered, setHovered] = useState(false);
-
-  const handleClick = (e) => {
-    e.preventDefault();
-    // Log access
-    const log = JSON.parse(localStorage.getItem("access_log") || "[]");
-    log.unshift({
-      user: user.email,
-      name: user.name,
-      role: user.role,
-      module: mod.name,
-      moduleId: mod.id,
-      url: mod.url,
-      timestamp: new Date().toISOString(),
-    });
-    localStorage.setItem("access_log", JSON.stringify(log.slice(0, 200)));
-    window.open(mod.url, "_blank");
-  };
-
-  return (
-    <a href={mod.url} onClick={handleClick}
-      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{
-        display:"grid", gridTemplateColumns:"42px 1fr auto",
-        alignItems:"center", gap:14, padding:"14px 18px", borderRadius:10,
-        background: hovered ? "var(--surface-hover)" : "transparent",
-        textDecoration:"none", color:"inherit",
-        borderLeft:`3px solid ${hovered ? groupColor : "transparent"}`,
-        transition:"all 0.25s ease",
-        animation:`rowIn 0.35s ease ${delay}s both`, cursor:"pointer",
-      }}
-    >
-      <span style={{
-        width:36, height:36, borderRadius:8,
-        background:groupColor + "14", color:groupColor,
-        display:"flex", alignItems:"center", justifyContent:"center",
-        fontSize:14, fontWeight:700, fontFamily:"var(--mono)",
-      }}>{String(mod.id).padStart(2, "0")}</span>
-      <div style={{ minWidth:0 }}>
-        <p style={{ margin:0, fontSize:14, fontWeight:600, color:"var(--text-1)", fontFamily:"var(--heading)", lineHeight:1.3, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{mod.name}</p>
-        <p style={{ margin:"3px 0 5px", fontSize:12, color:"var(--text-3)", lineHeight:1.4, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{mod.desc}</p>
-        <div>{mod.stack.split(" + ").map((t, i) => (
-          <span key={i} style={{ display:"inline-block", padding:"2px 8px", borderRadius:4, fontSize:10, background:"var(--surface-2)", color:"var(--text-3)", fontFamily:"var(--mono)", letterSpacing:"0.03em", marginRight:4, marginBottom:3 }}>{t.trim()}</span>
-        ))}</div>
-      </div>
-      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-        <StatusBadge status={mod.status} />
-        <span style={{ fontSize:16, color:"var(--text-3)", opacity: hovered ? 1 : 0, transition:"opacity 0.2s" }}>\u2192</span>
-      </div>
-    </a>
-  );
-};
-
-const GroupSection = ({ group, isOpen, onToggle, searchTerm, user }) => {
-  const filtered = group.modules.filter(m =>
-    !searchTerm || m.name.toLowerCase().includes(searchTerm) || m.desc.toLowerCase().includes(searchTerm) || m.stack.toLowerCase().includes(searchTerm)
-  );
-  if (searchTerm && filtered.length === 0) return null;
-
-  return (
-    <div style={{
-      background:"var(--card)", borderRadius:14,
-      border:"1px solid var(--border)", overflow:"hidden",
-      transition:"box-shadow 0.3s ease",
-      boxShadow: isOpen ? `0 4px 24px -8px ${group.color}18` : "none",
-    }}>
-      <button onClick={onToggle} style={{
-        width:"100%", border:"none", cursor:"pointer",
-        display:"flex", alignItems:"center", gap:14,
-        padding:"18px 22px",
-        background: isOpen ? group.color + "08" : "transparent",
-        transition:"background 0.2s",
-        borderBottom: isOpen ? "1px solid var(--border)" : "none",
-      }}>
-        <span style={{ width:40, height:40, borderRadius:10, background:group.color + "18", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>{group.icon}</span>
-        <div style={{ flex:1, textAlign:"left" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <span style={{ fontSize:11, fontWeight:700, color:group.color, fontFamily:"var(--mono)", letterSpacing:"0.08em" }}>GRUPO {group.id}</span>
-            <span style={{ fontSize:11, color:"var(--text-3)", fontFamily:"var(--mono)" }}>{filtered.length} modulo{filtered.length !== 1 ? "s" : ""}</span>
-          </div>
-          <p style={{ margin:"2px 0 0", fontSize:15, fontWeight:600, color:"var(--text-1)", fontFamily:"var(--heading)" }}>{group.name}</p>
-        </div>
-        <span style={{ fontSize:18, color:"var(--text-3)", transform: isOpen ? "rotate(180deg)" : "rotate(0)", transition:"transform 0.3s ease" }}>\u25BE</span>
-      </button>
-      {isOpen && (
-        <div style={{ padding:"8px 8px 12px" }}>
-          {filtered.map((m, i) => <ModuleRow key={m.id} mod={m} groupColor={group.color} delay={i * 0.04} user={user} />)}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ─── ACCESS LOG PANEL ────────────────────────────────────────────────────────
-
-const AccessLogPanel = ({ isOpen, onClose }) => {
-  const logs = JSON.parse(localStorage.getItem("access_log") || "[]");
-
-  return (
-    <div style={{
-      position:"fixed", top:0, right: isOpen ? 0 : -400, width:380, height:"100vh",
-      background:"#181B25", borderLeft:"1px solid #2A2D3A",
-      zIndex:1000, transition:"right 0.3s ease",
-      display:"flex", flexDirection:"column", fontFamily:"'Outfit', sans-serif",
-    }}>
-      <div style={{ padding:"20px 24px", borderBottom:"1px solid #2A2D3A", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <h3 style={{ margin:0, fontSize:16, fontWeight:600, color:"#fff" }}>Registro de accesos</h3>
-        <button onClick={onClose} style={{ background:"none", border:"none", color:"#5A6175", fontSize:20, cursor:"pointer" }}>\u2715</button>
-      </div>
-      <div style={{ flex:1, overflowY:"auto", padding:"12px 16px" }}>
-        {logs.length === 0 && <p style={{ color:"#5A6175", fontSize:13, textAlign:"center", marginTop:40 }}>Sin registros aun. Los accesos a modulos se guardaran aqui.</p>}
-        {logs.map((log, i) => (
-          <div key={i} style={{ padding:"12px 14px", background:"#0F1118", borderRadius:10, marginBottom:8, border:"1px solid #2A2D3A" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
-              <span style={{ fontSize:13, fontWeight:600, color:"#fff" }}>{log.name}</span>
-              <span style={{ fontSize:10, color:"#5A6175", fontFamily:"'IBM Plex Mono', monospace" }}>{log.role}</span>
-            </div>
-            <p style={{ margin:"0 0 4px", fontSize:12, color:"#8890A5" }}>Accedio a: <span style={{ color:"#1B9E6A" }}>{log.module}</span></p>
-            <p style={{ margin:0, fontSize:10, color:"#5A6175", fontFamily:"'IBM Plex Mono', monospace" }}>
-              {new Date(log.timestamp).toLocaleString("es-CO")}
-            </p>
-          </div>
-        ))}
-      </div>
-      {logs.length > 0 && (
-        <div style={{ padding:"12px 16px", borderTop:"1px solid #2A2D3A" }}>
-          <button onClick={() => { localStorage.removeItem("access_log"); onClose(); }}
-            style={{ width:"100%", padding:"10px", borderRadius:8, border:"1px solid #DC262644", background:"#DC262618", color:"#F87171", fontSize:12, fontWeight:600, cursor:"pointer" }}>
-            Limpiar registros
+          <button onClick={()=>onLogin(em,pw)} disabled={loading} style={{width:"100%",padding:"12px",borderRadius:12,background:loading?"#333":"linear-gradient(135deg,#4F6EF7,#7C3AED)",color:"#fff",fontSize:15,fontWeight:600,border:"none",cursor:loading?"wait":"pointer",fontFamily:"inherit",boxShadow:"0 6px 24px #4F6EF744",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+            {loading && <span style={{width:16,height:16,border:"2px solid #fff4",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .6s linear infinite",display:"inline-block"}}/>}
+            {loading?"Verificando...":"Iniciar sesion"}
           </button>
         </div>
-      )}
+        {!APPS_SCRIPT_URL && <div style={{marginTop:16,padding:"12px 16px",background:"#171C32",borderRadius:14,border:"1px solid #252B45"}}>
+          <p style={{margin:"0 0 6px",fontSize:10,color:"#6B7194",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase"}}>Cuentas demo:</p>
+          {LOCAL_USERS.map(u=><div key={u.email} style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:3}}>
+            <span style={{fontSize:11,color:"#8890A5",fontFamily:"'IBM Plex Mono',monospace"}}>{u.email}</span>
+            <button onClick={()=>{setEm(u.email);setPw(u.password)}} style={{background:"#4F6EF718",border:"none",borderRadius:5,padding:"2px 8px",fontSize:10,color:"#7C8CFF",cursor:"pointer",fontWeight:600}}>Usar</button>
+          </div>)}
+        </div>}
+      </div>
     </div>
   );
 };
 
-// ─── MAIN APP ────────────────────────────────────────────────────────────────
+// ── SIDEBAR NAV ITEM ─────────────────────────────────────────────────────────
+const NavItem = ({icon,label,active,onClick,badge}) => (
+  <button onClick={onClick} style={{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,border:"none",background:active?"#4F6EF7":"transparent",color:active?"#fff":"#8890A5",fontSize:13,fontWeight:active?600:400,cursor:"pointer",fontFamily:"inherit",transition:"all .2s",position:"relative"}}>
+    <span style={{fontSize:18,width:24,textAlign:"center"}}>{icon}</span>
+    <span>{label}</span>
+    {badge && <span style={{marginLeft:"auto",background:active?"#fff3":"#4F6EF722",color:active?"#fff":"#4F6EF7",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:10}}>{badge}</span>}
+  </button>
+);
 
+// ── MINI CHART (SVG bar chart) ───────────────────────────────────────────────
+const MiniBarChart = ({data,color,height=100}) => {
+  const max = Math.max(...data);
+  const w = 100/data.length;
+  return (
+    <svg width="100%" height={height} viewBox={`0 0 100 ${height}`} preserveAspectRatio="none">
+      {data.map((v,i)=>{
+        const h = (v/max)*(height-10);
+        return <rect key={i} x={i*w+1} y={height-h} width={w-2} height={h} rx={2} fill={color} opacity={i===data.length-1?1:0.5} />;
+      })}
+    </svg>
+  );
+};
+
+// ── GAUGE ────────────────────────────────────────────────────────────────────
+const Gauge = ({value,max,label,color}) => {
+  const pct = value/max;
+  const r=40; const circ=2*Math.PI*r; const dash=circ*pct*0.75;
+  return (
+    <div style={{textAlign:"center"}}>
+      <svg width="110" height="80" viewBox="0 0 110 90">
+        <path d="M 10 80 A 45 45 0 0 1 100 80" fill="none" stroke="#E5E7EB" strokeWidth="8" strokeLinecap="round"/>
+        <path d="M 10 80 A 45 45 0 0 1 100 80" fill="none" stroke={color} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${dash} ${circ}`} style={{transition:"stroke-dasharray .8s ease"}}/>
+        <text x="55" y="60" textAnchor="middle" fontSize="22" fontWeight="700" fill="#1A1D2B" fontFamily="'Bricolage Grotesque',sans-serif">{value}%</text>
+        <text x="55" y="78" textAnchor="middle" fontSize="10" fill="#8890A5" fontFamily="'IBM Plex Mono',monospace">{label}</text>
+      </svg>
+    </div>
+  );
+};
+
+// ── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [user, setUser] = useState(null);
-  const [loginError, setLoginError] = useState("");
-  const [openGroups, setOpenGroups] = useState(["A", "B"]);
-  const [search, setSearch] = useState("");
-  const [time, setTime] = useState(new Date());
-  const [showLog, setShowLog] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [user,setUser]=useState(null);
+  const [err,setErr]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [page,setPage]=useState("home");
+  const [sideOpen,setSideOpen]=useState(true);
+  const [openG,setOpenG]=useState(["A"]);
+  const [search,setSearch]=useState("");
+  const [time,setTime]=useState(new Date());
 
-  useEffect(() => {
-    const saved = localStorage.getItem("eth_user");
-    if (saved) setUser(JSON.parse(saved));
-    const t = setInterval(() => setTime(new Date()), 60000);
-    return () => clearInterval(t);
-  }, []);
+  useEffect(()=>{
+    const s=localStorage.getItem("eth_user"); if(s) setUser(JSON.parse(s));
+    const t=setInterval(()=>setTime(new Date()),60000); return()=>clearInterval(t);
+  },[]);
 
-  const handleLogin = (email, password) => {
-    const found = MOCK_USERS.find(u => u.email === email && u.password === password);
-    if (found) {
-      const userData = { email: found.email, name: found.name, role: found.role, loginAt: new Date().toISOString() };
-      setUser(userData);
-      localStorage.setItem("eth_user", JSON.stringify(userData));
-      setLoginError("");
-      // Log the login
-      const log = JSON.parse(localStorage.getItem("access_log") || "[]");
-      log.unshift({ user: found.email, name: found.name, role: found.role, module: "LOGIN", moduleId: 0, url: "-", timestamp: new Date().toISOString() });
-      localStorage.setItem("access_log", JSON.stringify(log.slice(0, 200)));
-    } else {
-      setLoginError("Email o contrasena incorrectos. Intenta de nuevo.");
-    }
+  const login=async(em,pw)=>{
+    setLoading(true);setErr("");
+    const r=await authUser(em,pw); setLoading(false);
+    if(r.ok){const ud={...r.user,loginAt:new Date().toISOString()};setUser(ud);localStorage.setItem("eth_user",JSON.stringify(ud));addLog(ud,"LOGIN");}
+    else setErr(r.error);
   };
+  const logout=()=>{addLog(user,"LOGOUT");setUser(null);localStorage.removeItem("eth_user");};
+  const togG=id=>setOpenG(p=>p.includes(id)?p.filter(g=>g!==id):[...p,id]);
+  const logs=JSON.parse(localStorage.getItem("eth_log")||"[]");
 
-  const handleLogout = () => {
-    const log = JSON.parse(localStorage.getItem("access_log") || "[]");
-    log.unshift({ user: user.email, name: user.name, role: user.role, module: "LOGOUT", moduleId: 0, url: "-", timestamp: new Date().toISOString() });
-    localStorage.setItem("access_log", JSON.stringify(log.slice(0, 200)));
-    setUser(null);
-    localStorage.removeItem("eth_user");
-    setShowUserMenu(false);
-  };
+  if(!user) return <Login onLogin={login} error={err} loading={loading}/>;
 
-  const toggle = (id) => setOpenGroups(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
-  const expandAll = () => setOpenGroups(GROUPS.map(g => g.id));
-  const collapseAll = () => setOpenGroups([]);
-  const searchLower = search.toLowerCase();
+  const sl=search.toLowerCase();
+  const greeting=time.getHours()<12?"Buenos dias":time.getHours()<18?"Buenas tardes":"Buenas noches";
 
-  // ── NOT LOGGED IN ──
-  if (!user) return <LoginScreen onLogin={handleLogin} error={loginError} />;
-
-  // ── LOGGED IN ──
   return (
-    <div style={{
-      "--heading": "'Outfit', 'Segoe UI', sans-serif",
-      "--body": "'Outfit', 'Segoe UI', sans-serif",
-      "--mono": "'IBM Plex Mono', 'SF Mono', monospace",
-      "--bg": "#F4F5F7", "--card": "#FFFFFF",
-      "--surface-2": "#EFF1F5", "--surface-hover": "#F7F8FA",
-      "--border": "#E2E5EB",
-      "--text-1": "#1A1D2B", "--text-2": "#4A5068", "--text-3": "#8890A5",
-      minHeight: "100vh", background: "var(--bg)",
-      fontFamily: "var(--body)", color: "var(--text-1)",
-    }}>
+    <div style={{display:"flex",minHeight:"100vh",fontFamily:"'Bricolage Grotesque',sans-serif",background:"#F0F2F8"}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-        @keyframes rowIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-        * { box-sizing:border-box; }
-        input::placeholder { color: var(--text-3); }
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+        *{box-sizing:border-box;margin:0;padding:0} input::placeholder{color:#A0A5BD}
+        ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-thumb{background:#CBD0E0;border-radius:3px}
       `}</style>
 
-      {/* Access Log Panel */}
-      <AccessLogPanel isOpen={showLog} onClose={() => setShowLog(false)} />
-      {showLog && <div onClick={() => setShowLog(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.3)", zIndex:999 }} />}
-
-      {/* Header */}
-      <header style={{ background:"#1A1D2B", color:"#fff", animation:"fadeUp 0.4s ease both" }}>
-        <div style={{ maxWidth:1280, margin:"0 auto", padding:"18px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-            <div style={{ width:42, height:42, borderRadius:10, background:"linear-gradient(135deg, #1B6B4A, #059669)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, fontWeight:800, color:"#fff", boxShadow:"0 2px 12px #1B6B4A44" }}>S3D</div>
+      {/* ── SIDEBAR ── */}
+      <aside style={{width:sideOpen?260:0,minHeight:"100vh",background:"#fff",borderRight:"1px solid #E8EBF2",display:"flex",flexDirection:"column",overflow:"hidden",transition:"width .3s ease",flexShrink:0}}>
+        <div style={{padding:"22px 20px 16px",borderBottom:"1px solid #E8EBF2"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:38,height:38,borderRadius:10,background:"linear-gradient(135deg,#4F6EF7,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:800,color:"#fff"}}>S3D</div>
             <div>
-              <h1 style={{ margin:0, fontSize:18, fontWeight:700, letterSpacing:"-0.02em" }}>Plataforma Gestion Integrada</h1>
-              <p style={{ margin:0, fontSize:12, opacity:0.55, fontFamily:"var(--mono)", letterSpacing:"0.03em" }}>CONVENIO ETH-ANH 2026</p>
+              <p style={{fontSize:14,fontWeight:700,color:"#1A1D2B"}}>ETH-ANH 2026</p>
+              <p style={{fontSize:10,color:"#8890A5",fontFamily:"'IBM Plex Mono',monospace"}}>Gestion Integrada</p>
             </div>
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-            <button onClick={() => setShowLog(true)} style={{
-              background:"#2A2D3A", border:"none", borderRadius:8,
-              padding:"8px 14px", color:"#8890A5", fontSize:12,
-              cursor:"pointer", fontFamily:"var(--mono)",
-              display:"flex", alignItems:"center", gap:6,
-            }}>
-              <span style={{ fontSize:14 }}>\u{1F4CB}</span> Registro accesos
-            </button>
-            <div style={{ position:"relative" }}>
-              <button onClick={() => setShowUserMenu(!showUserMenu)} style={{
-                background:"#1B6B4A33", border:"1px solid #1B6B4A66", borderRadius:10,
-                padding:"8px 14px", color:"#fff", fontSize:13,
-                cursor:"pointer", fontFamily:"var(--body)",
-                display:"flex", alignItems:"center", gap:8,
-              }}>
-                <span style={{ width:28, height:28, borderRadius:8, background:"#1B6B4A", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700 }}>
-                  {user.name.charAt(0)}
-                </span>
-                <span>{user.name}</span>
-                <span style={{ fontSize:10, opacity:0.6 }}>\u25BE</span>
-              </button>
-              {showUserMenu && (
-                <div style={{
-                  position:"absolute", top:"100%", right:0, marginTop:6,
-                  background:"#181B25", border:"1px solid #2A2D3A", borderRadius:12,
-                  padding:8, minWidth:220, zIndex:100,
-                }}>
-                  <div style={{ padding:"10px 14px", borderBottom:"1px solid #2A2D3A", marginBottom:4 }}>
-                    <p style={{ margin:0, fontSize:13, color:"#fff", fontWeight:600 }}>{user.name}</p>
-                    <p style={{ margin:"2px 0 0", fontSize:11, color:"#5A6175", fontFamily:"var(--mono)" }}>{user.email}</p>
-                    <p style={{ margin:"4px 0 0", fontSize:10, color:"#1B9E6A", fontFamily:"var(--mono)", textTransform:"uppercase" }}>{user.role}</p>
-                  </div>
-                  <button onClick={handleLogout} style={{
-                    width:"100%", padding:"10px 14px", borderRadius:8,
-                    border:"none", background:"#DC262618", color:"#F87171",
-                    fontSize:13, fontWeight:600, cursor:"pointer", textAlign:"left",
-                  }}>
-                    Cerrar sesion
-                  </button>
+        </div>
+
+        <div style={{padding:"12px 12px 8px"}}>
+          <p style={{fontSize:10,fontWeight:600,color:"#A0A5BD",padding:"0 8px 6px",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".08em"}}>Menu</p>
+          <NavItem icon="\u{1F3E0}" label="Dashboard" active={page==="home"} onClick={()=>setPage("home")} />
+          <NavItem icon="\u{1F4E6}" label="Modulos" active={page==="modulos"} onClick={()=>setPage("modulos")} badge={total} />
+          <NavItem icon="\u{1F4CA}" label="Metricas" active={page==="metricas"} onClick={()=>setPage("metricas")} />
+          <NavItem icon="\u{1F4CB}" label="Registro accesos" active={page==="log"} onClick={()=>setPage("log")} badge={logs.length||null} />
+        </div>
+
+        <div style={{padding:"4px 12px"}}>
+          <p style={{fontSize:10,fontWeight:600,color:"#A0A5BD",padding:"8px 8px 6px",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".08em"}}>Grupos</p>
+          {GROUPS.map(g=>(
+            <NavItem key={g.id} icon={g.icon} label={`${g.id}. ${g.name}`} active={page==="grupo_"+g.id} onClick={()=>{setPage("modulos");setOpenG([g.id]);setTimeout(()=>document.getElementById("g-"+g.id)?.scrollIntoView({behavior:"smooth",block:"start"}),100);}} />
+          ))}
+        </div>
+
+        <div style={{marginTop:"auto",padding:"16px 20px",borderTop:"1px solid #E8EBF2"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:34,height:34,borderRadius:10,background:"linear-gradient(135deg,#4F6EF7,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:14,fontWeight:700}}>{user.nombre.charAt(0)}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <p style={{fontSize:13,fontWeight:600,color:"#1A1D2B",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{user.nombre}</p>
+              <p style={{fontSize:10,color:"#8890A5",fontFamily:"'IBM Plex Mono',monospace"}}>{user.rol}</p>
+            </div>
+            <button onClick={logout} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#A0A5BD",padding:4}} title="Cerrar sesion">{"\u23FB"}</button>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── MAIN AREA ── */}
+      <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
+        {/* Top bar */}
+        <header style={{background:"#fff",borderBottom:"1px solid #E8EBF2",padding:"14px 28px",display:"flex",alignItems:"center",gap:16,justifyContent:"space-between",flexWrap:"wrap"}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <button onClick={()=>setSideOpen(!sideOpen)} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#8890A5"}}>{sideOpen?"\u2630":"\u2630"}</button>
+            <div style={{position:"relative",minWidth:260}}>
+              <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#A0A5BD"}}>{"\u2315"}</span>
+              <input type="text" placeholder="Buscar modulos..." value={search} onChange={e=>{setSearch(e.target.value);if(e.target.value)setPage("modulos");}}
+                style={{width:"100%",padding:"9px 14px 9px 36px",borderRadius:10,border:"1px solid #E8EBF2",background:"#F7F8FB",fontSize:13,fontFamily:"inherit",color:"#1A1D2B",outline:"none"}}
+                onFocus={e=>e.target.style.borderColor="#4F6EF7"} onBlur={e=>e.target.style.borderColor="#E8EBF2"} />
+            </div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:16}}>
+            <span style={{fontSize:12,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace"}}>{time.toLocaleDateString("es-CO",{weekday:"short",day:"numeric",month:"short"})}</span>
+            <div style={{display:"flex",alignItems:"center",gap:6,padding:"5px 12px",background:"#ECFDF5",borderRadius:20,fontSize:11,color:"#065F46",fontWeight:600}}>
+              <span style={{width:6,height:6,borderRadius:"50%",background:"#10B981",animation:"pulse 2s infinite"}}/> En linea
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main style={{flex:1,padding:"24px 28px",overflowY:"auto"}}>
+
+          {/* ══ HOME PAGE ══ */}
+          {page==="home" && (<div style={{animation:"fadeIn .4s ease both"}}>
+            <h2 style={{fontSize:22,fontWeight:700,color:"#1A1D2B",marginBottom:4}}>{greeting}, {user.nombre}</h2>
+            <p style={{fontSize:13,color:"#8890A5",marginBottom:24}}>Convenio ETH-ANH 2026 — Panel de control general</p>
+
+            {/* KPI Cards */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:14,marginBottom:24}}>
+              {[
+                {label:"Modulos totales",value:total,color:"#4F6EF7",delta:"+2 este mes"},
+                {label:"Nuevos por construir",value:countSt("nuevo"),color:"#3B82F6",delta:"72% del total"},
+                {label:"Adaptaciones",value:countSt("adaptar"),color:"#F59E0B",delta:"En progreso"},
+                {label:"Reutilizables",value:countSt("reutilizar"),color:"#10B981",delta:"Listos"},
+                {label:"Usuarios activos",value:"156",color:"#7C3AED",delta:"+12 esta semana"},
+                {label:"Avance global",value:"12%",color:"#DC2626",delta:"Meta: 35%"},
+              ].map((k,i)=>(
+                <div key={i} style={{background:"#fff",borderRadius:16,padding:"18px 20px",border:"1px solid #E8EBF2",animation:`fadeIn .35s ease ${.1+i*.06}s both`}}>
+                  <p style={{fontSize:11,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".04em",marginBottom:8}}>{k.label}</p>
+                  <p style={{fontSize:30,fontWeight:800,color:k.color,lineHeight:1}}>{k.value}</p>
+                  <p style={{fontSize:11,color:"#8890A5",marginTop:4}}>{k.delta}</p>
                 </div>
-              )}
+              ))}
             </div>
-          </div>
-        </div>
-        <div style={{ height:3, background:"linear-gradient(90deg, #1B6B4A, #0891B2, #9333EA, #DC2626, #B45309)" }} />
-      </header>
 
-      {/* Main */}
-      <main style={{ maxWidth:1280, margin:"0 auto", padding:"28px 32px 60px" }}>
+            {/* Charts row */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 300px",gap:14,marginBottom:24}}>
+              {/* Bar chart - modules by group */}
+              <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2",gridColumn:"span 1"}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:16}}>
+                  <div><p style={{fontSize:14,fontWeight:600,color:"#1A1D2B"}}>Modulos por grupo</p><p style={{fontSize:11,color:"#A0A5BD"}}>Distribucion de los 39 modulos</p></div>
+                </div>
+                <MiniBarChart data={GROUPS.map(g=>g.modules.length)} color="#4F6EF7" height={120} />
+                <div style={{display:"flex",justifyContent:"space-between",marginTop:8}}>
+                  {GROUPS.map(g=><span key={g.id} style={{fontSize:10,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace"}}>{g.id}</span>)}
+                </div>
+              </div>
 
-        {/* Welcome bar */}
-        <div style={{
-          background:"var(--card)", borderRadius:14, padding:"16px 22px",
-          border:"1px solid var(--border)", marginBottom:20,
-          display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12,
-          animation:"fadeUp 0.4s ease both",
-        }}>
-          <div>
-            <p style={{ margin:0, fontSize:15, fontWeight:600, color:"var(--text-1)" }}>
-              {time.getHours() < 12 ? "Buenos dias" : time.getHours() < 18 ? "Buenas tardes" : "Buenas noches"}, {user.name}
-            </p>
-            <p style={{ margin:"2px 0 0", fontSize:12, color:"var(--text-3)", fontFamily:"var(--mono)" }}>
-              Sesion iniciada: {new Date(user.loginAt).toLocaleString("es-CO")} \u2014 Rol: {user.role}
-            </p>
-          </div>
-          <div style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 14px", background:"#22c55e14", borderRadius:20, fontSize:12, color:"#16a34a", fontWeight:600 }}>
-            <span style={{ width:8, height:8, borderRadius:"50%", background:"#22c55e", animation:"pulse 2s infinite" }} />
-            Sesion activa
-          </div>
-        </div>
+              {/* Status distribution */}
+              <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2"}}>
+                <p style={{fontSize:14,fontWeight:600,color:"#1A1D2B",marginBottom:4}}>Estado de desarrollo</p>
+                <p style={{fontSize:11,color:"#A0A5BD",marginBottom:16}}>Progreso por categoria</p>
+                {[{l:"Nuevos",v:countSt("nuevo"),c:"#3B82F6"},{l:"Adaptar",v:countSt("adaptar"),c:"#F59E0B"},{l:"Reutilizar",v:countSt("reutilizar"),c:"#10B981"}].map((s,i)=>(
+                  <div key={i} style={{marginBottom:14}}>
+                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                      <span style={{fontSize:12,fontWeight:500,color:"#4A5068"}}>{s.l}</span>
+                      <span style={{fontSize:12,fontWeight:600,color:s.c}}>{s.v} modulos</span>
+                    </div>
+                    <div style={{height:8,background:"#F0F2F8",borderRadius:4,overflow:"hidden"}}>
+                      <div style={{height:"100%",width:`${(s.v/total)*100}%`,background:s.c,borderRadius:4,transition:"width .8s ease"}}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-        {/* KPI Row */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(170px, 1fr))", gap:12, marginBottom:24 }}>
-          {[
-            { label:"Total modulos", value:totalModules, color:"#1A1D2B" },
-            { label:"Grupos", value:"9", color:"#1B6B4A" },
-            { label:"Nuevos", value:countByStatus("nuevo"), color:"#3B82F6" },
-            { label:"A adaptar", value:countByStatus("adaptar"), color:"#F59E0B" },
-            { label:"Reutilizar", value:countByStatus("reutilizar"), color:"#10B981" },
-            { label:"Avance global", value:"12%", color:"#9333EA" },
-          ].map((k, i) => (
-            <div key={i} style={{ background:"var(--card)", borderRadius:12, padding:"16px 18px", border:"1px solid var(--border)", animation:`fadeUp 0.35s ease ${0.1+i*0.05}s both` }}>
-              <span style={{ fontSize:10, color:"var(--text-3)", fontFamily:"var(--mono)", textTransform:"uppercase", letterSpacing:"0.06em" }}>{k.label}</span>
-              <p style={{ margin:"6px 0 0", fontSize:28, fontWeight:800, color:k.color, fontFamily:"var(--heading)", lineHeight:1 }}>{k.value}</p>
+              {/* Gauge */}
+              <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                <p style={{fontSize:14,fontWeight:600,color:"#1A1D2B",marginBottom:12}}>Avance general</p>
+                <Gauge value={12} max={100} label="del convenio" color="#4F6EF7" />
+                <p style={{fontSize:11,color:"#10B981",fontWeight:600,marginTop:8}}>En tiempo segun cronograma</p>
+              </div>
             </div>
-          ))}
-        </div>
 
-        {/* Search + Controls */}
-        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20, flexWrap:"wrap", animation:"fadeUp 0.4s ease 0.3s both" }}>
-          <div style={{ flex:1, minWidth:240, position:"relative" }}>
-            <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", fontSize:16, color:"var(--text-3)" }}>\u2315</span>
-            <input type="text" placeholder="Buscar modulo, herramienta o descripcion..."
-              value={search} onChange={e => setSearch(e.target.value)}
-              style={{ width:"100%", padding:"12px 16px 12px 40px", border:"1px solid var(--border)", borderRadius:10, fontSize:14, fontFamily:"var(--body)", background:"var(--card)", color:"var(--text-1)", outline:"none" }}
-              onFocus={e => e.target.style.borderColor = "#1B6B4A88"}
-              onBlur={e => e.target.style.borderColor = "var(--border)"}
-            />
-          </div>
-          <button onClick={expandAll} style={{ padding:"10px 16px", borderRadius:8, border:"1px solid var(--border)", background:"var(--card)", fontSize:12, fontWeight:600, fontFamily:"var(--mono)", cursor:"pointer", color:"var(--text-2)" }}>Expandir todo</button>
-          <button onClick={collapseAll} style={{ padding:"10px 16px", borderRadius:8, border:"1px solid var(--border)", background:"var(--card)", fontSize:12, fontWeight:600, fontFamily:"var(--mono)", cursor:"pointer", color:"var(--text-2)" }}>Colapsar</button>
-        </div>
-
-        {/* Group Nav */}
-        <div style={{ display:"flex", gap:6, marginBottom:20, overflowX:"auto", paddingBottom:4, animation:"fadeUp 0.4s ease 0.35s both" }}>
-          {GROUPS.map(g => (
-            <button key={g.id} onClick={() => { if (!openGroups.includes(g.id)) toggle(g.id); document.getElementById(`group-${g.id}`)?.scrollIntoView({ behavior:"smooth", block:"center" }); }}
-              style={{ padding:"7px 14px", borderRadius:8, border:"none", background:g.color + "14", color:g.color, fontSize:12, fontWeight:600, fontFamily:"var(--mono)", cursor:"pointer", whiteSpace:"nowrap" }}>
-              {g.icon} {g.id}
-            </button>
-          ))}
-        </div>
-
-        {/* Groups */}
-        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
-          {GROUPS.map(g => (
-            <div key={g.id} id={`group-${g.id}`}>
-              <GroupSection group={g} isOpen={openGroups.includes(g.id) || !!searchLower} onToggle={() => toggle(g.id)} searchTerm={searchLower} user={user} />
+            {/* Recent activity */}
+            <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2"}}>
+              <p style={{fontSize:14,fontWeight:600,color:"#1A1D2B",marginBottom:14}}>Actividad reciente</p>
+              {logs.slice(0,6).map((l,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:i<5?"1px solid #F0F2F8":"none"}}>
+                  <div style={{width:8,height:8,borderRadius:"50%",background:l.modulo==="LOGIN"?"#10B981":l.modulo==="LOGOUT"?"#F87171":"#4F6EF7"}}/>
+                  <div style={{flex:1}}>
+                    <p style={{fontSize:13,color:"#1A1D2B"}}><strong>{l.nombre}</strong> — {l.modulo==="LOGIN"?"Inicio sesion":l.modulo==="LOGOUT"?"Cerro sesion":`Accedio a ${l.modulo}`}</p>
+                  </div>
+                  <span style={{fontSize:10,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace"}}>{new Date(l.ts).toLocaleString("es-CO",{hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short"})}</span>
+                </div>
+              ))}
+              {logs.length===0 && <p style={{fontSize:13,color:"#A0A5BD",textAlign:"center",padding:20}}>Los accesos a modulos aparaceran aqui</p>}
             </div>
-          ))}
-        </div>
+          </div>)}
 
-        {/* Stack Legend */}
-        <div style={{ marginTop:32, padding:"20px 24px", background:"var(--card)", borderRadius:14, border:"1px solid var(--border)", animation:"fadeUp 0.4s ease 0.5s both" }}>
-          <p style={{ margin:"0 0 12px", fontSize:12, fontWeight:600, color:"var(--text-3)", fontFamily:"var(--mono)", textTransform:"uppercase", letterSpacing:"0.06em" }}>Stack tecnologico</p>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-            {["Google Sheets", "Google Forms", "Looker Studio", "Google Drive", "Apps Script", "Moodle LMS", "Maps API", "Gemini API", "Google Workspace"].map(t => (
-              <span key={t} style={{ padding:"6px 14px", borderRadius:8, background:"var(--surface-2)", fontSize:12, fontWeight:500, color:"var(--text-2)", fontFamily:"var(--mono)" }}>{t}</span>
-            ))}
-          </div>
-        </div>
-      </main>
+          {/* ══ MODULES PAGE ══ */}
+          {page==="modulos" && (<div style={{animation:"fadeIn .4s ease both"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:10}}>
+              <div>
+                <h2 style={{fontSize:22,fontWeight:700,color:"#1A1D2B"}}>Modulos del convenio</h2>
+                <p style={{fontSize:13,color:"#8890A5"}}>{total} modulos en {GROUPS.length} grupos</p>
+              </div>
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={()=>setOpenG(GROUPS.map(g=>g.id))} style={{padding:"8px 16px",borderRadius:8,border:"1px solid #E8EBF2",background:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",color:"#4A5068"}}>Expandir todo</button>
+                <button onClick={()=>setOpenG([])} style={{padding:"8px 16px",borderRadius:8,border:"1px solid #E8EBF2",background:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",color:"#4A5068"}}>Colapsar</button>
+              </div>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {GROUPS.map(g=>{
+                const filt=g.modules.filter(m=>!sl||m.name.toLowerCase().includes(sl)||m.desc.toLowerCase().includes(sl)||m.stack.toLowerCase().includes(sl));
+                if(sl&&filt.length===0)return null;
+                const isO=openG.includes(g.id)||!!sl;
+                return(<div key={g.id} id={"g-"+g.id} style={{background:"#fff",borderRadius:16,border:"1px solid #E8EBF2",overflow:"hidden",boxShadow:isO?`0 4px 20px -8px ${g.color}12`:"none"}}>
+                  <button onClick={()=>togG(g.id)} style={{width:"100%",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:12,padding:"16px 20px",background:isO?g.color+"08":"transparent",borderBottom:isO?"1px solid #E8EBF2":"none"}}>
+                    <span style={{width:38,height:38,borderRadius:10,background:g.color+"16",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{g.icon}</span>
+                    <div style={{flex:1,textAlign:"left"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        <span style={{fontSize:11,fontWeight:700,color:g.color,fontFamily:"'IBM Plex Mono',monospace"}}>GRUPO {g.id}</span>
+                        <span style={{fontSize:11,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace"}}>{filt.length} mod.</span>
+                      </div>
+                      <p style={{fontSize:14,fontWeight:600,color:"#1A1D2B"}}>{g.name}</p>
+                    </div>
+                    <span style={{fontSize:16,color:"#A0A5BD",transform:isO?"rotate(180deg)":"none",transition:"transform .3s"}}>{"\u25BE"}</span>
+                  </button>
+                  {isO&&<div style={{padding:"6px 8px 10px"}}>{filt.map((m,i)=>{
+                    const st=ST[m.status];
+                    return(<a key={m.id} href={m.url} onClick={e=>{e.preventDefault();addLog(user,m.name);window.open(m.url,"_blank");}}
+                      style={{display:"grid",gridTemplateColumns:"40px 1fr auto",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:10,textDecoration:"none",color:"inherit",cursor:"pointer",transition:"background .15s",borderLeft:"3px solid transparent"}}
+                      onMouseEnter={e=>{e.currentTarget.style.background="#F7F8FB";e.currentTarget.style.borderLeftColor=g.color}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.borderLeftColor="transparent"}}>
+                      <span style={{width:34,height:34,borderRadius:8,background:g.color+"12",color:g.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace"}}>{String(m.id).padStart(2,"0")}</span>
+                      <div style={{minWidth:0}}>
+                        <p style={{fontSize:13,fontWeight:600,color:"#1A1D2B",lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.name}</p>
+                        <p style={{fontSize:11,color:"#8890A5",margin:"2px 0 4px",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.desc}</p>
+                        <div>{m.stack.split("+").map((t,j)=><span key={j} style={{display:"inline-block",padding:"1px 7px",borderRadius:4,fontSize:10,background:"#F0F2F8",color:"#6B7194",fontFamily:"'IBM Plex Mono',monospace",marginRight:3}}>{t.trim()}</span>)}</div>
+                      </div>
+                      <span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 9px",borderRadius:6,fontSize:10,fontWeight:600,background:st.bg,color:st.c,fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase"}}>
+                        <span style={{width:5,height:5,borderRadius:"50%",background:st.d}}/>{st.l}
+                      </span>
+                    </a>);
+                  })}</div>}
+                </div>);
+              })}
+            </div>
+          </div>)}
+
+          {/* ══ METRICS PAGE ══ */}
+          {page==="metricas" && (<div style={{animation:"fadeIn .4s ease both"}}>
+            <h2 style={{fontSize:22,fontWeight:700,color:"#1A1D2B",marginBottom:20}}>Metricas del convenio</h2>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+              <div style={{background:"#fff",borderRadius:16,padding:"24px",border:"1px solid #E8EBF2"}}>
+                <p style={{fontSize:14,fontWeight:600,marginBottom:16}}>Desembolsos ANH</p>
+                {[{l:"D1 — Plan trabajo",p:100,c:"#10B981"},{l:"D2 — Avance 35%",p:45,c:"#4F6EF7"},{l:"D3 — Avance 70%",p:0,c:"#A0A5BD"},{l:"D4 — Final 100%",p:0,c:"#A0A5BD"}].map((d,i)=>(
+                  <div key={i} style={{marginBottom:12}}>
+                    <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:12,color:"#4A5068"}}>{d.l}</span><span style={{fontSize:12,fontWeight:600,color:d.c}}>{d.p}%</span></div>
+                    <div style={{height:6,background:"#F0F2F8",borderRadius:3}}><div style={{height:"100%",width:d.p+"%",background:d.c,borderRadius:3,transition:"width .6s"}}/></div>
+                  </div>
+                ))}
+              </div>
+              <div style={{background:"#fff",borderRadius:16,padding:"24px",border:"1px solid #E8EBF2"}}>
+                <p style={{fontSize:14,fontWeight:600,marginBottom:16}}>Stack tecnologico</p>
+                {[{l:"Google Sheets",v:28},{l:"Google Forms",v:16},{l:"Looker Studio",v:14},{l:"Google Drive",v:10},{l:"Moodle LMS",v:3},{l:"Apps Script",v:4}].map((s,i)=>(
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                    <span style={{fontSize:12,color:"#4A5068",minWidth:110}}>{s.l}</span>
+                    <div style={{flex:1,height:6,background:"#F0F2F8",borderRadius:3}}><div style={{height:"100%",width:`${(s.v/28)*100}%`,background:"#4F6EF7",borderRadius:3}}/></div>
+                    <span style={{fontSize:11,fontWeight:600,color:"#4F6EF7",fontFamily:"'IBM Plex Mono',monospace"}}>{s.v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>)}
+
+          {/* ══ LOG PAGE ══ */}
+          {page==="log" && (<div style={{animation:"fadeIn .4s ease both"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+              <div><h2 style={{fontSize:22,fontWeight:700,color:"#1A1D2B"}}>Registro de accesos</h2><p style={{fontSize:13,color:"#8890A5"}}>{logs.length} registros</p></div>
+              {logs.length>0&&<button onClick={()=>{localStorage.removeItem("eth_log");setPage("home");}} style={{padding:"8px 16px",borderRadius:8,border:"1px solid #FCA5A5",background:"#FEF2F2",fontSize:12,fontWeight:600,cursor:"pointer",color:"#DC2626"}}>Limpiar registros</button>}
+            </div>
+            <div style={{background:"#fff",borderRadius:16,border:"1px solid #E8EBF2",overflow:"hidden"}}>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 160px",padding:"12px 20px",background:"#F7F8FB",borderBottom:"1px solid #E8EBF2",fontSize:11,fontWeight:600,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase"}}>
+                <span>Usuario</span><span>Accion</span><span>Rol</span><span>Fecha / Hora</span>
+              </div>
+              {logs.slice(0,50).map((l,i)=>(
+                <div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 160px",padding:"12px 20px",borderBottom:"1px solid #F0F2F8",fontSize:13,alignItems:"center"}}>
+                  <span style={{fontWeight:500,color:"#1A1D2B"}}>{l.nombre}</span>
+                  <span style={{color:l.modulo==="LOGIN"?"#10B981":l.modulo==="LOGOUT"?"#DC2626":"#4F6EF7",fontWeight:500}}>{l.modulo==="LOGIN"?"Inicio sesion":l.modulo==="LOGOUT"?"Cerro sesion":l.modulo}</span>
+                  <span style={{fontSize:11,color:"#8890A5",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase"}}>{l.rol}</span>
+                  <span style={{fontSize:11,color:"#A0A5BD",fontFamily:"'IBM Plex Mono',monospace"}}>{new Date(l.ts).toLocaleString("es-CO")}</span>
+                </div>
+              ))}
+              {logs.length===0&&<p style={{padding:40,textAlign:"center",color:"#A0A5BD",fontSize:13}}>Sin registros aun</p>}
+            </div>
+          </div>)}
+
+        </main>
+      </div>
     </div>
   );
 }
