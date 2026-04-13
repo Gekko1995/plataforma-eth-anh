@@ -1,13 +1,50 @@
 import { useState, useEffect } from "react";
 
-// ── AUTH ──────────────────────────────────────────────────────────────────────
+/* =====================================================================
+   PLATAFORMA DE GESTION INTEGRADA — CONVENIO ETH-ANH 2026
+   SINAPSIS3D S.A.S. para Fundacion WR Tejido Social
+   =====================================================================
+
+   MAPA DEL ARCHIVO — Busca estas secciones para editar:
+
+   SECCION 1 (linea ~15)   → USUARIOS: emails, contrasenas, roles
+   SECCION 2 (linea ~35)   → MODULOS: nombres, URLs, estados, colores
+   SECCION 3 (linea ~100)  → LOGIN: pantalla de inicio de sesion
+   SECCION 4 (linea ~190)  → SIDEBAR: menu lateral izquierdo
+   SECCION 5 (linea ~210)  → GRAFICAS: barras y gauge de avance
+   SECCION 6 (linea ~250)  → DASHBOARD: KPIs, metricas, registro
+
+   =====================================================================
+   EDICIONES RAPIDAS:
+   - Cambiar nombre/URL de un modulo → busca el modulo en SECCION 2
+   - Agregar usuario de prueba → agrega linea en LOCAL_USERS (SECCION 1)
+   - Cambiar logo "S3D" → busca "S3D" (aparece 2 veces)
+   - Cambiar avance % → busca "value={12}" en el Gauge
+   - Conectar Google Sheets → pega URL en APPS_SCRIPT_URL (SECCION 1)
+   ===================================================================== */
+
+
+/* =====================================================================
+   SECCION 1: CONFIGURACION DE USUARIOS Y LOGIN
+   =====================================================================
+   - APPS_SCRIPT_URL: cuando configures Google Sheets, pega la URL aqui
+   - LOCAL_USERS: usuarios de prueba (solo funcionan si APPS_SCRIPT_URL
+     esta vacio). Para agregar uno, copia el formato de abajo.
+   ===================================================================== */
+
+// >>> PEGA AQUI TU URL DE GOOGLE APPS SCRIPT <<<
+// Ejemplo: const APPS_SCRIPT_URL = "https://script.google.com/macros/s/ABC123/exec";
 const APPS_SCRIPT_URL = "";
+
+// >>> USUARIOS DE PRUEBA — agrega o quita los que necesites <<<
 const LOCAL_USERS = [
   { email: "admin@sinapsis3d.com", password: "admin2026", rol: "admin", nombre: "Administrador S3D" },
   { email: "coordinador@fwrts.org", password: "coord2026", rol: "coordinador", nombre: "Coordinador ETH" },
   { email: "profesional@convenio.com", password: "prof2026", rol: "profesional", nombre: "Prof. Campo" },
 ];
 
+// Funcion de login — NO MODIFICAR
+// Verifica email y contrasena contra Google Sheets o usuarios locales
 async function authUser(email, password) {
   if (APPS_SCRIPT_URL) {
     try {
@@ -20,34 +57,53 @@ async function authUser(email, password) {
   return f ? { ok: true, user: { email: f.email, nombre: f.nombre, rol: f.rol } } : { ok: false, error: "Email o contrasena incorrectos" };
 }
 
+// Guarda registro cada vez que alguien entra o accede a un modulo
 function addLog(user, mod) {
   const log = JSON.parse(localStorage.getItem("eth_log") || "[]");
   log.unshift({ user: user.email, nombre: user.nombre, rol: user.rol, modulo: mod, ts: new Date().toISOString() });
   localStorage.setItem("eth_log", JSON.stringify(log.slice(0, 300)));
 }
 
-// ── MODULES DATA ─────────────────────────────────────────────────────────────
+/* =====================================================================
+   SECCION 2: LOS 39 MODULOS DEL CONVENIO
+   =====================================================================
+   COMO EDITAR UN MODULO:
+   - name: "texto"     → Cambiar el nombre que se muestra
+   - desc: "texto"     → Cambiar la descripcion corta
+   - url: "https://..."→ Poner la URL real del Google Sheet/Form/Moodle
+   - status: "nuevo"   → Opciones: "nuevo" (azul), "adaptar" (amarillo),
+                          "reutilizar" (verde)
+   - stack: "X+Y"      → Herramientas que usa (solo informativo)
+
+   PARA AGREGAR UN MODULO: copia una linea y cambia id (usa 40, 41...)
+   PARA QUITAR UN MODULO: borra la linea completa
+
+   COLORES DE GRUPO: cambia el valor de "color" (codigo hex)
+   Busca colores en Google: "hex color picker"
+   ===================================================================== */
+
+// ── GRUPO A: Diagnostico y Territorio (verde #1B6B4A) ──
 const GROUPS = [
-  { id:"A", name:"Diagnostico y Territorio", color:"#1B6B4A", icon:"\u{1F30D}", modules:[
+  { id:"A", name:"Diagnostico y Territorio", color:"#1B6B4A", icon:"A", modules:[
     { id:1, name:"Linea diagnostica territorial", desc:"Caracterizacion socioeconomica y ambiental", stack:"Sheets+Forms+Looker", status:"nuevo", url:"#" },
     { id:2, name:"Lineas base e impacto", desc:"KPIs cadena valor DNP. Medicion brechas", stack:"Sheets+Looker", status:"nuevo", url:"#" },
     { id:3, name:"Georeferenciacion y mapeo", desc:"Google Maps + Looker. Capas E&P, CARs, PDET", stack:"Looker+Maps", status:"adaptar", url:"#" },
     { id:4, name:"Cluster productivo", desc:"Mercado, exportables, TLC, vocacion productiva", stack:"Sheets+Forms", status:"nuevo", url:"#" },
     { id:5, name:"Recabo info campo", desc:"Fichas producto, encuestas, fitosanitarios", stack:"Forms+Sheets", status:"nuevo", url:"#" },
   ]},
-  { id:"B", name:"Nucleo Estrategico ANH", color:"#B45309", icon:"\u26A1", modules:[
+  { id:"B", name:"Nucleo Estrategico ANH", color:"#B45309", icon:"B", modules:[
     { id:6, name:"Lineamientos ambientales", desc:"Planes CARs. Estudios E&P. Repositorio", stack:"Sheets+Drive+Looker", status:"adaptar", url:"#" },
     { id:7, name:"Inversion social territorial", desc:"Iniciativas. Actas/fotos. Diversificacion", stack:"Sheets+Forms+Looker", status:"reutilizar", url:"#" },
     { id:8, name:"Conflictividad y dialogo", desc:"Alertas SLA. 4 lineas ETH. Acuerdos", stack:"Sheets+Looker", status:"adaptar", url:"#" },
     { id:9, name:"Marco logico proyectos", desc:"Arbol problemas. MGA-DNP. Gantt", stack:"Sheets+Forms", status:"nuevo", url:"#" },
   ]},
-  { id:"C", name:"Formacion y Capacitacion", color:"#7C3AED", icon:"\u{1F393}", modules:[
+  { id:"C", name:"Formacion y Capacitacion", color:"#7C3AED", icon:"C", modules:[
     { id:10, name:"Moodle — Beneficiarios", desc:"Cursos productivos, emprendimiento, certificaciones", stack:"Moodle LMS", status:"adaptar", url:"#" },
     { id:11, name:"Moodle — Comunidades", desc:"Derechos, participacion, medio ambiente", stack:"Moodle LMS", status:"nuevo", url:"#" },
     { id:12, name:"Moodle — Personal convenio", desc:"Induccion ETH, protocolos, HSE", stack:"Moodle LMS", status:"adaptar", url:"#" },
     { id:13, name:"Cluster exportacion", desc:"Planes negocio, ferias internacionales", stack:"Sheets+Forms+Drive", status:"nuevo", url:"#" },
   ]},
-  { id:"D", name:"Actores y Talento Humano", color:"#0369A1", icon:"\u{1F465}", modules:[
+  { id:"D", name:"Actores y Talento Humano", color:"#0369A1", icon:"D", modules:[
     { id:14, name:"Gestion beneficiarios", desc:"Registro, consentimientos, segmentacion", stack:"Sheets+Forms+Looker", status:"reutilizar", url:"#" },
     { id:15, name:"Directorio actores", desc:"Operadoras, comunidades, autoridades", stack:"Sheets+Looker", status:"nuevo", url:"#" },
     { id:16, name:"Enfoque diferencial", desc:"Protocolos etnicos. Consulta previa", stack:"Sheets+Forms+Drive", status:"nuevo", url:"#" },
@@ -55,7 +111,7 @@ const GROUPS = [
     { id:18, name:"Gestion personal", desc:"Equipo, seguridad social, salarios", stack:"Sheets+Looker", status:"adaptar", url:"#" },
     { id:19, name:"Entidades aliadas", desc:"CARs 8 regiones. Estado alianzas", stack:"Sheets+Looker", status:"nuevo", url:"#" },
   ]},
-  { id:"E", name:"Financiero y Gobernanza", color:"#DC2626", icon:"\u{1F4B0}", modules:[
+  { id:"E", name:"Financiero y Gobernanza", color:"#DC2626", icon:"E", modules:[
     { id:20, name:"Admin y seguridad", desc:"Roles, permisos, auditoria, MFA", stack:"Script+Sheets", status:"reutilizar", url:"#" },
     { id:21, name:"Seguimiento y monitoreo", desc:"Hitos, % avance, semaforos", stack:"Sheets+Looker", status:"reutilizar", url:"#" },
     { id:22, name:"Gestion financiera", desc:"Presupuesto, desembolsos 20/30/40/10", stack:"Sheets+Looker", status:"nuevo", url:"#" },
@@ -64,34 +120,44 @@ const GROUPS = [
     { id:25, name:"Contratacion ESAL", desc:"Subcontratos, TdR, minutas", stack:"Sheets+Drive", status:"nuevo", url:"#" },
     { id:26, name:"Gestion riesgos", desc:"CONPES 3714. Alertas. Mitigacion", stack:"Sheets+Looker", status:"nuevo", url:"#" },
   ]},
-  { id:"F", name:"Informes y Rendicion", color:"#0891B2", icon:"\u{1F4C4}", modules:[
+  { id:"F", name:"Informes y Rendicion", color:"#0891B2", icon:"F", modules:[
     { id:27, name:"Informes funcionarios", desc:"Radicacion > revision > aprobacion", stack:"Forms+Sheets+Drive", status:"nuevo", url:"#" },
     { id:28, name:"Informes ANH", desc:"Compilador 4 desembolsos automatico", stack:"Script+Sheets", status:"nuevo", url:"#" },
     { id:29, name:"Gestion conocimiento", desc:"Metodologias, casos exito, lecciones", stack:"Drive+Sheets+Moodle", status:"nuevo", url:"#" },
   ]},
-  { id:"G", name:"Operacion Territorial", color:"#059669", icon:"\u{1F4CD}", modules:[
+  { id:"G", name:"Operacion Territorial", color:"#059669", icon:"G", modules:[
     { id:30, name:"Eventos y agenda", desc:"Talleres, foros, convocatoria, asistencia", stack:"Forms+Sheets+Looker", status:"nuevo", url:"#" },
     { id:31, name:"Logistica territorial", desc:"Transporte, alojamiento, refrigerios", stack:"Forms+Sheets", status:"nuevo", url:"#" },
     { id:32, name:"Comunicaciones", desc:"Piezas, campanas, presencia digital", stack:"Drive+Sheets", status:"nuevo", url:"#" },
     { id:33, name:"HSE seguridad y salud", desc:"Protocolos, incidentes, emergencias", stack:"Forms+Sheets", status:"nuevo", url:"#" },
   ]},
-  { id:"H", name:"Documentacion y Cierre", color:"#6D28D9", icon:"\u{1F5C4}\uFE0F", modules:[
+  { id:"H", name:"Documentacion y Cierre", color:"#6D28D9", icon:"H", modules:[
     { id:34, name:"Gestion documental", desc:"Drive jerarquico. Alertas. Gemini API", stack:"Drive+Script+Gemini", status:"reutilizar", url:"#" },
     { id:35, name:"Inventarios y bienes", desc:"Res. 0532/2024. Trazabilidad equipos", stack:"Sheets+Looker", status:"adaptar", url:"#" },
     { id:36, name:"Polizas y garantias", desc:"Cumplimiento, calidad, salarios. Vigencias", stack:"Sheets", status:"nuevo", url:"#" },
     { id:37, name:"Liquidacion y cierre", desc:"Checklist, acta, balance, paz y salvo", stack:"Sheets+Drive", status:"nuevo", url:"#" },
   ]},
-  { id:"I", name:"Infraestructura TI", color:"#475569", icon:"\u{1F6E0}\uFE0F", modules:[
+  { id:"I", name:"Infraestructura TI", color:"#475569", icon:"I", modules:[
     { id:38, name:"Mesa de ayuda", desc:"Tickets SLA. FAQ. Soporte 24/7", stack:"Forms+Sheets+Looker", status:"reutilizar", url:"#" },
     { id:39, name:"Infraestructura cloud", desc:"Workspace. Backups. 99.5% SLA", stack:"Google Workspace", status:"adaptar", url:"#" },
   ]},
 ];
 
+// Estados y sus colores — NO MODIFICAR a menos que quieras cambiar colores
 const ST = { nuevo:{l:"Nuevo",bg:"#EFF6FF",c:"#1E40AF",d:"#3B82F6"}, adaptar:{l:"Adaptar",bg:"#FFFBEB",c:"#92400E",d:"#F59E0B"}, reutilizar:{l:"Reutilizar",bg:"#ECFDF5",c:"#065F46",d:"#10B981"} };
 const total = GROUPS.reduce((a,g)=>a+g.modules.length,0);
 const countSt = s => GROUPS.reduce((a,g)=>a+g.modules.filter(m=>m.status===s).length,0);
 
-// ── LOGIN ────────────────────────────────────────────────────────────────────
+/* =====================================================================
+   SECCION 3: PANTALLA DE LOGIN
+   =====================================================================
+   Lo que ven los usuarios ANTES de iniciar sesion.
+   - Cambiar titulo: busca "Plataforma ETH-ANH" abajo
+   - Cambiar logo: busca "S3D" abajo
+   - Cambiar color del boton: busca "linear-gradient(135deg,#4F6EF7,#7C3AED)"
+   ===================================================================== */
+
+// ── Pantalla de Login ──
 const Login = ({ onLogin, error, loading }) => {
   const [em,setEm]=useState(""); const [pw,setPw]=useState(""); const [show,setShow]=useState(false);
   return (
@@ -139,7 +205,12 @@ const Login = ({ onLogin, error, loading }) => {
   );
 };
 
-// ── SIDEBAR NAV ITEM ─────────────────────────────────────────────────────────
+/* =====================================================================
+   SECCION 4: SIDEBAR — Boton del menu lateral
+   =====================================================================
+   Cada boton del sidebar usa este componente. No necesitas modificarlo.
+   ===================================================================== */
+
 const NavItem = ({icon,label,active,onClick,badge}) => (
   <button onClick={onClick} style={{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,border:"none",background:active?"#4F6EF7":"transparent",color:active?"#fff":"#8890A5",fontSize:13,fontWeight:active?600:400,cursor:"pointer",fontFamily:"inherit",transition:"all .2s",position:"relative"}}>
     <span style={{fontSize:18,width:24,textAlign:"center"}}>{icon}</span>
@@ -148,7 +219,13 @@ const NavItem = ({icon,label,active,onClick,badge}) => (
   </button>
 );
 
-// ── MINI CHART (SVG bar chart) ───────────────────────────────────────────────
+/* =====================================================================
+   SECCION 5: GRAFICAS — Barras y medidor de avance
+   =====================================================================
+   Componentes visuales. No necesitas modificarlos.
+   ===================================================================== */
+
+// Grafica de barras pequena
 const MiniBarChart = ({data,color,height=100}) => {
   const max = Math.max(...data);
   const w = 100/data.length;
@@ -178,7 +255,22 @@ const Gauge = ({value,max,label,color}) => {
   );
 };
 
-// ── MAIN APP ─────────────────────────────────────────────────────────────────
+/* =====================================================================
+   SECCION 6: APP PRINCIPAL — El dashboard completo
+   =====================================================================
+   Aqui se une todo: sidebar + header + paginas.
+   
+   PAGINAS: "home" = Dashboard | "modulos" = Los 39 modulos
+            "metricas" = Graficas | "log" = Registro de accesos
+   
+   EDITAR:
+   - Nombre plataforma: busca "ETH-ANH 2026" y "Gestion Integrada"
+   - Logo: busca "S3D"
+   - Avance %: busca "value={12}" en el Gauge
+   - KPIs: busca el array con label/value/color/delta
+   - Desembolsos: busca "D1", "D2", "D3", "D4" y cambia "p" (porcentaje)
+   ===================================================================== */
+
 export default function App() {
   const [user,setUser]=useState(null);
   const [err,setErr]=useState("");
@@ -233,10 +325,10 @@ export default function App() {
 
         <div style={{padding:"12px 12px 8px"}}>
           <p style={{fontSize:10,fontWeight:600,color:"#A0A5BD",padding:"0 8px 6px",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".08em"}}>Menu</p>
-          <icon="\u{1F30D}" label="Dashboard" active={page==="home"} onClick={()=>setPage("home")} />
-          <NavItem icon="%" label="Modulos" active={page==="modulos"} onClick={()=>setPage("modulos")} badge={total} />
-          <NavItem icon="¿" label="Metricas" active={page==="metricas"} onClick={()=>setPage("metricas")} />
-          <NavItem icon="_" label="Registro accesos" active={page==="log"} onClick={()=>setPage("log")} badge={logs.length||null} />
+          <NavItem icon="~" label="Dashboard" active={page==="home"} onClick={()=>setPage("home")} />
+          <NavItem icon="#" label="Modulos" active={page==="modulos"} onClick={()=>setPage("modulos")} badge={total} />
+          <NavItem icon="%" label="Metricas" active={page==="metricas"} onClick={()=>setPage("metricas")} />
+          <NavItem icon="!" label="Registro accesos" active={page==="log"} onClick={()=>setPage("log")} badge={logs.length||null} />
         </div>
 
         <div style={{padding:"4px 12px"}}>
