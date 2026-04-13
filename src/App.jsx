@@ -402,7 +402,7 @@ export default function App() {
                <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2",marginBottom:14}}>
               <p style={{fontSize:14,fontWeight:600,marginBottom:14}}>Reporte Looker Studio</p>
                  <iframe
-                   src="https://lookerstudio.google.com/reporting/2b97e06b-d56f-4f2a-ac73-84942060d75e"
+                   src="https://lookerstudio.google.com/embed/reporting/2b97e06b-d56f-4f2a-ac73-84942060d75e/page/rzP6E"
                    width="100%"
                    height="450"
                    style={{border:"none",borderRadius:8}}
