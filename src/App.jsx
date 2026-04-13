@@ -5,7 +5,7 @@ const GROUPS = [
   {
     id: "A", name: "Diagnóstico y Territorio", color: "#1B6B4A", icon: "🌍",
     modules: [
-      { id: 1, name: "Línea diagnóstica territorial", desc: "Caracterización socioeconómica y ambiental. Mapeo actores.", stack: "Sheets + Forms + Looker", status: "nuevo", url: "#" },
+      { id: 1, name: "Línea diagnóstica territorial", desc: "Caracterización socioeconómica y ambiental. Mapeo actores.", stack: "Sheets + Forms + Looker", status: "nuevo", url: "https://drive.google.com/file/d/1ypsSMGYDMTcHdzttC1j4jdTPqgD028C4/view?usp=drive_link" },
       { id: 2, name: "Líneas base y evaluación de impacto", desc: "Indicadores medibles inicio/medio/cierre. KPIs cadena valor DNP.", stack: "Sheets + Looker", status: "nuevo", url: "#" },
       { id: 3, name: "Georeferenciación y mapeo", desc: "Google Maps + Looker. Capas E&P, CARs, PDET, ZOMAC.", stack: "Looker + Maps API", status: "adaptar", url: "#" },
       { id: 4, name: "Caracterización clúster productivo", desc: "Estudio mercado, productos exportables, TLC, vocación productiva.", stack: "Sheets + Forms", status: "nuevo", url: "#" },
