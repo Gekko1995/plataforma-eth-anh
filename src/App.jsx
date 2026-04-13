@@ -233,7 +233,7 @@ export default function App() {
 
         <div style={{padding:"12px 12px 8px"}}>
           <p style={{fontSize:10,fontWeight:600,color:"#A0A5BD",padding:"0 8px 6px",fontFamily:"'IBM Plex Mono',monospace",textTransform:"uppercase",letterSpacing:".08em"}}>Menu</p>
-          <NavItem icon="#" label="Dashboard" active={page==="home"} onClick={()=>setPage("home")} />
+          <NavItem icon="\u{1F30D}" label="Dashboard" active={page==="home"} onClick={()=>setPage("home")} />
           <NavItem icon="%" label="Modulos" active={page==="modulos"} onClick={()=>setPage("modulos")} badge={total} />
           <NavItem icon="¿" label="Metricas" active={page==="metricas"} onClick={()=>setPage("metricas")} />
           <NavItem icon="_" label="Registro accesos" active={page==="log"} onClick={()=>setPage("log")} badge={logs.length||null} />
