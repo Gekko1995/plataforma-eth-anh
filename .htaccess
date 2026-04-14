@@ -35,7 +35,7 @@ Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 
 # Content-Security-Policy
-Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://lookerstudio.google.com https://datastudio.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; frame-src 'self' https://lookerstudio.google.com https://datastudio.google.com; connect-src 'self' https://script.google.com https://lookerstudio.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;"
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://lookerstudio.google.com https://datastudio.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; frame-src 'self' https://lookerstudio.google.com https://datastudio.google.com; connect-src 'self' https://script.google.com https://lookerstudio.google.com https://*.supabase.co https://supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;"
 
 # ========================================================
 # 3. CORS CON WHITELIST
