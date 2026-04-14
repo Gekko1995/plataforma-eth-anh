@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { APPS_SCRIPT_URL, LOCAL_USERS } from '../data/constants';
+import ForgotPassword from './ForgotPassword';
 
 /**
  * Pantalla de Login
@@ -8,8 +9,10 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
   const [em, setEm] = useState("");
   const [pw, setPw] = useState("");
   const [show, setShow] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
 
   return (
+    <>
     <div
       style={{
         minHeight: "100dvh",
@@ -226,6 +229,26 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
             )}
             {loading ? "Verificando..." : "Iniciar sesion"}
           </button>
+
+          {/* Enlace ¿Olvidaste tu contraseña? */}
+          <div style={{ textAlign: "center", marginTop: 14 }}>
+            <button
+              type="button"
+              onClick={() => setShowForgot(true)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#7C8CFF",
+                fontSize: 12,
+                cursor: "pointer",
+                fontFamily: "inherit",
+                textDecoration: "underline",
+                padding: 0
+              }}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
         </div>
 
         {/* Cuentas demo */}
@@ -287,5 +310,11 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
         )}
       </div>
     </div>
+
+    {/* Modal recuperar contraseña */}
+    {showForgot && (
+      <ForgotPassword onClose={() => setShowForgot(false)} isMobile={isMobile} />
+    )}
+    </>
   );
 }

@@ -4,7 +4,7 @@ import NavItem from "./components/NavItem";
 import Gauge from "./components/Gauge";
 import MiniBarChart from "./components/MiniBarChart";
 import { GROUPS, STATUS_STYLES } from "./data/constants";
-import { authUser, addLog, getLogs, clearLogs } from "./utils/auth";
+import { authUser, addLog, getLogs, clearLogs, createUser } from "./utils/auth";
 import { globalStyles, styles } from "./styles/globalStyles";
 
 /* =====================================================================
@@ -31,6 +31,12 @@ export default function App() {
   const [time, setTime] = useState(new Date());
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [showNewUser, setShowNewUser] = useState(false);
+  const [newUserForm, setNewUserForm] = useState({ nombre: "", email: "", password: "", rol: "profesional" });
+  const [newUserLoading, setNewUserLoading] = useState(false);
+  const [newUserMsg, setNewUserMsg] = useState({ type: "", text: "" });
+
+  const USERS_SHEET_URL = process.env.REACT_APP_USERS_SHEET_URL || "";
 
   // Detectar tamaño de pantalla
   useEffect(() => {
@@ -77,6 +83,25 @@ export default function App() {
   const togG = id => setOpenG(p => (p.includes(id) ? p.filter(g => g !== id) : [...p, id]));
   const logs = getLogs();
   const isAdmin = user?.rol === "admin";
+
+  const handleCreateUser = async e => {
+    e.preventDefault();
+    setNewUserMsg({ type: "", text: "" });
+    const { nombre, email, password, rol } = newUserForm;
+    if (!nombre.trim() || !email.trim() || !password.trim() || !rol.trim()) {
+      setNewUserMsg({ type: "error", text: "Todos los campos son obligatorios." });
+      return;
+    }
+    setNewUserLoading(true);
+    const result = await createUser({ nombre: nombre.trim(), email: email.trim(), password, rol });
+    setNewUserLoading(false);
+    if (result.ok) {
+      setNewUserMsg({ type: "ok", text: "Usuario creado correctamente." });
+      setNewUserForm({ nombre: "", email: "", password: "", rol: "profesional" });
+    } else {
+      setNewUserMsg({ type: "error", text: result.error || "No se pudo crear el usuario." });
+    }
+  };
   const utf8Bom = "\uFEFF";
   const escapeCSV = (value) => `"${String(value).replace(/"/g, '""')}"`;
   const getActionLabel = (modulo, withPrefix = false) => {
@@ -96,7 +121,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (user && !isAdmin && page === "log") {
+    if (user && !isAdmin && (page === "log" || page === "usuarios")) {
       setPage("home");
     }
   }, [user, isAdmin, page]);
@@ -240,6 +265,17 @@ export default function App() {
                 closeSidebarMobile();
               }}
               badge={logs.length || null}
+            />
+          )}
+          {isAdmin && (
+            <NavItem
+              icon="@"
+              label="Gestión usuarios"
+              active={page === "usuarios"}
+              onClick={() => {
+                setPage("usuarios");
+                closeSidebarMobile();
+              }}
             />
           )}
         </div>
@@ -928,6 +964,219 @@ export default function App() {
                 )}
                 {logs.length === 0 && <p style={{ padding: 40, textAlign: "center", color: "#A0A5BD", fontSize: 13 }}>Sin registros aun</p>}
               </div>
+            </div>
+          )}
+
+          {/* USUARIOS PAGE */}
+          {page === "usuarios" && isAdmin && (
+            <div style={{ animation: "fadeIn .4s ease both" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
+                <div>
+                  <h2 style={{ fontSize: isMobile ? 20 : 22, fontWeight: 700, color: "#1A1D2B" }}>Gestión de usuarios</h2>
+                  <p style={{ fontSize: 13, color: "#8890A5" }}>Administra los usuarios de la plataforma</p>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {USERS_SHEET_URL && (
+                    <a
+                      href={USERS_SHEET_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "9px 18px",
+                        borderRadius: 8,
+                        border: "1px solid #BBF7D0",
+                        background: "#ECFDF5",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#065F46",
+                        textDecoration: "none"
+                      }}
+                    >
+                      ✎ Editar en Google Sheets
+                    </a>
+                  )}
+                  <button
+                    onClick={() => { setShowNewUser(true); setNewUserMsg({ type: "", text: "" }); }}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "9px 18px",
+                      borderRadius: 8,
+                      border: "none",
+                      background: "linear-gradient(135deg,#4F6EF7,#7C3AED)",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      color: "#fff"
+                    }}
+                  >
+                    + Crear nuevo usuario
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ ...styles.card(isMobile), padding: isMobile ? 16 : 28 }}>
+                <p style={{ fontSize: 13, color: "#4A5068", lineHeight: 1.7 }}>
+                  Los usuarios se gestionan directamente en Google Sheets a través del Google Apps Script configurado.
+                  Usa el botón <strong>"Editar en Google Sheets"</strong> para ver y corregir usuarios existentes,
+                  o <strong>"Crear nuevo usuario"</strong> para agregar uno nuevo.
+                </p>
+                {!USERS_SHEET_URL && (
+                  <p style={{ marginTop: 14, fontSize: 12, color: "#92400E", background: "#FFFBEB", padding: "10px 14px", borderRadius: 8, border: "1px solid #FDE68A" }}>
+                    ⚠️ Define <code>REACT_APP_USERS_SHEET_URL</code> en el archivo <code>.env</code> para habilitar el enlace directo a la hoja de cálculo.
+                  </p>
+                )}
+              </div>
+
+              {/* Modal crear nuevo usuario */}
+              {showNewUser && (
+                <div
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    background: "rgba(0,0,0,.45)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 1000,
+                    padding: 16
+                  }}
+                  onClick={e => { if (e.target === e.currentTarget) setShowNewUser(false); }}
+                >
+                  <div
+                    style={{
+                      background: "#fff",
+                      borderRadius: 16,
+                      padding: isMobile ? 20 : 32,
+                      width: "100%",
+                      maxWidth: 440,
+                      boxShadow: "0 20px 60px -10px rgba(0,0,0,.25)"
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                      <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1A1D2B" }}>Crear nuevo usuario</h3>
+                      <button
+                        onClick={() => setShowNewUser(false)}
+                        style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#A0A5BD" }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleCreateUser} autoComplete="off">
+                      {[
+                        { label: "Nombre completo", key: "nombre", type: "text", placeholder: "Ej. María González" },
+                        { label: "Correo electrónico", key: "email", type: "email", placeholder: "usuario@ejemplo.com" },
+                        { label: "Contraseña", key: "password", type: "password", placeholder: "Mínimo 8 caracteres" }
+                      ].map(f => (
+                        <div key={f.key} style={{ marginBottom: 16 }}>
+                          <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>{f.label}</label>
+                          <input
+                            type={f.type}
+                            placeholder={f.placeholder}
+                            value={newUserForm[f.key]}
+                            onChange={e => setNewUserForm(p => ({ ...p, [f.key]: e.target.value }))}
+                            required
+                            style={{
+                              width: "100%",
+                              padding: "10px 14px",
+                              borderRadius: 8,
+                              border: "1px solid #E8EBF2",
+                              fontSize: 13,
+                              fontFamily: "inherit",
+                              color: "#1A1D2B",
+                              outline: "none",
+                              boxSizing: "border-box"
+                            }}
+                            onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                            onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                          />
+                        </div>
+                      ))}
+
+                      <div style={{ marginBottom: 20 }}>
+                        <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Rol</label>
+                        <select
+                          value={newUserForm.rol}
+                          onChange={e => setNewUserForm(p => ({ ...p, rol: e.target.value }))}
+                          style={{
+                            width: "100%",
+                            padding: "10px 14px",
+                            borderRadius: 8,
+                            border: "1px solid #E8EBF2",
+                            fontSize: 13,
+                            fontFamily: "inherit",
+                            color: "#1A1D2B",
+                            background: "#fff",
+                            outline: "none",
+                            boxSizing: "border-box"
+                          }}
+                          onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                          onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                        >
+                          <option value="profesional">Profesional</option>
+                          <option value="coordinador">Coordinador</option>
+                          <option value="admin">Administrador</option>
+                        </select>
+                      </div>
+
+                      {newUserMsg.text && (
+                        <p style={{
+                          fontSize: 13,
+                          padding: "10px 14px",
+                          borderRadius: 8,
+                          marginBottom: 16,
+                          background: newUserMsg.type === "ok" ? "#ECFDF5" : "#FEF2F2",
+                          color: newUserMsg.type === "ok" ? "#065F46" : "#DC2626",
+                          border: `1px solid ${newUserMsg.type === "ok" ? "#BBF7D0" : "#FCA5A5"}`
+                        }}>
+                          {newUserMsg.text}
+                        </p>
+                      )}
+
+                      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                        <button
+                          type="button"
+                          onClick={() => setShowNewUser(false)}
+                          style={{
+                            padding: "10px 20px",
+                            borderRadius: 8,
+                            border: "1px solid #E8EBF2",
+                            background: "#fff",
+                            fontSize: 13,
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            color: "#4A5068"
+                          }}
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={newUserLoading}
+                          style={{
+                            padding: "10px 24px",
+                            borderRadius: 8,
+                            border: "none",
+                            background: newUserLoading ? "#A5B4FC" : "linear-gradient(135deg,#4F6EF7,#7C3AED)",
+                            fontSize: 13,
+                            fontWeight: 600,
+                            cursor: newUserLoading ? "not-allowed" : "pointer",
+                            color: "#fff"
+                          }}
+                        >
+                          {newUserLoading ? "Creando..." : "Crear usuario"}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </main>
