@@ -4,7 +4,7 @@ import { APPS_SCRIPT_URL, LOCAL_USERS } from '../data/constants';
 /**
  * Pantalla de Login
  */
-export default function Login({ onLogin, error, loading }) {
+export default function Login({ onLogin, error, loading, isMobile = false }) {
   const [em, setEm] = useState("");
   const [pw, setPw] = useState("");
   const [show, setShow] = useState(false);
@@ -12,41 +12,41 @@ export default function Login({ onLogin, error, loading }) {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: isMobile ? "flex-start" : "center",
         justifyContent: "center",
         background: "linear-gradient(135deg,#0F1729 0%,#1a1f3a 50%,#0F1729 100%)",
         fontFamily: "'Bricolage Grotesque',sans-serif",
-        padding: "24px 20px 32px",
+        padding: isMobile ? "12px 14px 20px" : "24px 20px 32px",
         overflowY: "auto"
       }}
     >
-      <div style={{ width: "100%", maxWidth: 400, animation: "fadeIn .6s ease both" }}>
+      <div style={{ width: "100%", maxWidth: 400, animation: "fadeIn .6s ease both", marginTop: isMobile ? 0 : 8 }}>
         {/* Logo y título */}
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 18 : 32 }}>
           <div
             style={{
-              width: 64,
-              height: 64,
+              width: isMobile ? 52 : 64,
+              height: isMobile ? 52 : 64,
               borderRadius: 16,
               background: "linear-gradient(135deg,#4F6EF7,#7C3AED)",
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 26,
+              fontSize: isMobile ? 22 : 26,
               fontWeight: 800,
               color: "#fff",
-              marginBottom: 16,
+              marginBottom: isMobile ? 12 : 16,
               boxShadow: "0 12px 40px #4F6EF744"
             }}
           >
             S3D
           </div>
-          <h1 style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 700, color: "#fff" }}>
+          <h1 style={{ margin: "0 0 4px", fontSize: isMobile ? 20 : 24, fontWeight: 700, color: "#fff" }}>
             Plataforma ETH-ANH
           </h1>
-          <p style={{ margin: 0, fontSize: 13, color: "#6B7194", fontFamily: "'IBM Plex Mono',monospace" }}>
+          <p style={{ margin: 0, fontSize: isMobile ? 12 : 13, color: "#6B7194", fontFamily: "'IBM Plex Mono',monospace" }}>
             Convenio 2026 — Gestion Integrada
           </p>
         </div>
@@ -74,7 +74,7 @@ export default function Login({ onLogin, error, loading }) {
           style={{
             background: "#171C32",
             borderRadius: 20,
-            padding: "28px 24px",
+            padding: isMobile ? "20px 16px" : "28px 24px",
             border: "1px solid #252B45"
           }}
         >
