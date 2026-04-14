@@ -646,7 +646,7 @@ export default function App() {
                                 onClick={e => {
                                   e.preventDefault();
                                   addLog(user, m.name);
-                                  window.open(m.url, "_blank");
+                                  window.open(m.url, "_blank", "noopener,noreferrer");
                                 }}
                                 style={{
                                   display: "grid",

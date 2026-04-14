@@ -114,6 +114,8 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
               value={em}
               onChange={e => setEm(e.target.value)}
               placeholder="tu@correo.com"
+              maxLength={254}
+              autoComplete="email"
               style={{
                 width: "100%",
                 padding: "11px 14px",
@@ -151,6 +153,9 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
                 value={pw}
                 onChange={e => setPw(e.target.value)}
                 placeholder="••••••••"
+                maxLength={128}
+                autoComplete="current-password"
+                onKeyDown={e => e.key === "Enter" && onLogin(em, pw)}
                 style={{
                   width: "100%",
                   padding: "11px 42px 11px 14px",
