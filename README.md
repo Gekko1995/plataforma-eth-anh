@@ -12,6 +12,7 @@ Desarrollado por **SINAPSIS3D S.A.S.** para Fundación WR Tejido Social
 - ✅ **Dashboard interactivo** con KPIs y métricas
 - ✅ **Registro de accesos** con localStorage
 - ✅ **Integración Looker Studio** para visualización de datos
+- 🔒 **Seguridad obligatoria** implementada (CORS, Headers, CSP)
 
 ## 🏗️ Estructura del Proyecto
 
@@ -38,6 +39,20 @@ plataforma-eth-anh/
 └── package.json
 ```
 
+## 🔒 Seguridad
+
+Este proyecto implementa **medidas de seguridad obligatorias**:
+
+- ✅ **CORS** con whitelist de dominios (sin wildcard)
+- ✅ **Security Headers** (HSTS, CSP, X-Frame-Options, etc.)
+- ✅ **Content Security Policy** específica para Looker Studio
+- ✅ **Rate Limiting** para prevenir abuso
+- ✅ **HTTPS forzado** con certificados válidos
+
+**📖 Documentación completa:** Ver [`SECURITY.md`](SECURITY.md)
+
+⚠️ **IMPORTANTE:** Antes de desplegar a producción, lee y aplica todas las medidas en `SECURITY.md`
+
 ## 🚀 Inicio Rápido
 
 ### Instalación
@@ -61,6 +76,25 @@ npm run build
 ```
 
 Genera una versión optimizada para producción en la carpeta `build/`
+
+### Deployment Seguro
+
+```bash
+# Ejecutar script de deployment con verificaciones de seguridad
+./deploy.sh
+
+# Opción 1: Servidor Express (recomendado)
+npm run prod
+
+# Opción 2: Usar tu propio servidor web
+# Ver SECURITY.md para configuraciones de Nginx/Apache
+```
+
+**⚠️ Antes del primer deploy:** 
+1. Lee [`SECURITY.md`](SECURITY.md) completamente
+2. Actualiza dominios en CORS (`server.js`, `nginx.conf`, `.htaccess`)
+3. Configura certificado SSL/TLS
+4. Ejecuta `./deploy.sh` para verificar configuración
 
 ## 📱 Responsive Design
 

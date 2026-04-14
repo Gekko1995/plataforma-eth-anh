@@ -1,3 +1,8 @@
 build/
 node_modules/
 *.backup
+.env
+*.log
+.DS_Store
+.vscode/
+.idea/
