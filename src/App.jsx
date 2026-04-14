@@ -76,6 +76,42 @@ export default function App() {
 
   const togG = id => setOpenG(p => (p.includes(id) ? p.filter(g => g !== id) : [...p, id]));
   const logs = getLogs();
+  const isAdmin = user?.rol === "admin";
+
+  useEffect(() => {
+    if (user && !isAdmin && page === "log") {
+      setPage("home");
+    }
+  }, [user, isAdmin, page]);
+
+  const exportLogsToExcel = () => {
+    if (!logs.length) return;
+
+    const rows = logs.map(l => ({
+      usuario: l.nombre || "",
+      email: l.user || "",
+      rol: l.rol || "",
+      accion: l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : l.modulo,
+      fecha_hora: l.ts ? new Date(l.ts).toLocaleString("es-CO") : ""
+    }));
+
+    const escapeCSV = (value) => `"${String(value).replace(/"/g, '""')}"`;
+    const header = ["Usuario", "Email", "Rol", "Accion", "Fecha/Hora"];
+    const csv = [
+      header.map(escapeCSV).join(","),
+      ...rows.map(r => [r.usuario, r.email, r.rol, r.accion, r.fecha_hora].map(escapeCSV).join(","))
+    ].join("\n");
+
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `registro-accesos-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   if (!user) return <Login onLogin={login} error={err} loading={loading} />;
 
@@ -163,16 +199,18 @@ export default function App() {
               closeSidebarMobile();
             }}
           />
-          <NavItem
-            icon="!"
-            label="Registro accesos"
-            active={page === "log"}
-            onClick={() => {
-              setPage("log");
-              closeSidebarMobile();
-            }}
-            badge={logs.length || null}
-          />
+          {isAdmin && (
+            <NavItem
+              icon="!"
+              label="Registro accesos"
+              active={page === "log"}
+              onClick={() => {
+                setPage("log");
+                closeSidebarMobile();
+              }}
+              badge={logs.length || null}
+            />
+          )}
         </div>
 
         <div style={{ padding: "4px 12px", overflowY: "auto", flex: 1 }}>
@@ -413,42 +451,44 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Recent activity */}
-              <div style={styles.card(isMobile)}>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "#1A1D2B", marginBottom: 14 }}>Actividad reciente</p>
-                {logs.slice(0, 6).map((l, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      padding: "10px 0",
-                      borderBottom: i < 5 ? "1px solid #F0F2F8" : "none"
-                    }}
-                  >
+              {/* Recent activity (solo admin) */}
+              {isAdmin && (
+                <div style={styles.card(isMobile)}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "#1A1D2B", marginBottom: 14 }}>Actividad reciente</p>
+                  {logs.slice(0, 6).map((l, i) => (
                     <div
+                      key={i}
                       style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: "50%",
-                        background: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#F87171" : "#4F6EF7",
-                        flexShrink: 0
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "10px 0",
+                        borderBottom: i < 5 ? "1px solid #F0F2F8" : "none"
                       }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: isMobile ? 12 : 13, color: "#1A1D2B", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        <strong>{l.nombre}</strong> —{" "}
-                        {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : `Accedio a ${l.modulo}`}
-                      </p>
+                    >
+                      <div
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          background: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#F87171" : "#4F6EF7",
+                          flexShrink: 0
+                        }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: isMobile ? 12 : 13, color: "#1A1D2B", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          <strong>{l.nombre}</strong> —{" "}
+                          {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : `Accedio a ${l.modulo}`}
+                        </p>
+                      </div>
+                      <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>
+                        {new Date(l.ts).toLocaleString("es-CO", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
+                      </span>
                     </div>
-                    <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>
-                      {new Date(l.ts).toLocaleString("es-CO", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
-                    </span>
-                  </div>
-                ))}
-                {logs.length === 0 && <p style={{ fontSize: 13, color: "#A0A5BD", textAlign: "center", padding: 20 }}>Los accesos a modulos aparaceran aqui</p>}
-              </div>
+                  ))}
+                  {logs.length === 0 && <p style={{ fontSize: 13, color: "#A0A5BD", textAlign: "center", padding: 20 }}>Los accesos a modulos aparaceran aqui</p>}
+                </div>
+              )}
             </div>
           )}
 
@@ -740,7 +780,7 @@ export default function App() {
           )}
 
           {/* LOG PAGE */}
-          {page === "log" && (
+          {page === "log" && isAdmin && (
             <div style={{ animation: "fadeIn .4s ease both" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
                 <div>
@@ -748,24 +788,41 @@ export default function App() {
                   <p style={{ fontSize: 13, color: "#8890A5" }}>{logs.length} registros</p>
                 </div>
                 {logs.length > 0 && (
-                  <button
-                    onClick={() => {
-                      clearLogs();
-                      setPage("home");
-                    }}
-                    style={{
-                      padding: "8px 16px",
-                      borderRadius: 8,
-                      border: "1px solid #FCA5A5",
-                      background: "#FEF2F2",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      color: "#DC2626"
-                    }}
-                  >
-                    Limpiar registros
-                  </button>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      onClick={exportLogsToExcel}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "1px solid #BFDBFE",
+                        background: "#EFF6FF",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#1D4ED8"
+                      }}
+                    >
+                      Exportar Excel
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearLogs();
+                        setPage("home");
+                      }}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "1px solid #FCA5A5",
+                        background: "#FEF2F2",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#DC2626"
+                      }}
+                    >
+                      Limpiar registros
+                    </button>
+                  </div>
                 )}
               </div>
               <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #E8EBF2", overflow: isMobile ? "auto" : "hidden" }}>

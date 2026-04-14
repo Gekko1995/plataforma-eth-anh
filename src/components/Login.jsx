@@ -14,11 +14,12 @@ export default function Login({ onLogin, error, loading }) {
       style={{
         minHeight: "100vh",
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-start",
         justifyContent: "center",
         background: "linear-gradient(135deg,#0F1729 0%,#1a1f3a 50%,#0F1729 100%)",
         fontFamily: "'Bricolage Grotesque',sans-serif",
-        padding: "20px"
+        padding: "24px 20px 32px",
+        overflowY: "auto"
       }}
     >
       <div style={{ width: "100%", maxWidth: 400, animation: "fadeIn .6s ease both" }}>
