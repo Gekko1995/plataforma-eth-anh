@@ -5,7 +5,8 @@ Desarrollado por **SINAPSIS3D S.A.S.** para Fundación WR Tejido Social
 
 ## ✨ Características
 
-- ✅ **39  Módulos** organizados en 9 grupos temáticos
+- ✅ **39
+- Módulos** organizados en 9 grupos temáticos
 - ✅ **Diseño Responsive** (móvil, tablet, desktop)
 - ✅ **Arquitectura modular** con componentes reutilizables
 - ✅ **Autenticación real** con Supabase Auth
