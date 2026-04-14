@@ -1,0 +1,109 @@
+# ============================================================
+# CONFIGURACIÓN APACHE CON SEGURIDAD OBLIGATORIA
+# Plataforma ETH-ANH 2026
+# 
+# Coloca este archivo como .htaccess en la carpeta build/
+# ============================================================
+
+# ========================================================
+# 1. FORZAR HTTPS
+# ========================================================
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ========================================================
+# 2. SECURITY HEADERS OBLIGATORIOS
+# ========================================================
+
+# Strict-Transport-Security
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+# X-Content-Type-Options
+Header always set X-Content-Type-Options "nosniff"
+
+# X-Frame-Options (SAMEORIGIN para permitir Looker Studio)
+Header always set X-Frame-Options "SAMEORIGIN"
+
+# X-XSS-Protection
+Header always set X-XSS-Protection "1; mode=block"
+
+# Referrer-Policy
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Permissions-Policy
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+# Content-Security-Policy
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://lookerstudio.google.com https://datastudio.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; frame-src 'self' https://lookerstudio.google.com https://datastudio.google.com; connect-src 'self' https://script.google.com https://lookerstudio.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;"
+
+# ========================================================
+# 3. CORS CON WHITELIST
+# ========================================================
+
+# Verificar origen y establecer CORS solo para dominios permitidos
+SetEnvIf Origin "^https://(tu-dominio\.com|www\.tu-dominio\.com)$" ORIGIN_ALLOWED=$0
+
+Header always set Access-Control-Allow-Origin "%{ORIGIN_ALLOWED}e" env=ORIGIN_ALLOWED
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" env=ORIGIN_ALLOWED
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With" env=ORIGIN_ALLOWED
+Header always set Access-Control-Max-Age "86400" env=ORIGIN_ALLOWED
+
+# Manejar OPTIONS (preflight)
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=204,L]
+
+# ========================================================
+# 4. CACHE CONTROL
+# ========================================================
+
+# No cachear index.html
+<FilesMatch "index\.html$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+</FilesMatch>
+
+# Cachear archivos estáticos por 1 año
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# ========================================================
+# 5. REACT ROUTER - CATCH ALL
+# ========================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Si el archivo o directorio existe, servirlo
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # De lo contrario, servir index.html
+    RewriteRule . /index.html [L]
+</IfModule>
+
+# ========================================================
+# 6. GZIP COMPRESSION
+# ========================================================
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# ========================================================
+# 7. DESHABILITAR LISTADO DE DIRECTORIOS
+# ========================================================
+
+Options -Indexes
+
+# ========================================================
+# 8. PROTEGER ARCHIVOS SENSIBLES
+# ========================================================
+
+<FilesMatch "(^\.htaccess|^\.env|^\.git|package\.json|README\.md)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
