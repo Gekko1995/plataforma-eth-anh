@@ -76,6 +76,58 @@ export default function App() {
 
   const togG = id => setOpenG(p => (p.includes(id) ? p.filter(g => g !== id) : [...p, id]));
   const logs = getLogs();
+  const isAdmin = user?.rol === "admin";
+  const utf8Bom = "\uFEFF";
+  const escapeCSV = (value) => `"${String(value).replace(/"/g, '""')}"`;
+  const getActionLabel = (modulo, withPrefix = false) => {
+    if (modulo === "LOGIN") return "Inicio sesión";
+    if (modulo === "LOGOUT") return "Cerró sesión";
+    return withPrefix ? `Accedió a ${modulo}` : modulo;
+  };
+  const getExportFileName = () => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    const h = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+    return `registro-accesos-${y}-${m}-${d}-${h}-${min}-${s}.csv`;
+  };
+
+  useEffect(() => {
+    if (user && !isAdmin && page === "log") {
+      setPage("home");
+    }
+  }, [user, isAdmin, page]);
+
+  const exportLogsToExcel = () => {
+    if (!logs.length) return;
+
+    const rows = logs.map(l => ({
+      usuario: l.nombre || "",
+      email: l.user || "",
+      rol: l.rol || "",
+      accion: getActionLabel(l.modulo),
+      fecha_hora: l.ts ? new Date(l.ts).toLocaleString("es-CO") : ""
+    }));
+
+    const header = ["Usuario", "Email", "Rol", "Acción", "Fecha/Hora"];
+    const csv = [
+      header.map(escapeCSV).join(","),
+      ...rows.map(r => [r.usuario, r.email, r.rol, r.accion, r.fecha_hora].map(escapeCSV).join(","))
+    ].join("\n");
+
+    const blob = new Blob([utf8Bom + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = getExportFileName();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   if (!user) return <Login onLogin={login} error={err} loading={loading} />;
 
@@ -163,16 +215,18 @@ export default function App() {
               closeSidebarMobile();
             }}
           />
-          <NavItem
-            icon="!"
-            label="Registro accesos"
-            active={page === "log"}
-            onClick={() => {
-              setPage("log");
-              closeSidebarMobile();
-            }}
-            badge={logs.length || null}
-          />
+          {isAdmin && (
+            <NavItem
+              icon="!"
+              label="Registro accesos"
+              active={page === "log"}
+              onClick={() => {
+                setPage("log");
+                closeSidebarMobile();
+              }}
+              badge={logs.length || null}
+            />
+          )}
         </div>
 
         <div style={{ padding: "4px 12px", overflowY: "auto", flex: 1 }}>
@@ -413,42 +467,44 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Recent activity */}
-              <div style={styles.card(isMobile)}>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "#1A1D2B", marginBottom: 14 }}>Actividad reciente</p>
-                {logs.slice(0, 6).map((l, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      padding: "10px 0",
-                      borderBottom: i < 5 ? "1px solid #F0F2F8" : "none"
-                    }}
-                  >
+              {/* Recent activity (solo admin) */}
+              {isAdmin && (
+                <div style={styles.card(isMobile)}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "#1A1D2B", marginBottom: 14 }}>Actividad reciente</p>
+                  {logs.slice(0, 6).map((l, i) => (
                     <div
+                      key={i}
                       style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: "50%",
-                        background: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#F87171" : "#4F6EF7",
-                        flexShrink: 0
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                        padding: "10px 0",
+                        borderBottom: i < 5 ? "1px solid #F0F2F8" : "none"
                       }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: isMobile ? 12 : 13, color: "#1A1D2B", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        <strong>{l.nombre}</strong> —{" "}
-                        {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : `Accedio a ${l.modulo}`}
-                      </p>
+                    >
+                      <div
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          background: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#F87171" : "#4F6EF7",
+                          flexShrink: 0
+                        }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: isMobile ? 12 : 13, color: "#1A1D2B", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          <strong>{l.nombre}</strong> —{" "}
+                          {getActionLabel(l.modulo, true)}
+                        </p>
+                      </div>
+                      <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>
+                        {new Date(l.ts).toLocaleString("es-CO", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
+                      </span>
                     </div>
-                    <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>
-                      {new Date(l.ts).toLocaleString("es-CO", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
-                    </span>
-                  </div>
-                ))}
-                {logs.length === 0 && <p style={{ fontSize: 13, color: "#A0A5BD", textAlign: "center", padding: 20 }}>Los accesos a modulos aparaceran aqui</p>}
-              </div>
+                  ))}
+                  {logs.length === 0 && <p style={{ fontSize: 13, color: "#A0A5BD", textAlign: "center", padding: 20 }}>Los accesos a módulos aparecerán aquí</p>}
+                </div>
+              )}
             </div>
           )}
 
@@ -740,7 +796,7 @@ export default function App() {
           )}
 
           {/* LOG PAGE */}
-          {page === "log" && (
+          {page === "log" && isAdmin && (
             <div style={{ animation: "fadeIn .4s ease both" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
                 <div>
@@ -748,24 +804,41 @@ export default function App() {
                   <p style={{ fontSize: 13, color: "#8890A5" }}>{logs.length} registros</p>
                 </div>
                 {logs.length > 0 && (
-                  <button
-                    onClick={() => {
-                      clearLogs();
-                      setPage("home");
-                    }}
-                    style={{
-                      padding: "8px 16px",
-                      borderRadius: 8,
-                      border: "1px solid #FCA5A5",
-                      background: "#FEF2F2",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      color: "#DC2626"
-                    }}
-                  >
-                    Limpiar registros
-                  </button>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      onClick={exportLogsToExcel}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "1px solid #BFDBFE",
+                        background: "#EFF6FF",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#1D4ED8"
+                      }}
+                    >
+                      Exportar Excel
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearLogs();
+                        setPage("home");
+                      }}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "1px solid #FCA5A5",
+                        background: "#FEF2F2",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#DC2626"
+                      }}
+                    >
+                      Limpiar registros
+                    </button>
+                  </div>
                 )}
               </div>
               <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #E8EBF2", overflow: isMobile ? "auto" : "hidden" }}>
@@ -804,7 +877,7 @@ export default function App() {
                       >
                         <span style={{ fontWeight: 500, color: "#1A1D2B" }}>{l.nombre}</span>
                         <span style={{ color: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#DC2626" : "#4F6EF7", fontWeight: 500 }}>
-                          {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : l.modulo}
+                          {getActionLabel(l.modulo)}
                         </span>
                         <span style={{ fontSize: 11, color: "#8890A5", fontFamily: "'IBM Plex Mono',monospace", textTransform: "uppercase" }}>{l.rol}</span>
                         <span style={{ fontSize: 11, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace" }}>
@@ -829,7 +902,7 @@ export default function App() {
                           <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace" }}>{l.rol}</span>
                         </div>
                         <div style={{ fontSize: 12, color: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#DC2626" : "#4F6EF7", marginBottom: 2 }}>
-                          {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : l.modulo}
+                          {getActionLabel(l.modulo)}
                         </div>
                         <div style={{ fontSize: 10, color: "#8890A5", fontFamily: "'IBM Plex Mono',monospace" }}>
                           {new Date(l.ts).toLocaleString("es-CO")}
