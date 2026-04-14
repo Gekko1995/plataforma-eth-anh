@@ -157,26 +157,33 @@ export const styles = {
   }),
 
   // Sidebar responsive
-  sidebar: (isOpen, isMobile) => ({
-    width: isMobile ? "min(82vw, 320px)" : !isOpen ? 0 : 260,
-    minHeight: isMobile ? "auto" : "100vh",
-    height: "100dvh",
-    background: "#fff",
-    borderRight: "1px solid #E8EBF2",
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-    transition: isMobile ? "transform .25s ease" : "width .3s ease",
-    flexShrink: 0,
-    position: isMobile ? "fixed" : "relative",
-    zIndex: isMobile ? 1000 : "auto",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    transform: isMobile ? (isOpen ? "translateX(0)" : "translateX(-100%)") : "none",
-    pointerEvents: isMobile && !isOpen ? "none" : "auto",
-    boxShadow: isMobile && isOpen ? "0 0 20px rgba(0,0,0,0.3)" : "none"
-  }),
+  sidebar: (isOpen, isMobile) => {
+    const desktopWidth = isOpen ? 260 : 0;
+    const width = isMobile ? "min(82vw, 320px)" : desktopWidth;
+    const transform = isMobile ? (isOpen ? "translateX(0)" : "translateX(-100%)") : "none";
+    const pointerEvents = !isMobile || isOpen ? "auto" : "none";
+
+    return {
+      width,
+      minHeight: isMobile ? "auto" : "100vh",
+      height: "100dvh",
+      background: "#fff",
+      borderRight: "1px solid #E8EBF2",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      transition: isMobile ? "transform .25s ease" : "width .3s ease",
+      flexShrink: 0,
+      position: isMobile ? "fixed" : "relative",
+      zIndex: isMobile ? 1000 : "auto",
+      left: 0,
+      top: 0,
+      bottom: 0,
+      transform,
+      pointerEvents,
+      boxShadow: isMobile && isOpen ? "0 0 20px rgba(0,0,0,0.3)" : "none"
+    };
+  },
 
   // Overlay para sidebar en móvil
   overlay: (show) => ({
