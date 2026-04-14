@@ -397,18 +397,36 @@ export default function App() {
               ))}
             </div>
 
-             {/* === LOOKER STUDIO EMBEBIDO === */}
-               {/* Cambia la URL por la de tu reporte Looker */}
-               <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2",marginBottom:14}}>
-              <p style={{fontSize:14,fontWeight:600,marginBottom:14}}>Datos de interes </p>
-                 <iframe
-                   src="https://lookerstudio.google.com/embed/reporting/2b97e06b-d56f-4f2a-ac73-84942060d75e/page/rzP6E"
-                   width="100%"
-                   height="800"
-                   style={{border:"none",borderRadius:8}}
-                   allowFullScreen
-                 />
-               </div>
+            /* =====================================================================
+               SECCION: APP PRINCIPAL — El dashboard completo
+               =====================================================================
+               Aqui se une todo: sidebar + header + paginas.
+               
+               PAGINAS: "home" = Dashboard | "modulos" = Los 39 modulos
+                        "metricas" = Graficas | "log" = Registro de accesos
+               
+               EDITAR:
+               - Nombre plataforma: busca "ETH-ANH 2026" y "Gestion Integrada"
+               - Logo: busca "S3D"
+               - Avance %: busca "value={12}" en el Gauge
+               - KPIs: busca el array con label/value/color/delta
+               - Desembolsos: busca "D1", "D2", "D3", "D4" y cambia "p" (porcentaje)
+               ===================================================================== */
+
+
+             
+                {/* === LOOKER STUDIO EMBEBIDO === */}
+                  {/* Cambia la URL por la de tu reporte Looker */}
+                  <div style={{background:"#fff",borderRadius:16,padding:"20px 24px",border:"1px solid #E8EBF2",marginBottom:14}}>
+                 <p style={{fontSize:14,fontWeight:600,marginBottom:14}}>Datos de interes </p>
+                    <iframe
+                      src="https://lookerstudio.google.com/embed/reporting/2b97e06b-d56f-4f2a-ac73-84942060d75e/page/rzP6E"
+                      width="100%"
+                      height="800"
+                      style={{border:"none",borderRadius:8}}
+                      allowFullScreen
+                    />
+                  </div>
 
 
              
