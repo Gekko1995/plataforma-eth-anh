@@ -1,0 +1,172 @@
+# Plataforma ETH-ANH 2026 🚀
+
+Plataforma de Gestión Integrada para el Convenio ETH-ANH 2026
+Desarrollado por **SINAPSIS3D S.A.S.** para Fundación WR Tejido Social
+
+## ✨ Características
+
+- ✅ **39 Módulos** organizados en 9 grupos temáticos
+- ✅ **Diseño Responsive** (móvil, tablet, desktop)
+- ✅ **Arquitectura modular** con componentes reutilizables
+- ✅ **Autenticación** con Google Sheets o usuarios locales
+- ✅ **Dashboard interactivo** con KPIs y métricas
+- ✅ **Registro de accesos** con localStorage
+- ✅ **Integración Looker Studio** para visualización de datos
+
+## 🏗️ Estructura del Proyecto
+
+```
+plataforma-eth-anh/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/          # Componentes reutilizables
+│   │   ├── Login.jsx       # Pantalla de inicio de sesión
+│   │   ├── NavItem.jsx     # Botón de navegación
+│   │   ├── Gauge.jsx       # Medidor tipo gauge
+│   │   ├── MiniBarChart.jsx # Gráfica de barras
+│   │   └── KPICard.jsx     # Tarjeta de KPI
+│   ├── data/
+│   │   └── constants.js    # Usuarios, grupos y módulos
+│   ├── styles/
+│   │   ├── globalStyles.js # Estilos globales responsive
+│   │   └── breakpoints.js  # Breakpoints y media queries
+│   ├── utils/
+│   │   └── auth.js         # Funciones de autenticación
+│   ├── App.jsx             # Componente principal
+│   └── index.js            # Punto de entrada
+└── package.json
+```
+
+## 🚀 Inicio Rápido
+
+### Instalación
+
+```bash
+npm install
+```
+
+### Desarrollo
+
+```bash
+npm start
+```
+
+La aplicación se abrirá en [http://localhost:3000](http://localhost:3000)
+
+### Compilación
+
+```bash
+npm run build
+```
+
+Genera una versión optimizada para producción en la carpeta `build/`
+
+## 📱 Responsive Design
+
+La plataforma se adapta automáticamente a diferentes tamaños de pantalla:
+
+- **Móvil** (< 768px): Sidebar colapsable con hamburger menu, grids en columna única
+- **Tablet** (768px - 1024px): Grids de 2 columnas, sidebar fijo
+- **Desktop** (> 1024px): Experiencia completa con sidebar expandido
+
+## 🔐 Autenticación
+
+### Modo Demo (por defecto)
+
+Si no configuras Google Sheets, usa estas cuentas de prueba:
+
+| Email | Contraseña | Rol |
+|-------|-----------|-----|
+| admin@sinapsis3d.com | admin2026 | admin |
+| coordinador@fwrts.org | coord2026 | coordinador |
+| profesional@convenio.com | prof2026 | profesional |
+
+### Modo Google Sheets
+
+1. Edita `src/data/constants.js`
+2. Pega tu URL de Google Apps Script en `APPS_SCRIPT_URL`
+3. Configura tu Google Sheet con las columnas: email, password, nombre, rol
+
+## 🎨 Personalización
+
+### Cambiar Módulos
+
+Edita `src/data/constants.js` → array `GROUPS`:
+
+```javascript
+{
+  id: "A",
+  name: "Nombre del Grupo",
+  color: "#1B6B4A",  // Color del grupo
+  icon: "A",         // Icono/letra
+  modules: [
+    {
+      id: 1,
+      name: "Nombre del Módulo",
+      desc: "Descripción breve",
+      stack: "Sheets+Forms",  // Tecnologías usadas
+      status: "nuevo",        // nuevo | adaptar | reutilizar
+      url: "https://..."      // URL del módulo
+    }
+  ]
+}
+```
+
+### Cambiar Colores/Estilos
+
+- **Estilos globales**: `src/styles/globalStyles.js`
+- **Breakpoints**: `src/styles/breakpoints.js`
+- **Colores de estado**: `src/data/constants.js` → `STATUS_STYLES`
+
+### Cambiar Logo y Nombre
+
+Busca "S3D" y "ETH-ANH 2026" en:
+- `src/components/Login.jsx`
+- `src/App.jsx`
+
+## 📊 Integración Looker Studio
+
+1. Crea tu reporte en Looker Studio
+2. Obtén el enlace de embed
+3. Edita `src/App.jsx`
+4. Busca el iframe y reemplaza la URL:
+
+```javascript
+<iframe src="TU_URL_DE_LOOKER_AQUI" ... />
+```
+
+## 🛠️ Próximas Mejoras Sugeridas
+
+- [ ] Implementar lazy loading para iframe
+- [ ] Agregar React.memo para optimizar re-renders
+- [ ] Implementar dark mode
+- [ ] Agregar atajos de teclado
+- [ ] Implementar notificaciones toast
+- [ ] Agregar tests unitarios
+- [ ] Implementar breadcrumbs de navegación
+- [ ] Agregar modo offline con Service Workers
+
+## 📦 Tecnologías Utilizadas
+
+- **React** 18.2.0
+- **React Scripts** 5.0.1
+- **Google Fonts**: Bricolage Grotesque, IBM Plex Mono
+- **Google Looker Studio** (integración)
+- **LocalStorage** (persistencia)
+
+## 🤝 Soporte
+
+Para preguntas o soporte técnico, contacta a:
+- **SINAPSIS3D S.A.S.**
+- Email: admin@sinapsis3d.com
+
+## 📄 Licencia
+
+Propiedad de Fundación WR Tejido Social - Convenio ETH-ANH 2026
+
+---
+
+**Versión**: 1.0.0  
+**Última actualización**: Abril 2026  
+**Desarrollado por**: SINAPSIS3D S.A.S.
