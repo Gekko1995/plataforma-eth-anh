@@ -103,6 +103,8 @@ export const globalStyles = `
 /**
  * Estilos inline reutilizables con soporte responsive
  */
+const MOBILE_SIDEBAR_WIDTH = "min(82vw, 320px)";
+
 export const styles = {
   // Container principal con padding responsive
   container: (isMobile) => ({
@@ -159,13 +161,12 @@ export const styles = {
   // Sidebar responsive
   sidebar: (isOpen, isMobile) => {
     const desktopWidth = isOpen ? 260 : 0;
-    const width = isMobile ? "min(82vw, 320px)" : desktopWidth;
+    const width = isMobile ? MOBILE_SIDEBAR_WIDTH : desktopWidth;
     const transform = isMobile ? (isOpen ? "translateX(0)" : "translateX(-100%)") : "none";
     const pointerEvents = !isMobile || isOpen ? "auto" : "none";
 
     return {
       width,
-      minHeight: isMobile ? "auto" : "100vh",
       height: "100dvh",
       background: "#fff",
       borderRight: "1px solid #E8EBF2",
