@@ -8,7 +8,7 @@ Desarrollado por **SINAPSIS3D S.A.S.** para Fundación WR Tejido Social
 - ✅ **39 Módulos** organizados en 9 grupos temáticos
 - ✅ **Diseño Responsive** (móvil, tablet, desktop)
 - ✅ **Arquitectura modular** con componentes reutilizables
-- ✅ **Autenticación** con Google Sheets o usuarios locales
+- ✅ **Autenticación real** con Supabase Auth
 - ✅ **Dashboard interactivo** con KPIs y métricas
 - ✅ **Registro de accesos** con localStorage
 - ✅ **Integración Looker Studio** para visualización de datos
@@ -106,21 +106,14 @@ La plataforma se adapta automáticamente a diferentes tamaños de pantalla:
 
 ## 🔐 Autenticación
 
-### Modo Demo (por defecto)
+La autenticación se maneja con **Supabase Auth**:
 
-Si no configuras Google Sheets, usa estas cuentas de prueba:
-
-| Email | Contraseña | Rol |
-|-------|-----------|-----|
-| admin@sinapsis3d.com | admin2026 | admin |
-| coordinador@fwrts.org | coord2026 | coordinador |
-| profesional@convenio.com | prof2026 | profesional |
-
-### Modo Google Sheets
-
-1. Edita `src/data/constants.js`
-2. Pega tu URL de Google Apps Script en `APPS_SCRIPT_URL`
-3. Configura tu Google Sheet con las columnas: email, password, nombre, rol
+1. Define en `.env`:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` (solo backend/admin)
+2. Ejecuta el script SQL de `supabase/profiles.sql` para crear tabla `profiles`, trigger y políticas RLS.
+3. Inicia sesión con usuarios reales creados en Supabase.
 
 ## 🎨 Personalización
 
@@ -185,6 +178,7 @@ Busca "S3D" y "ETH-ANH 2026" en:
 
 - **React** 18.2.0
 - **React Scripts** 5.0.1
+- **Supabase JS** (autenticación y gestión de usuarios)
 - **Google Fonts**: Bricolage Grotesque, IBM Plex Mono
 - **Google Looker Studio** (integración)
 - **LocalStorage** (persistencia)
