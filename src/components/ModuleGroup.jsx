@@ -15,7 +15,7 @@ function ModuleCard({ module, groupColor, user, isMobile = false, onAccess }) {
         e.preventDefault();
         if (onAccess) onAccess(module);
         addLog(user, module.name);
-        window.open(module.url, "_blank");
+        window.open(module.url, "_blank", "noopener,noreferrer");
       }}
       style={{
         display: "grid",

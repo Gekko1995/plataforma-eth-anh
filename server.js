@@ -19,45 +19,50 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust reverse proxy (nginx, load balancer) — needed for correct IP in rate limiting
+app.set('trust proxy', 1);
+
 // ================================================================
 // 1. CONFIGURACIÓN DE CORS CON WHITELIST
 // ================================================================
 
-const allowedOrigins = [
-  // PRODUCCIÓN - Reemplaza con tus dominios reales
-  'https://tu-dominio.com',
-  'https://www.tu-dominio.com',
-  'https://plataforma-eth-anh.com',
-  
-  // DESARROLLO - Solo en modo desarrollo
-  ...(process.env.NODE_ENV === 'development' 
-    ? ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000']
-    : []
-  )
-];
+// Read allowed origins from environment variable (comma-separated)
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
+  : [];
+
+// In development, also allow localhost origins
+if (process.env.NODE_ENV === 'development') {
+  allowedOrigins.push('http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000');
+} else if (allowedOrigins.length === 0) {
+  console.warn('[CORS] ADVERTENCIA: La variable ALLOWED_ORIGINS no está configurada. Todas las peticiones cross-origin serán bloqueadas. Define ALLOWED_ORIGINS en tu .env.');
+}
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
-  if (allowedOrigins.includes(origin)) {
+
+  if (origin && allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
-  
+
+  // Vary: Origin tells caches that the response depends on the request origin
+  res.setHeader('Vary', 'Origin');
+
   // Solo permite métodos necesarios
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
   // Solo permite headers necesarios
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  
-  // Permite credentials solo si es necesario (cookies/sesiones)
+
+  // Credentials deshabilitadas (cookies/sesiones no requeridas)
   res.setHeader('Access-Control-Allow-Credentials', 'false');
-  
+
   // Maneja preflight requests
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Max-Age', '86400'); // 24 horas
     return res.sendStatus(204);
   }
-  
+
   next();
 });
 
@@ -80,7 +85,6 @@ app.use(helmet({
       scriptSrc: [
         "'self'",
         "'unsafe-inline'",
-        "'unsafe-eval'",
         "https://lookerstudio.google.com",
         "https://datastudio.google.com"
       ],
@@ -163,7 +167,68 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // ================================================================
-// 4. SERVIR ARCHIVOS ESTÁTICOS DE REACT
+// 4. BODY PARSER Y ENDPOINT DE AUTENTICACIÓN
+// ================================================================
+
+// Parse JSON bodies for the auth endpoint — strict size limit to prevent payload attacks
+// Note: if other endpoints need larger payloads, apply express.json selectively to those routes
+app.use(express.json({ limit: '16kb', strict: true }));
+
+// Demo users — only available in development (not exposed in production)
+const DEV_USERS = process.env.NODE_ENV === 'development'
+  ? [
+      { email: 'admin@sinapsis3d.com', password: 'admin2026', rol: 'admin', nombre: 'Administrador S3D' },
+      { email: 'coordinador@fwrts.org', password: 'coord2026', rol: 'coordinador', nombre: 'Coordinador ETH' },
+      { email: 'profesional@convenio.com', password: 'prof2026', rol: 'profesional', nombre: 'Prof. Campo' },
+    ]
+  : [];
+
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body || {};
+
+  // Validate that both fields are non-empty, non-whitespace strings
+  if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password.trim()) {
+    return res.status(400).json({ success: false, error: 'Email y contraseña requeridos' });
+  }
+
+  // Proxy to Google Apps Script when URL is configured
+  const appsScriptUrl = process.env.APPS_SCRIPT_URL;
+  if (appsScriptUrl) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10_000);
+    try {
+      const upstream = await fetch(appsScriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login', email, password }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      const data = await upstream.json();
+      return res.status(upstream.ok ? 200 : 401).json(data);
+    } catch (err) {
+      clearTimeout(timer);
+      if (err.name === 'AbortError') {
+        return res.status(504).json({ success: false, error: 'Tiempo de espera agotado' });
+      }
+      return res.status(502).json({ success: false, error: 'Error al conectar con el sistema de autenticacion' });
+    }
+  }
+
+  // Development fallback with local users
+  if (process.env.NODE_ENV === 'development') {
+    const found = DEV_USERS.find(u => u.email === email && u.password === password);
+    if (found) {
+      return res.json({ success: true, user: { email: found.email, nombre: found.nombre, rol: found.rol } });
+    }
+    return res.status(401).json({ success: false, error: 'Email o contraseña incorrectos' });
+  }
+
+  return res.status(503).json({ success: false, error: 'Sistema de autenticacion no configurado' });
+});
+
+// ================================================================
+// 5. SERVIR ARCHIVOS ESTÁTICOS DE REACT
 // ================================================================
 
 // Servir archivos estáticos con cache control
@@ -180,7 +245,7 @@ app.use(express.static(path.join(__dirname, 'build'), {
 }));
 
 // ================================================================
-// 5. RUTA CATCH-ALL PARA REACT ROUTER
+// 6. RUTA CATCH-ALL PARA REACT ROUTER
 // ================================================================
 
 app.get('*', (req, res) => {
@@ -188,7 +253,7 @@ app.get('*', (req, res) => {
 });
 
 // ================================================================
-// 6. MANEJO DE ERRORES
+// 7. MANEJO DE ERRORES
 // ================================================================
 
 app.use((err, req, res, next) => {
@@ -197,7 +262,7 @@ app.use((err, req, res, next) => {
 });
 
 // ================================================================
-// 7. INICIAR SERVIDOR
+// 8. INICIAR SERVIDOR
 // ================================================================
 
 app.listen(PORT, () => {

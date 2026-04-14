@@ -2,15 +2,19 @@
    CONFIGURACION DE USUARIOS Y GRUPOS - CONVENIO ETH-ANH 2026
    ===================================================================== */
 
-// >>> PEGA AQUI TU URL DE GOOGLE APPS SCRIPT <<<
-export const APPS_SCRIPT_URL = "";
+// URL de Google Apps Script — se lee desde la variable de entorno REACT_APP_APPS_SCRIPT_URL
+// En producción define REACT_APP_APPS_SCRIPT_URL en tu .env (nunca hardcodeada)
+export const APPS_SCRIPT_URL = process.env.REACT_APP_APPS_SCRIPT_URL || "";
 
-// >>> USUARIOS DE PRUEBA <<<
-export const LOCAL_USERS = [
-  { email: "admin@sinapsis3d.com", password: "admin2026", rol: "admin", nombre: "Administrador S3D" },
-  { email: "coordinador@fwrts.org", password: "coord2026", rol: "coordinador", nombre: "Coordinador ETH" },
-  { email: "profesional@convenio.com", password: "prof2026", rol: "profesional", nombre: "Prof. Campo" },
-];
+// Usuarios de prueba — solo disponibles en entorno de desarrollo
+// En producción este array queda vacío para no exponer credenciales en el bundle
+export const LOCAL_USERS = process.env.NODE_ENV === "development"
+  ? [
+      { email: "admin@sinapsis3d.com", password: "admin2026", rol: "admin", nombre: "Administrador S3D" },
+      { email: "coordinador@fwrts.org", password: "coord2026", rol: "coordinador", nombre: "Coordinador ETH" },
+      { email: "profesional@convenio.com", password: "prof2026", rol: "profesional", nombre: "Prof. Campo" },
+    ]
+  : [];
 
 // Estados y sus colores
 export const STATUS_STYLES = {
