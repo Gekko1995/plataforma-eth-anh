@@ -20,26 +20,37 @@ export async function authUser(email, password) {
     });
 
     const data = await response.json().catch(() => null);
-    if (!data) {
-      return { ok: false, error: response.ok ? "Respuesta invalida del servidor" : "Error de autenticacion" };
+
+    // 400/401 son errores reales de credenciales — no hacer fallback
+    if (response.status === 400 || response.status === 401) {
+      return { ok: false, error: (data && data.error) || "Email o contraseña incorrectos" };
     }
 
-    if (!response.ok) {
-      return { ok: false, error: data.error || "Credenciales incorrectas" };
+    // 404 / 5xx / sin JSON válido = servidor no disponible o no configurado
+    // En desarrollo, usar usuarios locales como respaldo
+    if (!response.ok || !data) {
+      if (process.env.NODE_ENV === "development") {
+        const found = LOCAL_USERS.find(u => u.email === email && u.password === password);
+        return found
+          ? { ok: true, user: { email: found.email, nombre: found.nombre, rol: found.rol } }
+          : { ok: false, error: "Email o contraseña incorrectos" };
+      }
+      return { ok: false, error: (data && data.error) || "Error de autenticacion" };
     }
+
     return data.success
       ? { ok: true, user: data.user }
-      : { ok: false, error: data.error || "Credenciales incorrectas" };
+      : { ok: false, error: data.error || "Email o contraseña incorrectos" };
   } catch (err) {
     if (err.name === "AbortError") {
       return { ok: false, error: "Tiempo de espera agotado. Intenta de nuevo." };
     }
-    // Fallback local solo en desarrollo (cuando el servidor Express no corre junto a npm start)
+    // Error de red (servidor Express no corriendo) — usar usuarios locales en desarrollo
     if (process.env.NODE_ENV === "development") {
       const found = LOCAL_USERS.find(u => u.email === email && u.password === password);
       return found
         ? { ok: true, user: { email: found.email, nombre: found.nombre, rol: found.rol } }
-        : { ok: false, error: "Email o contrasena incorrectos" };
+        : { ok: false, error: "Email o contraseña incorrectos" };
     }
     return { ok: false, error: "Error de conexion" };
   } finally {
