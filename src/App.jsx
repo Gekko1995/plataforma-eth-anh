@@ -129,7 +129,14 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  if (!user) return <Login onLogin={login} error={err} loading={loading} />;
+  if (!user) {
+    return (
+      <>
+        <style>{globalStyles}</style>
+        <Login onLogin={login} error={err} loading={loading} isMobile={isMobile} />
+      </>
+    );
+  }
 
   const sl = search.toLowerCase();
   const greeting = time.getHours() < 12 ? "Buenos dias" : time.getHours() < 18 ? "Buenas tardes" : "Buenas noches";
@@ -140,7 +147,15 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Bricolage Grotesque',sans-serif", background: "#F0F2F8" }}>
+    <div
+      style={{
+        display: "flex",
+        height: "100dvh",
+        fontFamily: "'Bricolage Grotesque',sans-serif",
+        background: "#F0F2F8",
+        overflow: "hidden"
+      }}
+    >
       <style>{globalStyles}</style>
 
       {/* Overlay para móvil */}
@@ -291,7 +306,7 @@ export default function App() {
       </aside>
 
       {/* MAIN AREA */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, height: "100dvh", overflow: "hidden" }}>
         {/* Top bar */}
         <header style={styles.header(isMobile)}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "1" : "auto" }}>

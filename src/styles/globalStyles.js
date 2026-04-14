@@ -103,11 +103,16 @@ export const globalStyles = `
 /**
  * Estilos inline reutilizables con soporte responsive
  */
+const MOBILE_SIDEBAR_WIDTH = "min(82vw, 320px)";
+
 export const styles = {
   // Container principal con padding responsive
   container: (isMobile) => ({
+    flex: 1,
+    minHeight: 0,
     padding: isMobile ? "16px" : "24px 28px",
-    overflowY: "auto"
+    overflowY: "auto",
+    WebkitOverflowScrolling: "touch"
   }),
 
   // Grid responsive para KPIs
@@ -139,7 +144,10 @@ export const styles = {
     alignItems: "center",
     gap: isMobile ? 8 : 16,
     justifyContent: "space-between",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    position: "sticky",
+    top: 0,
+    zIndex: 10
   }),
 
   // Card genérica responsive
@@ -151,22 +159,32 @@ export const styles = {
   }),
 
   // Sidebar responsive
-  sidebar: (isOpen, isMobile) => ({
-    width: !isOpen ? 0 : isMobile ? "80%" : 260,
-    minHeight: "100vh",
-    background: "#fff",
-    borderRight: "1px solid #E8EBF2",
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-    transition: "width .3s ease",
-    flexShrink: 0,
-    position: isMobile ? "fixed" : "relative",
-    zIndex: isMobile ? 1000 : "auto",
-    left: 0,
-    top: 0,
-    boxShadow: isMobile && isOpen ? "0 0 20px rgba(0,0,0,0.3)" : "none"
-  }),
+  sidebar: (isOpen, isMobile) => {
+    const desktopWidth = isOpen ? 260 : 0;
+    const width = isMobile ? MOBILE_SIDEBAR_WIDTH : desktopWidth;
+    const transform = isMobile ? (isOpen ? "translateX(0)" : "translateX(-100%)") : "none";
+    const pointerEvents = !isMobile || isOpen ? "auto" : "none";
+
+    return {
+      width,
+      height: "100dvh",
+      background: "#fff",
+      borderRight: "1px solid #E8EBF2",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      transition: isMobile ? "transform .25s ease" : "width .3s ease",
+      flexShrink: 0,
+      position: isMobile ? "fixed" : "relative",
+      zIndex: isMobile ? 1000 : "auto",
+      left: 0,
+      top: 0,
+      bottom: 0,
+      transform,
+      pointerEvents,
+      boxShadow: isMobile && isOpen ? "0 0 20px rgba(0,0,0,0.3)" : "none"
+    };
+  },
 
   // Overlay para sidebar en móvil
   overlay: (show) => ({
