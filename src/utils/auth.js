@@ -33,6 +33,7 @@ async function fetchProfile(userId) {
     .maybeSingle();
 
   if (error) {
+    console.error('No se pudo consultar profiles en Supabase:', error.message || error);
     return null;
   }
 

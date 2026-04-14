@@ -62,14 +62,18 @@ begin
     new.id,
     coalesce(new.raw_user_meta_data->>'nombre', split_part(new.email, '@', 1)),
     new.email,
-    coalesce(new.raw_user_meta_data->>'rol', 'usuario'),
-    coalesce(new.raw_user_meta_data->>'grupo', 'A')
+    case
+      when coalesce(new.raw_user_meta_data->>'rol', '') in ('admin', 'usuario') then new.raw_user_meta_data->>'rol'
+      else 'usuario'
+    end,
+    case
+      when coalesce(new.raw_user_meta_data->>'grupo', '') in ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I') then new.raw_user_meta_data->>'grupo'
+      else 'A'
+    end
   )
   on conflict (id) do update
     set nombre = excluded.nombre,
-        email = excluded.email,
-        rol = excluded.rol,
-        grupo = excluded.grupo;
+        email = excluded.email;
 
   return new;
 end;

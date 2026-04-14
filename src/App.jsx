@@ -103,8 +103,7 @@ export default function App() {
     addLog(user, "LOGOUT");
     const result = await signOutUser();
     if (!result.ok) {
-      setErr(result.error || "No se pudo cerrar sesión.");
-      return;
+      setErr((result.error || "No se pudo cerrar sesión.") + " Se cerró la sesión local.");
     }
     setUser(null);
     setPage("home");
