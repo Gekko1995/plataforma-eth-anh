@@ -86,3 +86,31 @@ export function getLogs() {
 export function clearLogs() {
   localStorage.removeItem("eth_log");
 }
+
+/**
+ * Crea un nuevo usuario a través del endpoint seguro del servidor.
+ */
+export async function createUser({ nombre, email, password, rol }) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const response = await fetch("/api/users/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre, email, password, rol }),
+      signal: controller.signal,
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data) {
+      return { ok: false, error: (data && data.error) || "Error al crear el usuario" };
+    }
+    return data.success ? { ok: true } : { ok: false, error: data.error || "Error al crear el usuario" };
+  } catch (err) {
+    if (err.name === "AbortError") {
+      return { ok: false, error: "Tiempo de espera agotado. Intenta de nuevo." };
+    }
+    return { ok: false, error: "Error de conexión" };
+  } finally {
+    clearTimeout(timer);
+  }
+}

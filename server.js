@@ -228,7 +228,49 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // ================================================================
-// 5. SERVIR ARCHIVOS ESTÁTICOS DE REACT
+// 5. ENDPOINT DE CREACIÓN DE USUARIOS (solo via Apps Script)
+// ================================================================
+
+app.post('/api/users/create', async (req, res) => {
+  const { nombre, email, password, rol } = req.body || {};
+
+  if (
+    typeof nombre !== 'string' || !nombre.trim() ||
+    typeof email !== 'string' || !email.trim() ||
+    typeof password !== 'string' || !password.trim() ||
+    typeof rol !== 'string' || !rol.trim()
+  ) {
+    return res.status(400).json({ success: false, error: 'Todos los campos son obligatorios' });
+  }
+
+  const appsScriptUrl = process.env.APPS_SCRIPT_URL;
+  if (!appsScriptUrl) {
+    return res.status(503).json({ success: false, error: 'Sistema de gestión de usuarios no configurado' });
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const upstream = await fetch(appsScriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'createUser', nombre: nombre.trim(), email: email.trim(), password, rol: rol.trim() }),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    const data = await upstream.json();
+    return res.status(upstream.ok ? 200 : 400).json(data);
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      return res.status(504).json({ success: false, error: 'Tiempo de espera agotado' });
+    }
+    return res.status(502).json({ success: false, error: 'Error al conectar con el sistema de gestión' });
+  }
+});
+
+// ================================================================
+// 6. SERVIR ARCHIVOS ESTÁTICOS DE REACT
 // ================================================================
 
 // Servir archivos estáticos con cache control
@@ -245,7 +287,7 @@ app.use(express.static(path.join(__dirname, 'build'), {
 }));
 
 // ================================================================
-// 6. RUTA CATCH-ALL PARA REACT ROUTER
+// 7. RUTA CATCH-ALL PARA REACT ROUTER
 // ================================================================
 
 app.get('*', (req, res) => {
@@ -253,7 +295,7 @@ app.get('*', (req, res) => {
 });
 
 // ================================================================
-// 7. MANEJO DE ERRORES
+// 8. MANEJO DE ERRORES
 // ================================================================
 
 app.use((err, req, res, next) => {
@@ -262,7 +304,7 @@ app.use((err, req, res, next) => {
 });
 
 // ================================================================
-// 8. INICIAR SERVIDOR
+// 9. INICIAR SERVIDOR
 // ================================================================
 
 app.listen(PORT, () => {

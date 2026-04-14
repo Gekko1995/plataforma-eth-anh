@@ -12,6 +12,7 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
   const [showForgot, setShowForgot] = useState(false);
 
   return (
+    <>
     <div
       style={{
         minHeight: "100dvh",
@@ -314,5 +315,6 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
     {showForgot && (
       <ForgotPassword onClose={() => setShowForgot(false)} isMobile={isMobile} />
     )}
+    </>
   );
 }
