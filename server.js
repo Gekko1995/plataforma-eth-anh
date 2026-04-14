@@ -15,9 +15,23 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseAdmin = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
+  : null;
+const supabaseOrigin = (() => {
+  if (!SUPABASE_URL) return null;
+  try {
+    return new URL(SUPABASE_URL).origin;
+  } catch {
+    return null;
+  }
+})();
 
 // Trust reverse proxy (nginx, load balancer) — needed for correct IP in rate limiting
 app.set('trust proxy', 1);
@@ -111,8 +125,8 @@ app.use(helmet({
       ],
       connectSrc: [
         "'self'",
-        "https://script.google.com",
-        "https://lookerstudio.google.com"
+        "https://lookerstudio.google.com",
+        ...(supabaseOrigin ? [supabaseOrigin] : [])
       ],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
@@ -174,99 +188,83 @@ app.use(limiter);
 // Note: if other endpoints need larger payloads, apply express.json selectively to those routes
 app.use(express.json({ limit: '16kb', strict: true }));
 
-// Demo users — only available in development (not exposed in production)
-const DEV_USERS = process.env.NODE_ENV === 'development'
-  ? [
-      { email: 'admin@sinapsis3d.com', password: 'admin2026', rol: 'admin', nombre: 'Administrador S3D' },
-      { email: 'coordinador@fwrts.org', password: 'coord2026', rol: 'coordinador', nombre: 'Coordinador ETH' },
-      { email: 'profesional@convenio.com', password: 'prof2026', rol: 'profesional', nombre: 'Prof. Campo' },
-    ]
-  : [];
-
-app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body || {};
-
-  // Validate that both fields are non-empty, non-whitespace strings
-  if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password.trim()) {
-    return res.status(400).json({ success: false, error: 'Email y contraseña requeridos' });
-  }
-
-  // Proxy to Google Apps Script when URL is configured
-  const appsScriptUrl = process.env.APPS_SCRIPT_URL;
-  if (appsScriptUrl) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10_000);
-    try {
-      const upstream = await fetch(appsScriptUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'login', email, password }),
-        signal: controller.signal,
-      });
-      clearTimeout(timer);
-      const data = await upstream.json();
-      return res.status(upstream.ok ? 200 : 401).json(data);
-    } catch (err) {
-      clearTimeout(timer);
-      if (err.name === 'AbortError') {
-        return res.status(504).json({ success: false, error: 'Tiempo de espera agotado' });
-      }
-      return res.status(502).json({ success: false, error: 'Error al conectar con el sistema de autenticacion' });
-    }
-  }
-
-  // Development fallback with local users
-  if (process.env.NODE_ENV === 'development') {
-    const found = DEV_USERS.find(u => u.email === email && u.password === password);
-    if (found) {
-      return res.json({ success: true, user: { email: found.email, nombre: found.nombre, rol: found.rol } });
-    }
-    return res.status(401).json({ success: false, error: 'Email o contraseña incorrectos' });
-  }
-
-  return res.status(503).json({ success: false, error: 'Sistema de autenticacion no configurado' });
-});
-
-// ================================================================
-// 5. ENDPOINT DE CREACIÓN DE USUARIOS (solo via Apps Script)
-// ================================================================
+const VALID_ROLES = new Set(['admin', 'usuario']);
+const VALID_GROUPS = new Set(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
 
 app.post('/api/users/create', async (req, res) => {
-  const { nombre, email, password, rol } = req.body || {};
+  if (!supabaseAdmin) {
+    return res.status(503).json({ success: false, error: 'Supabase Admin no está configurado en el servidor.' });
+  }
+
+  const authHeader = req.headers.authorization || '';
+  const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  if (!accessToken) {
+    return res.status(401).json({ success: false, error: 'Token de sesión requerido.' });
+  }
+
+  const { data: authData, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
+  if (authError || !authData?.user?.id) {
+    return res.status(401).json({ success: false, error: 'Sesión inválida.' });
+  }
+
+  const { data: requesterProfile, error: requesterError } = await supabaseAdmin
+    .from('profiles')
+    .select('rol')
+    .eq('id', authData.user.id)
+    .maybeSingle();
+
+  if (requesterError || requesterProfile?.rol !== 'admin') {
+    return res.status(403).json({ success: false, error: 'Solo los administradores pueden crear usuarios.' });
+  }
+
+  const { nombre, email, password, rol, grupo } = req.body || {};
+  const normalizedRole = typeof rol === 'string' ? rol.trim().toLowerCase() : '';
+  const normalizedGroup = typeof grupo === 'string' ? grupo.trim().toUpperCase() : '';
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const normalizedNombre = typeof nombre === 'string' ? nombre.trim() : '';
 
   if (
-    typeof nombre !== 'string' || !nombre.trim() ||
-    typeof email !== 'string' || !email.trim() ||
-    typeof password !== 'string' || !password.trim() ||
-    typeof rol !== 'string' || !rol.trim()
+    !normalizedNombre ||
+    !normalizedEmail ||
+    typeof password !== 'string' ||
+    password.length < 8 ||
+    !VALID_ROLES.has(normalizedRole) ||
+    !VALID_GROUPS.has(normalizedGroup)
   ) {
-    return res.status(400).json({ success: false, error: 'Todos los campos son obligatorios' });
+    return res.status(400).json({ success: false, error: 'Datos inválidos para crear el usuario.' });
   }
 
-  const appsScriptUrl = process.env.APPS_SCRIPT_URL;
-  if (!appsScriptUrl) {
-    return res.status(503).json({ success: false, error: 'Sistema de gestión de usuarios no configurado' });
+  const { data: createdData, error: createError } = await supabaseAdmin.auth.admin.createUser({
+    email: normalizedEmail,
+    password,
+    email_confirm: true,
+    user_metadata: {
+      nombre: normalizedNombre,
+      rol: normalizedRole,
+      grupo: normalizedGroup,
+    },
+  });
+
+  if (createError || !createdData?.user?.id) {
+    return res.status(400).json({ success: false, error: createError?.message || 'No se pudo crear el usuario.' });
   }
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10_000);
-  try {
-    const upstream = await fetch(appsScriptUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'createUser', nombre: nombre.trim(), email: email.trim(), password, rol: rol.trim() }),
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-    const data = await upstream.json();
-    return res.status(upstream.ok ? 200 : 400).json(data);
-  } catch (err) {
-    clearTimeout(timer);
-    if (err.name === 'AbortError') {
-      return res.status(504).json({ success: false, error: 'Tiempo de espera agotado' });
-    }
-    return res.status(502).json({ success: false, error: 'Error al conectar con el sistema de gestión' });
+  const { error: upsertProfileError } = await supabaseAdmin.from('profiles').upsert(
+    {
+      id: createdData.user.id,
+      nombre: normalizedNombre,
+      email: normalizedEmail,
+      rol: normalizedRole,
+      grupo: normalizedGroup,
+    },
+    { onConflict: 'id' }
+  );
+
+  if (upsertProfileError) {
+    return res.status(500).json({ success: false, error: 'Usuario creado, pero falló la sincronización del perfil.' });
   }
+
+  return res.status(201).json({ success: true, user: { id: createdData.user.id, email: normalizedEmail } });
 });
 
 // ================================================================

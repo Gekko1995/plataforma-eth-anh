@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { APPS_SCRIPT_URL, LOCAL_USERS } from '../data/constants';
 import ForgotPassword from './ForgotPassword';
 
 /**
@@ -53,24 +52,6 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
             Convenio 2026 — Gestion Integrada
           </p>
         </div>
-
-        {/* Mensaje modo demo */}
-        {!APPS_SCRIPT_URL && (
-          <div
-            style={{
-              background: "#F59E0B14",
-              border: "1px solid #F59E0B33",
-              borderRadius: 10,
-              padding: "8px 14px",
-              marginBottom: 14,
-              fontSize: 12,
-              color: "#FCD34D",
-              textAlign: "center"
-            }}
-          >
-            Modo demo — Usa las cuentas de prueba
-          </div>
-        )}
 
         {/* Formulario */}
         <div
@@ -251,63 +232,6 @@ export default function Login({ onLogin, error, loading, isMobile = false }) {
           </div>
         </div>
 
-        {/* Cuentas demo */}
-        {!APPS_SCRIPT_URL && (
-          <div
-            style={{
-              marginTop: 16,
-              padding: "12px 16px",
-              background: "#171C32",
-              borderRadius: 14,
-              border: "1px solid #252B45"
-            }}
-          >
-            <p
-              style={{
-                margin: "0 0 6px",
-                fontSize: 10,
-                color: "#6B7194",
-                fontFamily: "'IBM Plex Mono',monospace",
-                textTransform: "uppercase"
-              }}
-            >
-              Cuentas demo:
-            </p>
-            {LOCAL_USERS.map(u => (
-              <div
-                key={u.email}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 3
-                }}
-              >
-                <span style={{ fontSize: 11, color: "#8890A5", fontFamily: "'IBM Plex Mono',monospace" }}>
-                  {u.email}
-                </span>
-                <button
-                  onClick={() => {
-                    setEm(u.email);
-                    setPw(u.password);
-                  }}
-                  style={{
-                    background: "#4F6EF718",
-                    border: "none",
-                    borderRadius: 5,
-                    padding: "2px 8px",
-                    fontSize: 10,
-                    color: "#7C8CFF",
-                    cursor: "pointer",
-                    fontWeight: 600
-                  }}
-                >
-                  Usar
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
 
