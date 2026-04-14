@@ -77,6 +77,23 @@ export default function App() {
   const togG = id => setOpenG(p => (p.includes(id) ? p.filter(g => g !== id) : [...p, id]));
   const logs = getLogs();
   const isAdmin = user?.rol === "admin";
+  const utf8Bom = "\uFEFF";
+  const escapeCSV = (value) => `"${String(value).replace(/"/g, '""')}"`;
+  const getActionLabel = (modulo, withPrefix = false) => {
+    if (modulo === "LOGIN") return "Inicio sesión";
+    if (modulo === "LOGOUT") return "Cerró sesión";
+    return withPrefix ? `Accedió a ${modulo}` : modulo;
+  };
+  const getExportFileName = () => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    const h = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+    return `registro-accesos-${y}-${m}-${d}-${h}-${min}-${s}.csv`;
+  };
 
   useEffect(() => {
     if (user && !isAdmin && page === "log") {
@@ -91,22 +108,21 @@ export default function App() {
       usuario: l.nombre || "",
       email: l.user || "",
       rol: l.rol || "",
-      accion: l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : l.modulo,
+      accion: getActionLabel(l.modulo),
       fecha_hora: l.ts ? new Date(l.ts).toLocaleString("es-CO") : ""
     }));
 
-    const escapeCSV = (value) => `"${String(value).replace(/"/g, '""')}"`;
-    const header = ["Usuario", "Email", "Rol", "Accion", "Fecha/Hora"];
+    const header = ["Usuario", "Email", "Rol", "Acción", "Fecha/Hora"];
     const csv = [
       header.map(escapeCSV).join(","),
       ...rows.map(r => [r.usuario, r.email, r.rol, r.accion, r.fecha_hora].map(escapeCSV).join(","))
     ].join("\n");
 
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([utf8Bom + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `registro-accesos-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.csv`;
+    link.download = getExportFileName();
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -478,7 +494,7 @@ export default function App() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <p style={{ fontSize: isMobile ? 12 : 13, color: "#1A1D2B", overflow: "hidden", textOverflow: "ellipsis" }}>
                           <strong>{l.nombre}</strong> —{" "}
-                          {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : `Accedio a ${l.modulo}`}
+                          {getActionLabel(l.modulo, true)}
                         </p>
                       </div>
                       <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace", flexShrink: 0 }}>
@@ -486,7 +502,7 @@ export default function App() {
                       </span>
                     </div>
                   ))}
-                  {logs.length === 0 && <p style={{ fontSize: 13, color: "#A0A5BD", textAlign: "center", padding: 20 }}>Los accesos a modulos aparaceran aqui</p>}
+                  {logs.length === 0 && <p style={{ fontSize: 13, color: "#A0A5BD", textAlign: "center", padding: 20 }}>Los accesos a módulos aparecerán aquí</p>}
                 </div>
               )}
             </div>
@@ -861,7 +877,7 @@ export default function App() {
                       >
                         <span style={{ fontWeight: 500, color: "#1A1D2B" }}>{l.nombre}</span>
                         <span style={{ color: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#DC2626" : "#4F6EF7", fontWeight: 500 }}>
-                          {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : l.modulo}
+                          {getActionLabel(l.modulo)}
                         </span>
                         <span style={{ fontSize: 11, color: "#8890A5", fontFamily: "'IBM Plex Mono',monospace", textTransform: "uppercase" }}>{l.rol}</span>
                         <span style={{ fontSize: 11, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace" }}>
@@ -886,7 +902,7 @@ export default function App() {
                           <span style={{ fontSize: 10, color: "#A0A5BD", fontFamily: "'IBM Plex Mono',monospace" }}>{l.rol}</span>
                         </div>
                         <div style={{ fontSize: 12, color: l.modulo === "LOGIN" ? "#10B981" : l.modulo === "LOGOUT" ? "#DC2626" : "#4F6EF7", marginBottom: 2 }}>
-                          {l.modulo === "LOGIN" ? "Inicio sesion" : l.modulo === "LOGOUT" ? "Cerro sesion" : l.modulo}
+                          {getActionLabel(l.modulo)}
                         </div>
                         <div style={{ fontSize: 10, color: "#8890A5", fontFamily: "'IBM Plex Mono',monospace" }}>
                           {new Date(l.ts).toLocaleString("es-CO")}
