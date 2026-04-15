@@ -2,12 +2,18 @@ import { useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { useModulosVisibles } from '../hooks/useModulosVisibles';
 import { GROUPS } from '../data/constants';
+import { modulos as MODULOS_DATA } from '../data/modulos';
+import ModuloModal from '../components/ModuloModal';
+
+// Lookup rápido id → datos ricos del módulo
+const moduloMap = Object.fromEntries(MODULOS_DATA.map(m => [m.id, m]));
 
 export default function ModulosPage() {
   const { user } = useOutletContext();
   const { modulosVisibles, loading, error } = useModulosVisibles(user);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
+  const [selectedModulo, setSelectedModulo] = useState(null);
 
   const filtroGrupo = searchParams.get('grupo') || '';
   const setFiltroGrupo = (val) => {
@@ -15,12 +21,18 @@ export default function ModulosPage() {
     else setSearchParams({});
   };
 
+  function abrirModal(m, g) {
+    const richData = moduloMap[m.id];
+    if (!richData) return;
+    setSelectedModulo({ ...richData, grupoColor: g.color, grupoNombre: g.name });
+  }
+
   if (loading) {
-    return <p style={{ color: 'var(--text-secondary)' }}>Cargando módulos…</p>;
+    return <p style={{ color: 'var(--content-text-muted)' }}>Cargando módulos…</p>;
   }
 
   if (error) {
-    return <p style={{ color: 'var(--danger)' }}>{error}</p>;
+    return <p style={{ color: 'var(--status-danger)' }}>{error}</p>;
   }
 
   const modulosFiltrados = modulosVisibles.filter(m => {
@@ -29,7 +41,6 @@ export default function ModulosPage() {
     return coincideGrupo && coincideBusqueda;
   });
 
-  // Agrupar los módulos visibles por grupo para mostrar el encabezado de grupo
   const gruposConModulos = GROUPS
     .map(g => ({
       ...g,
@@ -39,7 +50,7 @@ export default function ModulosPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '20px', color: 'var(--text-primary)' }}>
+      <h1 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '20px', color: 'var(--content-text)' }}>
         Módulos
       </h1>
 
@@ -71,23 +82,22 @@ export default function ModulosPage() {
       </div>
 
       {gruposConModulos.length === 0 && (
-        <p style={{ color: 'var(--text-secondary)' }}>No se encontraron módulos.</p>
+        <p style={{ color: 'var(--content-text-muted)' }}>No se encontraron módulos.</p>
       )}
 
       {gruposConModulos.map(g => (
         <div key={g.id} style={{ marginBottom: '32px' }}>
+          {/* Encabezado de grupo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-            <span
-              style={{
-                width: '28px', height: '28px', borderRadius: '50%',
-                background: g.color, color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 700, fontSize: '13px', flexShrink: 0,
-              }}
-            >
+            <span style={{
+              width: '28px', height: '28px', borderRadius: '50%',
+              background: g.color, color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 700, fontSize: '13px', flexShrink: 0,
+            }}>
               {g.id}
             </span>
-            <span style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-primary)' }}>
+            <span style={{ fontWeight: 600, fontSize: '15px', color: 'var(--content-text)' }}>
               {g.name}
             </span>
             <span className="badge" style={{ background: g.color + '22', color: g.color, border: `1px solid ${g.color}44` }}>
@@ -95,43 +105,54 @@ export default function ModulosPage() {
             </span>
           </div>
 
+          {/* Tarjetas de módulos */}
           <div className="modules-grid">
-            {g.modulos.map(m => {
-              return (
-                <div key={m.id} className={`module-card group-${g.id.toLowerCase()}`}>
-                  <div style={{ marginBottom: '8px' }}>
-                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                      {m.id}
-                    </span>
-                  </div>
-                  <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '6px', color: 'var(--text-primary)' }}>
-                    {m.name}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.4 }}>
-                    {m.desc}
-                  </div>
-                  <a
-                    href={m.url}
-                    onClick={e => { e.preventDefault(); window.open(m.url, '_blank', 'noopener,noreferrer'); }}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '4px',
-                      fontSize: '12px', fontWeight: 600,
-                      color: g.color, textDecoration: 'none',
-                      background: g.color + '12', borderRadius: '6px',
-                      padding: '4px 10px',
-                      transition: 'background .15s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = g.color + '22'}
-                    onMouseLeave={e => e.currentTarget.style.background = g.color + '12'}
-                  >
-                    Abrir módulo →
-                  </a>
+            {g.modulos.map(m => (
+              <div key={m.id} className={`module-card group-${g.id.toLowerCase()}`}>
+                <div style={{ marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--content-text-hint)', fontWeight: 500 }}>
+                    {m.id}
+                  </span>
                 </div>
-              );
-            })}
+                <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '6px', color: 'var(--content-text)', lineHeight: 1.35 }}>
+                  {m.name}
+                </div>
+                <div style={{
+                  fontSize: '12px', color: 'var(--content-text-muted)',
+                  marginBottom: '14px', lineHeight: 1.45,
+                  display: '-webkit-box', WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                }}>
+                  {m.desc}
+                </div>
+                <button
+                  onClick={() => abrirModal(m, g)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    fontSize: '12px', fontWeight: 600,
+                    color: g.color, background: g.color + '12',
+                    border: 'none', borderRadius: '6px',
+                    padding: '5px 11px', cursor: 'pointer',
+                    transition: 'background .15s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = g.color + '22'}
+                  onMouseLeave={e => e.currentTarget.style.background = g.color + '12'}
+                >
+                  Abrir módulo →
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       ))}
+
+      {/* Modal de detalle */}
+      {selectedModulo && (
+        <ModuloModal
+          modulo={selectedModulo}
+          onClose={() => setSelectedModulo(null)}
+        />
+      )}
     </div>
   );
 }
