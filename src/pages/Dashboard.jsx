@@ -47,7 +47,7 @@ export default function Dashboard() {
         {GROUPS.map(g => (
           <button
             key={g.id}
-            onClick={() => navigate('/modulos')}
+            onClick={() => navigate(`/modulos?grupo=${g.id}`)}
             style={{
               background: '#fff',
               border: `2px solid ${g.color}33`,

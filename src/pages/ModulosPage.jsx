@@ -1,13 +1,19 @@
 import { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { useModulosVisibles } from '../hooks/useModulosVisibles';
 import { STATUS_STYLES, GROUPS } from '../data/constants';
 
 export default function ModulosPage() {
   const { user } = useOutletContext();
   const { modulosVisibles, loading, error } = useModulosVisibles(user);
-  const [filtroGrupo, setFiltroGrupo] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
+
+  const filtroGrupo = searchParams.get('grupo') || '';
+  const setFiltroGrupo = (val) => {
+    if (val) setSearchParams({ grupo: val });
+    else setSearchParams({});
+  };
 
   if (loading) {
     return <p style={{ color: 'var(--text-secondary)' }}>Cargando módulos…</p>;
