@@ -61,11 +61,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const kpis = [
-    { label: 'Módulos totales',  value: total,                              color: '#4f8ef7', bg: '#eff6ff', icon: <IconGrid    size={18} color="#4f8ef7" /> },
-    { label: 'Nuevos',           value: countSt('nuevo'),                   color: '#7C3AED', bg: '#f5f3ff', icon: <IconStar    size={18} color="#7C3AED" /> },
-    { label: 'Adaptar',          value: countSt('adaptar'),                 color: '#B45309', bg: '#fffbeb', icon: <IconRefresh size={18} color="#B45309" /> },
-    { label: 'Reutilizar',       value: countSt('reutilizar'),              color: '#059669', bg: '#ecfdf5', icon: <IconRecycle size={18} color="#059669" /> },
-    { label: 'Visibles para ti', value: loading ? '…' : modulosVisibles.length, color: '#0369A1', bg: '#f0f9ff', icon: <IconEye size={18} color="#0369A1" /> },
+    { label: 'Módulos totales',  value: total,                                  color: '#4f8ef7', bg: '#eff6ff', icon: <IconGrid size={18} color="#4f8ef7" /> },
+    { label: 'Visibles para ti', value: loading ? '…' : modulosVisibles.length, color: '#0369A1', bg: '#f0f9ff', icon: <IconEye  size={18} color="#0369A1" /> },
   ];
 
   return (
@@ -75,7 +72,12 @@ export default function Dashboard() {
         <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--content-text)', lineHeight: 1.2 }}>
           Bienvenido, {user?.nombre?.split(' ')[0] || 'Usuario'}
         </h1>
-        <p style={{ fontSize: '13px', color: 'var(--content-text-muted)', marginTop: '5px' }}>
+        <p style={{ fontSize: '12px', color: 'var(--content-text-muted)', marginTop: '4px' }}>
+          Tu rol: <strong style={{ color: 'var(--content-text)', fontWeight: 600 }}>
+            {user?.rol === 'admin' ? 'Administrador' : user?.rol === 'coordinador' ? 'Coordinador' : 'Usuario'}
+          </strong>
+        </p>
+        <p style={{ fontSize: '13px', color: 'var(--content-text-hint)', marginTop: '4px' }}>
           {new Date().toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           {' · '}Plataforma ETH-ANH 2026
         </p>

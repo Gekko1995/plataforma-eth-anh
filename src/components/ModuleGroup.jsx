@@ -105,25 +105,23 @@ function ModuleCard({ module, groupColor, user, isMobile = false, onAccess }) {
         </div>
       </div>
 
-      {/* Status Badge */}
+      {/* CTA */}
       <span
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: 4,
+          gap: 3,
           padding: "3px 9px",
           borderRadius: 6,
           fontSize: isMobile ? 9 : 10,
           fontWeight: 600,
-          background: st.bg,
-          color: st.c,
-          fontFamily: "'IBM Plex Mono',monospace",
-          textTransform: "uppercase",
-          whiteSpace: "nowrap"
+          background: groupColor + "12",
+          color: groupColor,
+          whiteSpace: "nowrap",
+          flexShrink: 0,
         }}
       >
-        <span style={{ width: 5, height: 5, borderRadius: "50%", background: st.d }} />
-        {st.l}
+        Abrir módulo →
       </span>
     </a>
   );
