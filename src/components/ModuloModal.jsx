@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Modal de detalle de módulo.
@@ -7,7 +8,8 @@ import { useEffect } from 'react';
  *   onClose     — función para cerrar
  */
 export default function ModuloModal({ modulo, onClose }) {
-  const { id, nombre, descripcion, stack, grupoColor, grupoNombre, url } = modulo;
+  const navigate = useNavigate();
+  const { id, nombre, descripcion, stack, grupoColor, grupoNombre, url, imagen } = modulo;
   const tieneUrl = Boolean(url);
 
   // Cierra con ESC
@@ -23,6 +25,11 @@ export default function ModuloModal({ modulo, onClose }) {
     return () => { document.body.style.overflow = ''; };
   }, []);
 
+  function irADemo() {
+    onClose();
+    navigate(`/modulos/${id}/demo`);
+  }
+
   return (
     <div
       className="modal-overlay"
@@ -30,43 +37,68 @@ export default function ModuloModal({ modulo, onClose }) {
     >
       <div
         className="modal"
-        style={{ maxWidth: '520px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+        style={{ maxWidth: '540px', display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Barra de color del grupo */}
-        <div style={{ height: '4px', background: grupoColor, flexShrink: 0 }} />
-
-        {/* Header */}
-        <div className="modal-header" style={{ alignItems: 'flex-start', gap: '12px' }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              {/* Número del módulo */}
-              <span style={{
-                width: '28px', height: '28px', borderRadius: '7px',
-                background: grupoColor + '18', color: grupoColor,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 700, fontSize: '12px', flexShrink: 0,
-              }}>
-                {id}
-              </span>
-              {/* Etiqueta de grupo */}
-              <span style={{
-                fontSize: '11px', fontWeight: 600,
-                color: grupoColor, background: grupoColor + '12',
-                padding: '2px 8px', borderRadius: '20px',
-              }}>
-                Grupo {modulo.grupo} · {grupoNombre}
-              </span>
-            </div>
-            <h2 className="modal-title" style={{ fontSize: '17px', fontWeight: 700, lineHeight: 1.3 }}>
-              {nombre}
-            </h2>
+        {/* Imagen de cabecera */}
+        <div style={{ position: 'relative', height: '180px', flexShrink: 0, overflow: 'hidden' }}>
+          {imagen ? (
+            <img
+              src={imagen}
+              alt={nombre}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: grupoColor + '22' }} />
+          )}
+          {/* Degradado sobre la imagen */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)',
+          }} />
+          {/* Barra de color del grupo */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: grupoColor }} />
+          {/* Etiqueta de grupo sobre imagen */}
+          <div style={{ position: 'absolute', bottom: '14px', left: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{
+              width: '28px', height: '28px', borderRadius: '7px',
+              background: grupoColor, color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 700, fontSize: '12px', flexShrink: 0,
+            }}>
+              {id}
+            </span>
+            <span style={{
+              fontSize: '11px', fontWeight: 600,
+              color: '#fff', background: 'rgba(0,0,0,0.35)',
+              padding: '3px 10px', borderRadius: '20px',
+              backdropFilter: 'blur(4px)',
+            }}>
+              Grupo {modulo.grupo} · {grupoNombre}
+            </span>
           </div>
-
           {/* Botón cerrar */}
-          <button className="modal-close" onClick={onClose} aria-label="Cerrar">
+          <button
+            onClick={onClose}
+            aria-label="Cerrar"
+            style={{
+              position: 'absolute', top: '12px', right: '12px',
+              width: '28px', height: '28px', borderRadius: '50%',
+              background: 'rgba(0,0,0,0.4)', border: 'none',
+              color: '#fff', fontSize: '16px', lineHeight: 1,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(4px)',
+            }}
+          >
             ×
           </button>
+        </div>
+
+        {/* Header con título */}
+        <div style={{ padding: '18px 20px 0' }}>
+          <h2 style={{ fontSize: '17px', fontWeight: 700, lineHeight: 1.3, color: 'var(--content-text)', margin: 0 }}>
+            {nombre}
+          </h2>
         </div>
 
         {/* Body */}
@@ -87,7 +119,7 @@ export default function ModuloModal({ modulo, onClose }) {
             </p>
           </div>
 
-          {/* Puntos clave (solo si tiene contenido) */}
+          {/* Puntos clave con checkmarks */}
           {modulo.puntosClave && modulo.puntosClave.length > 0 && (
             <div>
               <p style={{
@@ -98,13 +130,17 @@ export default function ModuloModal({ modulo, onClose }) {
               }}>
                 Puntos clave
               </p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '7px' }}>
                 {modulo.puntosClave.map((punto, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--content-text)' }}>
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '13px', color: 'var(--content-text)' }}>
                     <span style={{
-                      width: '6px', height: '6px', borderRadius: '50%',
-                      background: grupoColor, flexShrink: 0,
-                    }} />
+                      width: '18px', height: '18px', borderRadius: '50%',
+                      background: grupoColor + '18', color: grupoColor,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 700, fontSize: '11px', flexShrink: 0, marginTop: '1px',
+                    }}>
+                      ✓
+                    </span>
                     {punto}
                   </li>
                 ))}
@@ -141,24 +177,6 @@ export default function ModuloModal({ modulo, onClose }) {
               ))}
             </div>
           </div>
-
-          {/* Aviso si el módulo no tiene URL aún */}
-          {!tieneUrl && (
-            <div style={{
-              background: '#fffbeb',
-              border: '1px solid #fde68a',
-              borderRadius: '8px',
-              padding: '10px 14px',
-              fontSize: '12px',
-              color: '#92400e',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              <span style={{ fontSize: '14px' }}>⏳</span>
-              Este módulo estará disponible próximamente.
-            </div>
-          )}
         </div>
 
         {/* Footer */}
@@ -168,16 +186,13 @@ export default function ModuloModal({ modulo, onClose }) {
           </button>
           <button
             className="btn btn-primary"
-            disabled={!tieneUrl}
-            onClick={() => tieneUrl && window.open(url, '_blank', 'noopener,noreferrer')}
+            onClick={irADemo}
             style={{
-              background: tieneUrl ? grupoColor : undefined,
-              borderColor: tieneUrl ? grupoColor : undefined,
-              opacity: tieneUrl ? 1 : 0.5,
-              cursor: tieneUrl ? 'pointer' : 'not-allowed',
+              background: grupoColor,
+              borderColor: grupoColor,
             }}
           >
-            Ir al módulo →
+            Ver demo del módulo →
           </button>
         </div>
       </div>

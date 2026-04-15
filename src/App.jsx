@@ -7,6 +7,7 @@ import ModulosPage from './pages/ModulosPage';
 import UsuariosPage from './pages/UsuariosPage';
 import PermisosPage from './pages/PermisosPage';
 import CambiarPassword from './pages/CambiarPassword';
+import ModuloDemoPage from './pages/ModuloDemoPage';
 import {
   authUser,
   addLog,
@@ -135,6 +136,7 @@ export default function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="modulos" element={<ModulosPage />} />
+          <Route path="modulos/:id/demo" element={<ModuloDemoPage />} />
           <Route
             path="usuarios"
             element={user?.rol === 'admin' ? <UsuariosPage /> : <Navigate to="/dashboard" replace />}
