@@ -34,7 +34,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Tarjetas de grupos */}
+      {/* Tarjetas de grupos — solo los que tienen módulos visibles */}
       <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--text-secondary)' }}>
         Grupos de módulos
       </h2>
@@ -44,7 +44,7 @@ export default function Dashboard() {
         gap: '14px',
         marginBottom: '32px',
       }}>
-        {GROUPS.map(g => (
+        {GROUPS.filter(g => modulosVisibles.some(m => m.grupoId === g.id)).map(g => (
           <button
             key={g.id}
             onClick={() => navigate(`/modulos?grupo=${g.id}`)}
@@ -81,7 +81,7 @@ export default function Dashboard() {
               </span>
             </div>
             <div style={{ fontSize: '12px', color: '#64748b' }}>
-              {g.modules.length} módulo{g.modules.length !== 1 ? 's' : ''}
+              {modulosVisibles.filter(m => m.grupoId === g.id).length} módulo{modulosVisibles.filter(m => m.grupoId === g.id).length !== 1 ? 's' : ''}
             </div>
           </button>
         ))}
