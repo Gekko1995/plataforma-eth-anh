@@ -27,7 +27,8 @@ export default function App() {
 
     async function hydrate() {
       try {
-        const timeout = new Promise(resolve => setTimeout(() => resolve({ ok: false }), 5000));
+        // Timeout generoso: solo para conexiones completamente caídas, no latencia normal
+        const timeout = new Promise(resolve => setTimeout(() => resolve({ ok: false }), 20000));
         const result = await Promise.race([getCurrentAuthenticatedUser(), timeout]);
         if (!mounted) return;
         if (result.ok) {
@@ -43,7 +44,15 @@ export default function App() {
 
     hydrate();
 
-    const { data: { subscription } } = onAuthStateChange(() => hydrate());
+    // TOKEN_REFRESHED ocurre automáticamente cada ~50 min — no requiere re-hidratar
+    // SIGNED_OUT lo manejamos directamente sin query a la BD
+    const { data: { subscription } } = onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        if (mounted) setUser(null);
+      } else if (event !== 'TOKEN_REFRESHED') {
+        hydrate();
+      }
+    });
 
     return () => {
       mounted = false;
