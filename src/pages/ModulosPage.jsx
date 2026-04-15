@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { useModulosVisibles } from '../hooks/useModulosVisibles';
-import { STATUS_STYLES, GROUPS } from '../data/constants';
+import { GROUPS } from '../data/constants';
 
 export default function ModulosPage() {
   const { user } = useOutletContext();
@@ -97,29 +97,35 @@ export default function ModulosPage() {
 
           <div className="modules-grid">
             {g.modulos.map(m => {
-              const st = STATUS_STYLES[m.status] || {};
               return (
                 <div key={m.id} className={`module-card group-${g.id.toLowerCase()}`}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <div style={{ marginBottom: '8px' }}>
                     <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                      #{m.id}
-                    </span>
-                    <span
-                      className="badge"
-                      style={{ background: st.bg, color: st.c, fontSize: '11px' }}
-                    >
-                      {st.l}
+                      {m.id}
                     </span>
                   </div>
                   <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '6px', color: 'var(--text-primary)' }}>
                     {m.name}
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.4 }}>
                     {m.desc}
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                    {m.stack}
-                  </div>
+                  <a
+                    href={m.url}
+                    onClick={e => { e.preventDefault(); window.open(m.url, '_blank', 'noopener,noreferrer'); }}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '4px',
+                      fontSize: '12px', fontWeight: 600,
+                      color: g.color, textDecoration: 'none',
+                      background: g.color + '12', borderRadius: '6px',
+                      padding: '4px 10px',
+                      transition: 'background .15s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = g.color + '22'}
+                    onMouseLeave={e => e.currentTarget.style.background = g.color + '12'}
+                  >
+                    Abrir módulo →
+                  </a>
                 </div>
               );
             })}
