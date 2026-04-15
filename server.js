@@ -188,7 +188,7 @@ app.use(limiter);
 // Note: if other endpoints need larger payloads, apply express.json selectively to those routes
 app.use(express.json({ limit: '16kb', strict: true }));
 
-const VALID_ROLES = new Set(['admin', 'usuario']);
+const VALID_ROLES = new Set(['admin', 'usuario', 'Gestor de Contenido']);
 const VALID_GROUPS = new Set(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
 
 app.post('/api/users/create', async (req, res) => {
@@ -218,7 +218,7 @@ app.post('/api/users/create', async (req, res) => {
   }
 
   const { nombre, email, password, rol, grupo } = req.body || {};
-  const normalizedRole = typeof rol === 'string' ? rol.trim().toLowerCase() : '';
+  const normalizedRole = typeof rol === 'string' ? rol.trim() : '';
   const normalizedGroup = typeof grupo === 'string' ? grupo.trim().toUpperCase() : '';
   const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
   const normalizedNombre = typeof nombre === 'string' ? nombre.trim() : '';
