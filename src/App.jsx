@@ -14,6 +14,7 @@ import {
   onAuthStateChange,
   signOutUser
 } from "./utils/auth";
+import PanelPermisos from "./components/PanelPermisos";
 import { globalStyles, styles } from "./styles/globalStyles";
 
 /* =====================================================================
@@ -150,7 +151,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (user && !isAdmin && (page === "log" || page === "usuarios")) {
+    if (user && !isAdmin && (page === "log" || page === "usuarios" || page === "permisos")) {
       setPage("home");
     }
   }, [user, isAdmin, page]);
@@ -303,6 +304,17 @@ export default function App() {
               active={page === "usuarios"}
               onClick={() => {
                 setPage("usuarios");
+                closeSidebarMobile();
+              }}
+            />
+          )}
+          {isAdmin && (
+            <NavItem
+              icon="*"
+              label="Permisos módulos"
+              active={page === "permisos"}
+              onClick={() => {
+                setPage("permisos");
                 closeSidebarMobile();
               }}
             />
@@ -1203,6 +1215,11 @@ export default function App() {
                 </div>
               )}
             </div>
+          )}
+
+          {/* PERMISOS PAGE */}
+          {page === "permisos" && isAdmin && (
+            <PanelPermisos isMobile={isMobile} />
           )}
         </main>
       </div>

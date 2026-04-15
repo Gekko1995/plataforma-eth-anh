@@ -168,6 +168,46 @@ export async function createUser({ nombre, email, password, rol, grupo }) {
   }
 }
 
+// ── PERMISOS DE MÓDULOS ─────────────────────────────────────────────
+
+export async function getUsuarios() {
+  if (!supabase) return { ok: false, error: 'Supabase no configurado.' };
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id,nombre,email,rol,grupo')
+    .order('nombre');
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, data };
+}
+
+export async function getPermisosUsuario(userId) {
+  if (!supabase || !userId) return { ok: false, error: 'Parámetros inválidos.' };
+  const { data, error } = await supabase
+    .from('permisos_modulos')
+    .select('modulo_id,puede_ver')
+    .eq('user_id', userId);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, data: data || [] };
+}
+
+export async function savePermisosUsuario(userId, permisos) {
+  if (!supabase || !userId) return { ok: false, error: 'Parámetros inválidos.' };
+  const rows = permisos.map(p => ({
+    user_id: userId,
+    modulo_id: p.modulo_id,
+    grupo_id: p.grupo_id,
+    puede_ver: p.puede_ver,
+    updated_at: new Date().toISOString(),
+  }));
+  const { error } = await supabase
+    .from('permisos_modulos')
+    .upsert(rows, { onConflict: 'user_id,modulo_id' });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+// ────────────────────────────────────────────────────────────────────
+
 export async function resetPassword(email) {
   if (!supabase) {
     return { ok: false, error: 'Supabase no está configurado.' };
