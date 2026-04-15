@@ -311,8 +311,9 @@ html, body, #root {
 
 .header-title {
   font-size: var(--fs-md);
-  font-weight: var(--fw-medium);
+  font-weight: 700;
   color: var(--content-text);
+  letter-spacing: -0.01em;
 }
 
 .header-breadcrumb {
@@ -330,15 +331,22 @@ html, body, #root {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, #1a2a4a, #0d1a33);
+  background: linear-gradient(135deg, #1e40af, #1a2a4a);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: var(--fw-medium);
-  color: var(--accent-a);
+  font-weight: 600;
+  color: #e0eaff;
   cursor: pointer;
-  border: 1.5px solid rgba(79, 142, 247, 0.3);
+  border: 2px solid rgba(79, 142, 247, 0.35);
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25);
+  transition: box-shadow var(--ease), transform var(--ease);
+}
+
+.header-avatar:hover {
+  box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
+  transform: scale(1.05);
 }
 
 .header-role-badge {
@@ -750,6 +758,12 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  transition: box-shadow var(--ease), transform var(--ease);
+}
+
+.kpi-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .kpi-label {
@@ -760,7 +774,31 @@ html, body, #root {
   letter-spacing: 0.06em;
 }
 
-.kpi-value { font-size: var(--fs-xl); font-weight: var(--fw-semibold); color: var(--content-text); line-height: 1; }
+.kpi-value { font-size: 28px; font-weight: 700; color: var(--content-text); line-height: 1; }
+
+/* ── Section label (headings de sección en Dashboard) ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--content-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* ── Tarjetas de grupo en Dashboard ── */
+.group-card-btn {
+  background: var(--content-surface);
+  border: 1px solid var(--content-border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow var(--ease), border-color var(--ease), transform var(--ease);
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  overflow: hidden;
+  display: block;
+  width: 100%;
+}
 .kpi-delta { font-size: var(--fs-xs); color: var(--status-ok); display: flex; align-items: center; gap: 3px; }
 .kpi-delta.neg { color: var(--status-danger); }
 
