@@ -34,20 +34,55 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Botones neumórficos por grupo */}
+      {/* Tarjetas de grupos */}
       <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--text-secondary)' }}>
         Grupos de módulos
       </h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gap: '14px',
+        marginBottom: '32px',
+      }}>
         {GROUPS.map(g => (
           <button
             key={g.id}
-            className={`neu-btn neu-${g.id.toLowerCase()}`}
-            title={g.name}
             onClick={() => navigate('/modulos')}
+            style={{
+              background: '#fff',
+              border: `2px solid ${g.color}33`,
+              borderRadius: '12px',
+              padding: '16px',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'box-shadow .18s, border-color .18s',
+              boxShadow: '0 1px 4px rgba(0,0,0,.06)',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = g.color;
+              e.currentTarget.style.boxShadow = `0 4px 16px ${g.color}33`;
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = `${g.color}33`;
+              e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,.06)';
+            }}
           >
-            {g.id}
-            <span className="neu-tooltip">{g.name}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <span style={{
+                width: '30px', height: '30px', borderRadius: '8px',
+                background: g.color, color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: '14px', flexShrink: 0,
+              }}>
+                {g.id}
+              </span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b', lineHeight: 1.3 }}>
+                {g.name}
+              </span>
+            </div>
+            <div style={{ fontSize: '12px', color: '#64748b' }}>
+              {g.modules.length} módulo{g.modules.length !== 1 ? 's' : ''}
+            </div>
           </button>
         ))}
       </div>
