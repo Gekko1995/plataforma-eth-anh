@@ -36,7 +36,7 @@ export default function Layout({ user, onLogout }) {
           <span className="sidebar-logo-text">ANH 2026</span>
         </div>
 
-        <nav style={{ flex: 1, padding: '8px 0' }}>
+        <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto', overflowX: 'hidden' }}>
           {navItems.map(item => (
             <NavLink
               key={item.to}
@@ -50,9 +50,9 @@ export default function Layout({ user, onLogout }) {
           ))}
         </nav>
 
-        <div style={{ padding: '8px 0', borderTop: '1px solid var(--sidebar-border)' }}>
+        <div style={{ flexShrink: 0, padding: '8px 0', borderTop: '1px solid var(--sidebar-border)' }}>
           <button className="nav-item nav-logout" onClick={handleLogout}>
-            <span className="nav-icon">⏻</span>
+            <span className="nav-icon">↩</span>
             <span className="nav-label">Cerrar sesión</span>
           </button>
         </div>
