@@ -42,7 +42,7 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [showNewUser, setShowNewUser] = useState(false);
-  const [newUserForm, setNewUserForm] = useState({ nombre: "", email: "", password: "", rol: "usuario", grupo: "A" });
+  const [newUserForm, setNewUserForm] = useState({ nombre: "", email: "", password: "", rol: "Gestor de Contenido", grupo: "A" });
   const [newUserLoading, setNewUserLoading] = useState(false);
   const [newUserMsg, setNewUserMsg] = useState({ type: "", text: "" });
 
@@ -127,7 +127,7 @@ export default function App() {
     setNewUserLoading(false);
     if (result.ok) {
       setNewUserMsg({ type: "ok", text: "Usuario creado correctamente." });
-      setNewUserForm({ nombre: "", email: "", password: "", rol: "usuario", grupo: "A" });
+      setNewUserForm({ nombre: "", email: "", password: "", rol: "Gestor de Contenido", grupo: "A" });
     } else {
       setNewUserMsg({ type: "error", text: result.error || "No se pudo crear el usuario." });
     }
@@ -1131,6 +1131,7 @@ export default function App() {
                           onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
                           onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
                         >
+                          <option value="Gestor de Contenido">Gestor de Contenido</option>
                           <option value="usuario">Usuario</option>
                           <option value="admin">Administrador</option>
                         </select>
