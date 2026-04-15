@@ -26,10 +26,7 @@ export default function Layout({ user, onLogout }) {
     <div className="app-layout">
       {/* Overlay móvil */}
       {sidebarOpen && (
-        <div
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }}
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="sidebar-overlay-click" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
@@ -47,34 +44,31 @@ export default function Layout({ user, onLogout }) {
               className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
               onClick={() => setSidebarOpen(false)}
             >
-              <span style={{ fontSize: '18px', lineHeight: 1 }}>{item.icon}</span>
+              <span className="nav-icon">{item.icon}</span>
               <span className="nav-label">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <button
-          onClick={handleLogout}
-          className="nav-item"
-          style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', marginBottom: '8px' }}
-        >
-          <span style={{ fontSize: '18px', lineHeight: 1 }}>⏻</span>
-          <span className="nav-label">Cerrar sesión</span>
-        </button>
+        <div style={{ padding: '8px 0', borderTop: '1px solid var(--sidebar-border)' }}>
+          <button className="nav-item nav-logout" onClick={handleLogout}>
+            <span className="nav-icon">⏻</span>
+            <span className="nav-label">Cerrar sesión</span>
+          </button>
+        </div>
       </aside>
 
       {/* Header */}
       <header className="header">
         <button
-          className="btn btn-ghost btn-sm"
-          style={{ marginRight: '12px' }}
+          className="btn btn-ghost btn-sm sidebar-toggle"
           onClick={() => setSidebarOpen(s => !s)}
           aria-label="Menú"
         >
           ☰
         </button>
 
-        <span style={{ flex: 1, fontWeight: 600, fontSize: '15px', color: 'var(--text-primary)' }}>
+        <span className="header-title">
           Plataforma ETH-ANH 2026
         </span>
 
