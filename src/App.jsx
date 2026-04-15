@@ -1051,123 +1051,149 @@ export default function App() {
                   style={{
                     position: "fixed",
                     inset: 0,
-                    background: "rgba(0,0,0,.45)",
+                    background: "rgba(0,0,0,.55)",
                     display: "flex",
-                    alignItems: "flex-start",
+                    alignItems: isMobile ? "flex-end" : "center",
                     justifyContent: "center",
-                    overflowY: "auto",
                     zIndex: 1000,
-                    padding: "24px 16px"
                   }}
                   onClick={e => { if (e.target === e.currentTarget) setShowNewUser(false); }}
                 >
                   <div
                     style={{
                       background: "#fff",
-                      borderRadius: 16,
-                      padding: isMobile ? 20 : 32,
+                      borderRadius: isMobile ? "20px 20px 0 0" : 16,
+                      padding: isMobile ? "24px 20px 32px" : "36px 40px",
                       width: "100%",
-                      maxWidth: 440,
-                      maxHeight: "90dvh",
+                      maxWidth: isMobile ? "100%" : 560,
+                      height: isMobile ? "92dvh" : "auto",
+                      maxHeight: isMobile ? "92dvh" : "92dvh",
                       overflowY: "auto",
-                      boxShadow: "0 20px 60px -10px rgba(0,0,0,.25)"
+                      boxShadow: "0 20px 60px -10px rgba(0,0,0,.3)"
                     }}
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                      <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1A1D2B" }}>Crear nuevo usuario</h3>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                      <div>
+                        <h3 style={{ fontSize: isMobile ? 18 : 20, fontWeight: 700, color: "#1A1D2B", marginBottom: 2 }}>Crear nuevo usuario</h3>
+                        <p style={{ fontSize: 12, color: "#8890A5" }}>Completa todos los campos para registrar el acceso</p>
+                      </div>
                       <button
                         onClick={() => setShowNewUser(false)}
-                        style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#A0A5BD" }}
+                        style={{ background: "#F0F2F8", border: "none", borderRadius: 8, width: 32, height: 32, fontSize: 16, cursor: "pointer", color: "#4A5068", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
                       >
                         ✕
                       </button>
                     </div>
 
                     <form onSubmit={handleCreateUser} autoComplete="off">
-                      {[
-                        { label: "Nombre completo", key: "nombre", type: "text", placeholder: "Ej. María González" },
-                        { label: "Correo electrónico", key: "email", type: "email", placeholder: "usuario@ejemplo.com" },
-                        { label: "Contraseña", key: "password", type: "password", placeholder: "Mínimo 8 caracteres" }
-                      ].map(f => (
-                        <div key={f.key} style={{ marginBottom: 16 }}>
-                          <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>{f.label}</label>
-                          <input
-                            type={f.type}
-                            placeholder={f.placeholder}
-                            value={newUserForm[f.key]}
-                            onChange={e => setNewUserForm(p => ({ ...p, [f.key]: e.target.value }))}
-                            required
+                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                        {[
+                          { label: "Nombre completo", key: "nombre", type: "text", placeholder: "Ej. María González" },
+                          { label: "Correo electrónico", key: "email", type: "email", placeholder: "usuario@ejemplo.com" },
+                        ].map(f => (
+                          <div key={f.key}>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>{f.label}</label>
+                            <input
+                              type={f.type}
+                              placeholder={f.placeholder}
+                              value={newUserForm[f.key]}
+                              onChange={e => setNewUserForm(p => ({ ...p, [f.key]: e.target.value }))}
+                              style={{
+                                width: "100%",
+                                padding: "11px 14px",
+                                borderRadius: 8,
+                                border: "1px solid #E8EBF2",
+                                fontSize: 13,
+                                fontFamily: "inherit",
+                                color: "#1A1D2B",
+                                outline: "none",
+                                boxSizing: "border-box"
+                              }}
+                              onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                              onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ marginBottom: 16 }}>
+                        <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Contraseña</label>
+                        <input
+                          type="password"
+                          placeholder="Mínimo 8 caracteres"
+                          value={newUserForm.password}
+                          onChange={e => setNewUserForm(p => ({ ...p, password: e.target.value }))}
+                          style={{
+                            width: "100%",
+                            padding: "11px 14px",
+                            borderRadius: 8,
+                            border: "1px solid #E8EBF2",
+                            fontSize: 13,
+                            fontFamily: "inherit",
+                            color: "#1A1D2B",
+                            outline: "none",
+                            boxSizing: "border-box"
+                          }}
+                          onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                          onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                        />
+                      </div>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+                        <div>
+                          <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Rol</label>
+                          <select
+                            value={newUserForm.rol}
+                            onChange={e => setNewUserForm(p => ({ ...p, rol: e.target.value }))}
                             style={{
                               width: "100%",
-                              padding: "10px 14px",
+                              padding: "11px 14px",
                               borderRadius: 8,
                               border: "1px solid #E8EBF2",
                               fontSize: 13,
                               fontFamily: "inherit",
                               color: "#1A1D2B",
+                              background: "#fff",
                               outline: "none",
                               boxSizing: "border-box"
                             }}
                             onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
                             onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
-                          />
+                          >
+                            <option value="Gestor de Contenido">Gestor de Contenido</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="admin">Administrador</option>
+                          </select>
                         </div>
-                      ))}
-
-                      <div style={{ marginBottom: 20 }}>
-                        <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Rol</label>
-                        <select
-                          value={newUserForm.rol}
-                          onChange={e => setNewUserForm(p => ({ ...p, rol: e.target.value }))}
-                          style={{
-                            width: "100%",
-                            padding: "10px 14px",
-                            borderRadius: 8,
-                            border: "1px solid #E8EBF2",
-                            fontSize: 13,
-                            fontFamily: "inherit",
-                            color: "#1A1D2B",
-                            background: "#fff",
-                            outline: "none",
-                            boxSizing: "border-box"
-                          }}
-                          onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
-                          onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
-                        >
-                          <option value="Gestor de Contenido">Gestor de Contenido</option>
-                          <option value="usuario">Usuario</option>
-                          <option value="admin">Administrador</option>
-                        </select>
-                      </div>
-
-                      <div style={{ marginBottom: 20 }}>
-                        <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Grupo</label>
-                        <select
-                          value={newUserForm.grupo}
-                          onChange={e => setNewUserForm(p => ({ ...p, grupo: e.target.value }))}
-                          style={{
-                            width: "100%",
-                            padding: "10px 14px",
-                            borderRadius: 8,
-                            border: "1px solid #E8EBF2",
-                            fontSize: 13,
-                            fontFamily: "inherit",
-                            color: "#1A1D2B",
-                            background: "#fff",
-                            outline: "none",
-                            boxSizing: "border-box"
-                          }}
-                          onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
-                          onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
-                        >
-                          {["A", "B", "C", "D", "E", "F", "G", "H", "I"].map(g => (
-                            <option key={g} value={g}>{g}</option>
-                          ))}
-                        </select>
+                        <div>
+                          <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Grupo</label>
+                          <select
+                            value={newUserForm.grupo}
+                            onChange={e => setNewUserForm(p => ({ ...p, grupo: e.target.value }))}
+                            style={{
+                              width: "100%",
+                              padding: "11px 14px",
+                              borderRadius: 8,
+                              border: "1px solid #E8EBF2",
+                              fontSize: 13,
+                              fontFamily: "inherit",
+                              color: "#1A1D2B",
+                              background: "#fff",
+                              outline: "none",
+                              boxSizing: "border-box"
+                            }}
+                            onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                            onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                          >
+                            {["A", "B", "C", "D", "E", "F", "G", "H", "I"].map(g => (
+                              <option key={g} value={g}>{g}</option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
 
                       {newUserMsg.text && (
-                        <p style={{
+                        <div style={{
                           fontSize: 13,
                           padding: "10px 14px",
                           borderRadius: 8,
@@ -1177,15 +1203,16 @@ export default function App() {
                           border: `1px solid ${newUserMsg.type === "ok" ? "#BBF7D0" : "#FCA5A5"}`
                         }}>
                           {newUserMsg.text}
-                        </p>
+                        </div>
                       )}
 
-                      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                      <div style={{ display: "flex", gap: 10 }}>
                         <button
                           type="button"
                           onClick={() => setShowNewUser(false)}
                           style={{
-                            padding: "10px 20px",
+                            flex: 1,
+                            padding: "12px",
                             borderRadius: 8,
                             border: "1px solid #E8EBF2",
                             background: "#fff",
@@ -1201,7 +1228,8 @@ export default function App() {
                           type="submit"
                           disabled={newUserLoading}
                           style={{
-                            padding: "10px 24px",
+                            flex: 2,
+                            padding: "12px",
                             borderRadius: 8,
                             border: "none",
                             background: newUserLoading ? "#A5B4FC" : "linear-gradient(135deg,#4F6EF7,#7C3AED)",
