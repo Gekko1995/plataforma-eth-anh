@@ -1045,8 +1045,8 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Modal crear nuevo usuario */}
-              {showNewUser && (
+              {/* Modal movido al nivel raíz del componente */}
+              {false && (
                 <div
                   style={{
                     position: "fixed",
@@ -1255,6 +1255,215 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {/* ── MODAL CREAR USUARIO — nivel raíz para evitar clipping ── */}
+      {showNewUser && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,.6)",
+            display: "flex",
+            alignItems: isMobile ? "flex-end" : "center",
+            justifyContent: "center",
+            zIndex: 2000,
+          }}
+          onClick={e => { if (e.target === e.currentTarget) setShowNewUser(false); }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: isMobile ? "20px 20px 0 0" : 16,
+              padding: isMobile ? "24px 20px 36px" : "36px 40px",
+              width: "100%",
+              maxWidth: isMobile ? "100%" : 560,
+              height: isMobile ? "92dvh" : "auto",
+              maxHeight: "92dvh",
+              overflowY: "auto",
+              boxShadow: "0 -4px 40px rgba(0,0,0,.2)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <div>
+                <h3 style={{ fontSize: isMobile ? 18 : 20, fontWeight: 700, color: "#1A1D2B", marginBottom: 2 }}>Crear nuevo usuario</h3>
+                <p style={{ fontSize: 12, color: "#8890A5" }}>Completa todos los campos para registrar el acceso</p>
+              </div>
+              <button
+                onClick={() => setShowNewUser(false)}
+                style={{ background: "#F0F2F8", border: "none", borderRadius: 8, width: 34, height: 34, fontSize: 16, cursor: "pointer", color: "#4A5068", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateUser} autoComplete="off">
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                {[
+                  { label: "Nombre completo", key: "nombre", type: "text", placeholder: "Ej. María González" },
+                  { label: "Correo electrónico", key: "email", type: "email", placeholder: "usuario@ejemplo.com" },
+                ].map(f => (
+                  <div key={f.key}>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>{f.label}</label>
+                    <input
+                      type={f.type}
+                      placeholder={f.placeholder}
+                      value={newUserForm[f.key]}
+                      onChange={e => setNewUserForm(p => ({ ...p, [f.key]: e.target.value }))}
+                      style={{
+                        width: "100%",
+                        padding: "11px 14px",
+                        borderRadius: 8,
+                        border: "1px solid #E8EBF2",
+                        fontSize: 14,
+                        fontFamily: "inherit",
+                        color: "#1A1D2B",
+                        outline: "none",
+                        boxSizing: "border-box"
+                      }}
+                      onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                      onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Contraseña</label>
+                <input
+                  type="password"
+                  placeholder="Mínimo 8 caracteres"
+                  value={newUserForm.password}
+                  onChange={e => setNewUserForm(p => ({ ...p, password: e.target.value }))}
+                  style={{
+                    width: "100%",
+                    padding: "11px 14px",
+                    borderRadius: 8,
+                    border: "1px solid #E8EBF2",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                    color: "#1A1D2B",
+                    outline: "none",
+                    boxSizing: "border-box"
+                  }}
+                  onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                  onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 28 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Rol</label>
+                  <select
+                    value={newUserForm.rol}
+                    onChange={e => setNewUserForm(p => ({ ...p, rol: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "11px 14px",
+                      borderRadius: 8,
+                      border: "1px solid #E8EBF2",
+                      fontSize: 14,
+                      fontFamily: "inherit",
+                      color: "#1A1D2B",
+                      background: "#fff",
+                      outline: "none",
+                      boxSizing: "border-box"
+                    }}
+                    onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                    onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                  >
+                    <option value="Gestor de Contenido">Gestor de Contenido</option>
+                    <option value="usuario">Usuario</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#4A5068", marginBottom: 6 }}>Grupo</label>
+                  <select
+                    value={newUserForm.grupo}
+                    onChange={e => setNewUserForm(p => ({ ...p, grupo: e.target.value }))}
+                    style={{
+                      width: "100%",
+                      padding: "11px 14px",
+                      borderRadius: 8,
+                      border: "1px solid #E8EBF2",
+                      fontSize: 14,
+                      fontFamily: "inherit",
+                      color: "#1A1D2B",
+                      background: "#fff",
+                      outline: "none",
+                      boxSizing: "border-box"
+                    }}
+                    onFocus={e => (e.target.style.borderColor = "#4F6EF7")}
+                    onBlur={e => (e.target.style.borderColor = "#E8EBF2")}
+                  >
+                    {["A", "B", "C", "D", "E", "F", "G", "H", "I"].map(g => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {newUserMsg.text && (
+                <div style={{
+                  fontSize: 13,
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  marginBottom: 16,
+                  background: newUserMsg.type === "ok" ? "#ECFDF5" : "#FEF2F2",
+                  color: newUserMsg.type === "ok" ? "#065F46" : "#DC2626",
+                  border: `1px solid ${newUserMsg.type === "ok" ? "#BBF7D0" : "#FCA5A5"}`
+                }}>
+                  {newUserMsg.text}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowNewUser(false)}
+                  style={{
+                    flex: 1,
+                    padding: "13px",
+                    borderRadius: 8,
+                    border: "1px solid #E8EBF2",
+                    background: "#fff",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    color: "#4A5068"
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={newUserLoading}
+                  style={{
+                    flex: 2,
+                    padding: "13px",
+                    borderRadius: 8,
+                    border: "none",
+                    background: newUserLoading ? "#A5B4FC" : "linear-gradient(135deg,#4F6EF7,#7C3AED)",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: newUserLoading ? "not-allowed" : "pointer",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8
+                  }}
+                >
+                  {newUserLoading && (
+                    <span style={{ width: 14, height: 14, border: "2px solid #fff4", borderTopColor: "#fff", borderRadius: "50%", animation: "spin .6s linear infinite", display: "inline-block" }} />
+                  )}
+                  {newUserLoading ? "Creando..." : "Crear usuario"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
