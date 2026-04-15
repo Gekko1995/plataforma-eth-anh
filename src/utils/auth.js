@@ -168,6 +168,48 @@ export async function createUser({ nombre, email, password, rol, grupo }) {
   }
 }
 
+// ── GESTIÓN DE USUARIOS (Admin) ─────────────────────────────────────
+
+async function callAdminApi(endpoint, body) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) return { ok: false, error: 'Sesión inválida. Inicia sesión nuevamente.' };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), AUTH_TIMEOUT_MS);
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data) return { ok: false, error: (data && data.error) || 'Error en el servidor.' };
+    return data.success ? { ok: true } : { ok: false, error: data.error || 'Error desconocido.' };
+  } catch (err) {
+    if (err.name === 'AbortError') return { ok: false, error: 'Tiempo de espera agotado.' };
+    return { ok: false, error: 'Error de conexión.' };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function inviteUser({ nombre, email, rol, grupo }) {
+  return callAdminApi('/api/users/create', { nombre, email, rol, grupo });
+}
+
+export async function changeUserPassword(userId, newPassword) {
+  return callAdminApi('/api/users/change-password', { userId, newPassword });
+}
+
+export async function toggleUserStatus(userId, activo) {
+  return callAdminApi('/api/users/toggle-status', { userId, activo });
+}
+
+export async function deleteUser(userId) {
+  return callAdminApi('/api/users/delete', { userId });
+}
+
 // ── PERMISOS DE MÓDULOS ─────────────────────────────────────────────
 
 export async function getUsuarios() {
