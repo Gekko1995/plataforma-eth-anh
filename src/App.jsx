@@ -1053,10 +1053,11 @@ export default function App() {
                     inset: 0,
                     background: "rgba(0,0,0,.45)",
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: "flex-start",
                     justifyContent: "center",
+                    overflowY: "auto",
                     zIndex: 1000,
-                    padding: 16
+                    padding: "24px 16px"
                   }}
                   onClick={e => { if (e.target === e.currentTarget) setShowNewUser(false); }}
                 >
@@ -1067,6 +1068,8 @@ export default function App() {
                       padding: isMobile ? 20 : 32,
                       width: "100%",
                       maxWidth: 440,
+                      maxHeight: "90dvh",
+                      overflowY: "auto",
                       boxShadow: "0 20px 60px -10px rgba(0,0,0,.25)"
                     }}
                   >
