@@ -6,12 +6,14 @@ import Dashboard from './pages/Dashboard';
 import ModulosPage from './pages/ModulosPage';
 import UsuariosPage from './pages/UsuariosPage';
 import PermisosPage from './pages/PermisosPage';
+import CambiarPassword from './pages/CambiarPassword';
 import {
   authUser,
   addLog,
   getCurrentAuthenticatedUser,
   onAuthStateChange,
 } from './utils/auth';
+import { getProfileFlags } from './utils/profile';
 import './styles/eth-anh-styles.css';
 
 export default function App() {
@@ -25,12 +27,15 @@ export default function App() {
 
     async function hydrate() {
       try {
-        const timeout = new Promise(resolve =>
-          setTimeout(() => resolve({ ok: false }), 5000)
-        );
+        const timeout = new Promise(resolve => setTimeout(() => resolve({ ok: false }), 5000));
         const result = await Promise.race([getCurrentAuthenticatedUser(), timeout]);
         if (!mounted) return;
-        setUser(result.ok ? { ...result.user, loginAt: new Date().toISOString() } : null);
+        if (result.ok) {
+          const flags = await getProfileFlags(result.user.id);
+          setUser({ ...result.user, ...flags, loginAt: new Date().toISOString() });
+        } else {
+          setUser(null);
+        }
       } catch {
         if (mounted) setUser(null);
       }
@@ -50,14 +55,15 @@ export default function App() {
     setAuthLoading(true);
     setAuthError('');
     const result = await authUser(email, password);
-    setAuthLoading(false);
     if (result.ok) {
-      const ud = { ...result.user, loginAt: new Date().toISOString() };
+      const flags = await getProfileFlags(result.user.id);
+      const ud = { ...result.user, ...flags, loginAt: new Date().toISOString() };
       setUser(ud);
       addLog(ud, 'LOGIN');
     } else {
       setAuthError(result.error);
     }
+    setAuthLoading(false);
   }
 
   function handleLogout() {
@@ -65,13 +71,16 @@ export default function App() {
     setUser(null);
   }
 
-  // Pantalla de carga mientras se verifica sesión
+  function handlePasswordChanged() {
+    setUser(u => ({ ...u, debe_cambiar_password: false }));
+  }
+
   if (user === undefined) {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        height: '100vh', background: 'var(--content-bg)',
-        fontSize: '15px', color: 'var(--text-secondary)',
+        height: '100vh', background: '#f4f6fb',
+        fontSize: '15px', color: '#64748b',
       }}>
         Cargando…
       </div>
@@ -86,18 +95,32 @@ export default function App() {
           path="/login"
           element={
             user
-              ? <Navigate to="/dashboard" replace />
+              ? <Navigate to={user.debe_cambiar_password ? '/cambiar-password' : '/dashboard'} replace />
               : <Login onLogin={handleLogin} error={authError} loading={authLoading} />
           }
         />
 
-        {/* Rutas protegidas */}
+        {/* Cambiar contraseña obligatorio */}
+        <Route
+          path="/cambiar-password"
+          element={
+            !user
+              ? <Navigate to="/login" replace />
+              : user.debe_cambiar_password
+                ? <CambiarPassword user={user} onChanged={handlePasswordChanged} />
+                : <Navigate to="/dashboard" replace />
+          }
+        />
+
+        {/* Rutas protegidas — bloquea acceso si debe cambiar contraseña */}
         <Route
           path="/"
           element={
-            user
-              ? <Layout user={user} onLogout={handleLogout} />
-              : <Navigate to="/login" replace />
+            !user
+              ? <Navigate to="/login" replace />
+              : user.debe_cambiar_password
+                ? <Navigate to="/cambiar-password" replace />
+                : <Layout user={user} onLogout={handleLogout} />
           }
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
@@ -113,7 +136,6 @@ export default function App() {
           />
         </Route>
 
-        {/* Cualquier otra ruta */}
         <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
       </Routes>
     </BrowserRouter>
