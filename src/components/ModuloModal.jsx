@@ -87,6 +87,31 @@ export default function ModuloModal({ modulo, onClose }) {
             </p>
           </div>
 
+          {/* Puntos clave (solo si tiene contenido) */}
+          {modulo.puntosClave && modulo.puntosClave.length > 0 && (
+            <div>
+              <p style={{
+                fontSize: '11px', fontWeight: 600,
+                color: 'var(--content-text-muted)',
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+                marginBottom: '8px',
+              }}>
+                Puntos clave
+              </p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {modulo.puntosClave.map((punto, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--content-text)' }}>
+                    <span style={{
+                      width: '6px', height: '6px', borderRadius: '50%',
+                      background: grupoColor, flexShrink: 0,
+                    }} />
+                    {punto}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Stack de herramientas */}
           <div>
             <p style={{
@@ -95,7 +120,7 @@ export default function ModuloModal({ modulo, onClose }) {
               textTransform: 'uppercase', letterSpacing: '0.06em',
               marginBottom: '8px',
             }}>
-              Herramientas
+              Componentes tecnológicos
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {stack.map((tool, i) => (
