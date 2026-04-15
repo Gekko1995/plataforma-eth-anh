@@ -24,9 +24,16 @@ export default function App() {
     let mounted = true;
 
     async function hydrate() {
-      const result = await getCurrentAuthenticatedUser();
-      if (!mounted) return;
-      setUser(result.ok ? { ...result.user, loginAt: new Date().toISOString() } : null);
+      try {
+        const timeout = new Promise(resolve =>
+          setTimeout(() => resolve({ ok: false }), 5000)
+        );
+        const result = await Promise.race([getCurrentAuthenticatedUser(), timeout]);
+        if (!mounted) return;
+        setUser(result.ok ? { ...result.user, loginAt: new Date().toISOString() } : null);
+      } catch {
+        if (mounted) setUser(null);
+      }
     }
 
     hydrate();
