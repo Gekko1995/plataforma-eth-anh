@@ -48,7 +48,8 @@ function Toggle({ checked, onChange }) {
   );
 }
 
-export default function PanelPermisos({ isMobile }) {
+export default function PanelPermisos({ isMobile, user }) {
+  const isSuperRoot = user?.rol === 'super_root';
   const [usuarios, setUsuarios] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [permisos, setPermisos] = useState({});        // { [modulo_id]: boolean }
@@ -63,7 +64,14 @@ export default function PanelPermisos({ isMobile }) {
     (async () => {
       setLoadingUsuarios(true);
       const r = await getUsuarios();
-      if (r.ok) setUsuarios(r.data.filter(u => u.rol !== 'admin'));
+      if (r.ok) {
+        setUsuarios(r.data.filter(u => {
+          // super_root puede gestionar módulos de admins pero no de otros super_root
+          if (isSuperRoot) return u.rol !== 'super_root';
+          // admin solo puede gestionar usuarios y gestores, nunca admins ni super_root
+          return u.rol !== 'admin' && u.rol !== 'super_root';
+        }));
+      }
       setLoadingUsuarios(false);
     })();
   }, []);

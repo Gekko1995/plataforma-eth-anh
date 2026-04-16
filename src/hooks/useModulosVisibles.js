@@ -4,8 +4,9 @@ import { getPermisosUsuario } from '../utils/auth';
 
 /**
  * Devuelve los módulos que el usuario puede ver.
- * - admin: todos los módulos de todos los grupos
- * - cualquier otro rol: solo los módulos con puede_ver === true en permisos_modulos
+ * - super_root: todos los módulos siempre (sin consultar BD)
+ * - admin: todos por defecto, a menos que super_root haya restringido alguno
+ * - otros roles: solo los módulos con puede_ver === true en permisos_modulos
  */
 export function useModulosVisibles(user) {
   const [modulosVisibles, setModulosVisibles] = useState([]);
@@ -19,8 +20,8 @@ export function useModulosVisibles(user) {
       return;
     }
 
-    if (user.rol === 'admin' || user.rol === 'super_root') {
-      // Admin y super_root ven todo sin consultar la base de datos
+    // super_root ve todo sin consultar la base de datos
+    if (user.rol === 'super_root') {
       const todos = GROUPS.flatMap(g =>
         g.modules.map(m => ({ ...m, grupoId: g.id, grupoName: g.name, grupoColor: g.color }))
       );
@@ -29,7 +30,6 @@ export function useModulosVisibles(user) {
       return;
     }
 
-    // Para cualquier otro rol, consultamos permisos_modulos
     let cancelled = false;
 
     async function cargar() {
@@ -47,16 +47,20 @@ export function useModulosVisibles(user) {
         return;
       }
 
-      // Construir un Set con los modulo_id que tienen puede_ver === true
-      const permitidos = new Set(
-        (result.data || [])
-          .filter(p => p.puede_ver === true)
-          .map(p => p.modulo_id)
-      );
+      // Construir mapa modulo_id → puede_ver
+      const mapaPermisos = {};
+      (result.data || []).forEach(p => { mapaPermisos[p.modulo_id] = p.puede_ver; });
 
       const visibles = GROUPS.flatMap(g =>
         g.modules
-          .filter(m => permitidos.has(m.id))
+          .filter(m => {
+            // Para admins: visible por defecto (true) a menos que esté explícitamente en false
+            if (user.rol === 'admin') {
+              return mapaPermisos[m.id] !== false;
+            }
+            // Para otros roles: solo si está explícitamente en true
+            return mapaPermisos[m.id] === true;
+          })
           .map(m => ({ ...m, grupoId: g.id, grupoName: g.name, grupoColor: g.color }))
       );
 
@@ -66,9 +70,7 @@ export function useModulosVisibles(user) {
 
     cargar();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [user?.id, user?.rol]);
 
   return { modulosVisibles, loading, error };
