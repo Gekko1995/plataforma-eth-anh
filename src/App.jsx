@@ -11,6 +11,7 @@ import ModuloDemoPage from './pages/ModuloDemoPage';
 import PresentacionVistaPage from './pages/PresentacionVistaPage';
 import PresentacionEditorPage from './pages/PresentacionEditorPage';
 import HistorialPage from './pages/HistorialPage';
+import PerfilPage from './pages/PerfilPage';
 import {
   authUser,
   addLog,
@@ -94,6 +95,10 @@ export default function App() {
     setUser(u => ({ ...u, debe_cambiar_password: false }));
   }
 
+  function handleUserUpdate(patch) {
+    setUser(u => ({ ...u, ...patch }));
+  }
+
   if (user === undefined) {
     return (
       <div style={{
@@ -139,11 +144,12 @@ export default function App() {
               ? <Navigate to="/login" replace />
               : user.debe_cambiar_password
                 ? <Navigate to="/cambiar-password" replace />
-                : <Layout user={user} onLogout={handleLogout} />
+                : <Layout user={user} onLogout={handleLogout} onUserUpdate={handleUserUpdate} />
           }
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="perfil" element={<PerfilPage />} />
           <Route path="modulos" element={<ModulosPage />} />
           <Route path="modulos/:id/demo" element={<ModuloDemoPage />} />
           <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
