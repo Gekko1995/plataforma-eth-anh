@@ -22,7 +22,8 @@ export default function ModuloModal({ modulo, onClose, user }) {
     addLog(user, 'MODULO_VISTA', `${nombre} · ${segundos}s`);
   }
 
-  // Cierra con ESC
+  // Cierra con ESC — deps omit handleClose intencionalmente: handleClose es estable
+  // durante el ciclo de vida del modal y onClose es la única dependencia externa relevante
   useEffect(() => {
     const handleKey = (e) => { if (e.key === 'Escape') handleClose(); };
     document.addEventListener('keydown', handleKey);

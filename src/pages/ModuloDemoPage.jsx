@@ -617,7 +617,7 @@ export default function ModuloDemoPage() {
         addLog(user, 'MODULO_DEMO', `${modulo.nombre} · ${segundos}s`);
       }
     };
-  }, []); // eslint-disable-line
+  }, [user, modulo]); // user y modulo son estables durante el ciclo de vida del componente
 
   const [toast, setToast] = useState(null);
   function showToast(label) {
