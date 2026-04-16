@@ -62,8 +62,15 @@ export async function changeOwnPassword(newPassword) {
   if (!supabase) return { ok: false, error: 'Supabase no está configurado.' };
 
   try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return { ok: false, error: 'Sesión expirada. Recarga la página e intenta de nuevo.' };
+
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) return { ok: false, error: error.message };
+
+    // Marcar en la BD que ya cambió su contraseña
+    await supabase.from('profiles').update({ debe_cambiar_password: false }).eq('id', user.id);
+
     return { ok: true };
   } catch (err) {
     return { ok: false, error: err.message || 'Error desconocido.' };

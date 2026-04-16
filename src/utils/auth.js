@@ -155,7 +155,7 @@ export function clearLogs() {
 /**
  * Crea un nuevo usuario usando el endpoint seguro del backend.
  */
-export async function createUser({ nombre, email, password, rol, grupo }) {
+export async function createUser({ nombre, email, password, rol, grupo, enviarCorreo }) {
   const accessToken = await getAccessToken();
   if (!accessToken) {
     return { ok: false, error: 'Sesión inválida. Inicia sesión nuevamente.' };
@@ -170,7 +170,7 @@ export async function createUser({ nombre, email, password, rol, grupo }) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ nombre, email, password, rol, grupo }),
+      body: JSON.stringify({ nombre, email, password, rol, grupo, enviarCorreo: enviarCorreo === true }),
       signal: controller.signal,
     });
     const data = await response.json().catch(() => null);

@@ -33,7 +33,7 @@ export default function GestionUsuarios({ isMobile }) {
   const [selected, setSelected] = useState(null);
   const [msg, setMsg]           = useState({ text: '', ok: true });
 
-  const [form, setForm]         = useState({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupo: 'A' });
+  const [form, setForm]         = useState({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupo: 'A', enviarCorreo: false });
   const [formError, setFormError] = useState('');
   const [saving, setSaving]     = useState(false);
 
@@ -58,7 +58,7 @@ export default function GestionUsuarios({ isMobile }) {
   }
 
   function openCrear() {
-    setForm({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupo: 'A' });
+    setForm({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupo: 'A', enviarCorreo: false });
     setFormError('');
     setModal(MODAL_CREAR);
   }
@@ -87,17 +87,18 @@ export default function GestionUsuarios({ isMobile }) {
 
     setSaving(true);
     const result = await createUser({
-      nombre:   form.nombre.trim(),
-      email:    form.email.trim(),
-      password: form.password,
-      rol:      form.rol,
-      grupo:    form.grupo,
+      nombre:       form.nombre.trim(),
+      email:        form.email.trim(),
+      password:     form.password,
+      rol:          form.rol,
+      grupo:        form.grupo,
+      enviarCorreo: form.enviarCorreo,
     });
     setSaving(false);
 
     if (result.ok) {
       closeModal();
-      showMsg('Usuario creado. Se envió el correo con sus credenciales.');
+      showMsg(form.enviarCorreo ? 'Usuario creado. Se envió el correo con sus credenciales.' : 'Usuario creado.');
       fetchUsuarios();
     } else {
       setFormError(result.error);
@@ -235,7 +236,7 @@ export default function GestionUsuarios({ isMobile }) {
             <div className="modal-header">
               <div>
                 <div className="modal-title">Crear usuario</div>
-                <div className="modal-subtitle">El usuario recibirá sus credenciales por correo</div>
+                <div className="modal-subtitle">Completa los datos del nuevo usuario</div>
               </div>
               <button className="modal-close" onClick={closeModal}>×</button>
             </div>
@@ -259,6 +260,17 @@ export default function GestionUsuarios({ isMobile }) {
                     <input className="form-input" type="password" placeholder="Repite la contraseña" value={form.confirmar} onChange={e => setForm(f => ({ ...f, confirmar: e.target.value }))} />
                   </div>
                 </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', cursor: 'pointer', userSelect: 'none' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.enviarCorreo}
+                    onChange={e => setForm(f => ({ ...f, enviarCorreo: e.target.checked }))}
+                    style={{ width: '16px', height: '16px', accentColor: '#2563eb', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '13px', color: '#374151' }}>
+                    Enviar correo de bienvenida con credenciales
+                  </span>
+                </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Rol</label>

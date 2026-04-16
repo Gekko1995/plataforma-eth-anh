@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   const auth = await verifyAdmin(req, supabaseAdmin);
   if (!auth.ok) return res.status(auth.status).json({ success: false, error: auth.error });
 
-  const { nombre, email, password, rol, grupo } = req.body || {};
+  const { nombre, email, password, rol, grupo, enviarCorreo } = req.body || {};
 
   const n = typeof nombre === 'string' ? nombre.trim() : '';
   const e = typeof email  === 'string' ? email.trim()  : '';
@@ -46,12 +46,14 @@ module.exports = async (req, res) => {
     debe_cambiar_password: true,
   }, { onConflict: 'id' });
 
-  // Enviar correo de bienvenida con credenciales
-  await sendEmail({
-    to:      e,
-    subject: 'Bienvenido a la Plataforma ETH-ANH 2026 — Tus credenciales',
-    html:    bienvenidaHtml({ nombre: n, email: e, password, rol, grupo: g }),
-  });
+  // Enviar correo de bienvenida solo si el admin lo autorizó
+  if (enviarCorreo === true) {
+    await sendEmail({
+      to:      e,
+      subject: 'Bienvenido a la Plataforma ETH-ANH 2026 — Tus credenciales',
+      html:    bienvenidaHtml({ nombre: n, email: e, password, rol, grupo: g }),
+    });
+  }
 
   return res.status(200).json({ success: true });
 };
