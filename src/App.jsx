@@ -16,6 +16,7 @@ import {
   addLog,
   getCurrentAuthenticatedUser,
   onAuthStateChange,
+  signOutUser,
 } from './utils/auth';
 import { getProfileFlags } from './utils/profile';
 import './styles/eth-anh-styles.css';
@@ -79,8 +80,13 @@ export default function App() {
     setAuthLoading(false);
   }
 
-  function handleLogout() {
-    if (user) addLog(user, 'LOGOUT');
+  async function handleLogout() {
+    if (user) {
+      // Await the LOGOUT log so the insert completes before the session ends
+      // (RLS requires auth.uid() = user_id, which is null after signOut)
+      await addLog(user, 'LOGOUT');
+    }
+    await signOutUser();
     setUser(null);
   }
 
