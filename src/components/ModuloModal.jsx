@@ -40,43 +40,50 @@ export default function ModuloModal({ modulo, onClose }) {
         style={{ maxWidth: '540px', display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Imagen de cabecera */}
-        <div style={{ position: 'relative', height: '180px', flexShrink: 0, overflow: 'hidden' }}>
-          {imagen ? (
-            <img
-              src={imagen}
-              alt={nombre}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          ) : (
-            <div style={{ width: '100%', height: '100%', background: grupoColor + '22' }} />
-          )}
-          {/* Degradado sobre la imagen */}
+        {/* Cabecera de gradiente */}
+        <div style={{
+          position: 'relative', height: '150px', flexShrink: 0, overflow: 'hidden',
+          background: `linear-gradient(135deg, ${grupoColor} 0%, ${grupoColor}88 100%)`,
+        }}>
+          {/* Trama de puntos */}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)',
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
           }} />
-          {/* Barra de color del grupo */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: grupoColor }} />
-          {/* Etiqueta de grupo sobre imagen */}
-          <div style={{ position: 'absolute', bottom: '14px', left: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{
-              width: '28px', height: '28px', borderRadius: '7px',
-              background: grupoColor, color: '#fff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 700, fontSize: '12px', flexShrink: 0,
-            }}>
-              {id}
-            </span>
-            <span style={{
-              fontSize: '11px', fontWeight: 600,
-              color: '#fff', background: 'rgba(0,0,0,0.35)',
-              padding: '3px 10px', borderRadius: '20px',
-              backdropFilter: 'blur(4px)',
-            }}>
-              Grupo {modulo.grupo} · {grupoNombre}
-            </span>
+          {/* Brillo esquina */}
+          <div style={{
+            position: 'absolute', top: '-50px', right: '-50px',
+            width: '180px', height: '180px', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.08)',
+          }} />
+
+          {/* Etiqueta grupo + título */}
+          <div style={{ position: 'absolute', inset: 0, padding: '18px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span style={{
+                width: '30px', height: '30px', borderRadius: '8px',
+                background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(6px)',
+                border: '1px solid rgba(255,255,255,0.30)',
+                color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: '13px', flexShrink: 0,
+              }}>
+                {id}
+              </span>
+              <span style={{
+                fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.85)',
+                background: 'rgba(255,255,255,0.15)', padding: '3px 10px',
+                borderRadius: '20px', backdropFilter: 'blur(4px)',
+                border: '1px solid rgba(255,255,255,0.20)',
+              }}>
+                Grupo {modulo.grupo} · {grupoNombre}
+              </span>
+            </div>
+            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3 }}>
+              {nombre}
+            </h2>
           </div>
+
           {/* Botón cerrar */}
           <button
             onClick={onClose}
@@ -84,7 +91,7 @@ export default function ModuloModal({ modulo, onClose }) {
             style={{
               position: 'absolute', top: '12px', right: '12px',
               width: '28px', height: '28px', borderRadius: '50%',
-              background: 'rgba(0,0,0,0.4)', border: 'none',
+              background: 'rgba(255,255,255,0.20)', border: '1px solid rgba(255,255,255,0.30)',
               color: '#fff', fontSize: '16px', lineHeight: 1,
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               backdropFilter: 'blur(4px)',
@@ -92,13 +99,6 @@ export default function ModuloModal({ modulo, onClose }) {
           >
             ×
           </button>
-        </div>
-
-        {/* Header con título */}
-        <div style={{ padding: '18px 20px 0' }}>
-          <h2 style={{ fontSize: '17px', fontWeight: 700, lineHeight: 1.3, color: 'var(--content-text)', margin: 0 }}>
-            {nombre}
-          </h2>
         </div>
 
         {/* Body */}
