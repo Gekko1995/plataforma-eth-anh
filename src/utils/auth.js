@@ -104,18 +104,34 @@ export async function getAccessToken() {
 }
 
 /**
- * Guarda registro de acceso en localStorage
+ * Guarda registro de acceso en localStorage y en Supabase.
  */
-export function addLog(user, module) {
+export function addLog(user, accion) {
+  // Persistencia local (fallback / cache)
   const log = JSON.parse(localStorage.getItem('eth_log') || '[]');
   log.unshift({
     user: user.email,
     nombre: user.nombre,
     rol: user.rol,
-    modulo: module,
+    modulo: accion,
     ts: new Date().toISOString(),
   });
   localStorage.setItem('eth_log', JSON.stringify(log.slice(0, 300)));
+
+  // Persistencia remota (fire-and-forget)
+  if (supabase && user.id) {
+    supabase.from('activity_log').insert({
+      user_id:     user.id,
+      user_email:  user.email,
+      user_nombre: user.nombre,
+      user_rol:    user.rol,
+      accion,
+    }).then(({ error }) => {
+      if (error) console.warn('Failed to save user activity log:', error.message);
+    }).catch(err => {
+      console.warn('Failed to save user activity log:', err.message || err);
+    });
+  }
 }
 
 /**

@@ -78,11 +78,22 @@ function SidebarIsotipo() {
   );
 }
 
+function IconHistorial() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 8v4l3 3" />
+      <path d="M3.05 11a9 9 0 1 1 .5 4" />
+      <polyline points="3 16 3 11 8 11" />
+    </svg>
+  );
+}
+
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', Icon: IconDashboard },
   { to: '/modulos', label: 'Módulos', Icon: IconModulos },
   { to: '/usuarios', label: 'Usuarios', Icon: IconUsuarios, adminOnly: true },
   { to: '/permisos', label: 'Permisos', Icon: IconPermisos, adminOnly: true },
+  { to: '/historial', label: 'Historial', Icon: IconHistorial, adminOnly: true },
 ];
 
 export default function Layout({ user, onLogout }) {
