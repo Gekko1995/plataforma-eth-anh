@@ -105,6 +105,7 @@ export async function getAccessToken() {
 
 /**
  * Guarda registro de acceso en localStorage y en Supabase.
+ * Retorna una promesa que resuelve cuando el insert remoto termina (o null si no aplica).
  */
 export function addLog(user, accion) {
   // Persistencia local (fallback / cache)
@@ -118,9 +119,9 @@ export function addLog(user, accion) {
   });
   localStorage.setItem('eth_log', JSON.stringify(log.slice(0, 300)));
 
-  // Persistencia remota (fire-and-forget)
+  // Persistencia remota — retorna la promesa para poder ser esperada (ej: logout)
   if (supabase && user.id) {
-    supabase.from('activity_log').insert({
+    return supabase.from('activity_log').insert({
       user_id:     user.id,
       user_email:  user.email,
       user_nombre: user.nombre,
@@ -132,6 +133,7 @@ export function addLog(user, accion) {
       console.warn('Failed to save user activity log:', err.message || err);
     });
   }
+  return Promise.resolve();
 }
 
 /**
