@@ -97,12 +97,13 @@ function IconPerfil() {
 }
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', Icon: IconDashboard },
-  { to: '/modulos', label: 'Módulos', Icon: IconModulos },
-  { to: '/usuarios', label: 'Usuarios', Icon: IconUsuarios, adminOnly: true },
-  { to: '/permisos', label: 'Permisos', Icon: IconPermisos, adminOnly: true },
-  { to: '/historial', label: 'Historial', Icon: IconHistorial, adminOnly: true },
-  { to: '/perfil', label: 'Mi perfil', Icon: IconPerfil },
+  { to: '/dashboard',      label: 'Dashboard',      Icon: IconDashboard },
+  { to: '/modulos',        label: 'Módulos',         Icon: IconModulos },
+  { to: '/usuarios',       label: 'Usuarios',        Icon: IconUsuarios,  adminOnly: true },
+  { to: '/permisos',       label: 'Permisos Módulos',Icon: IconPermisos,  adminOnly: true },
+  { to: '/historial',      label: 'Historial',       Icon: IconHistorial, historialOnly: true },
+  { to: '/permisos-admin', label: 'Permisos Admin',  Icon: IconPermisos,  superRootOnly: true },
+  { to: '/perfil',         label: 'Mi perfil',       Icon: IconPerfil },
 ];
 
 export default function Layout({ user, onLogout, onUserUpdate }) {
@@ -115,7 +116,15 @@ export default function Layout({ user, onLogout, onUserUpdate }) {
     navigate('/login');
   }
 
-  const navItems = NAV_ITEMS.filter(item => !item.adminOnly || user?.rol === 'admin');
+  const isSuperRoot = user?.rol === 'super_root';
+  const isAdmin     = user?.rol === 'admin' || isSuperRoot;
+
+  const navItems = NAV_ITEMS.filter(item => {
+    if (item.superRootOnly)  return isSuperRoot;
+    if (item.adminOnly)      return isAdmin;
+    if (item.historialOnly)  return user?.adminPermisos?.puede_ver_historial || isSuperRoot;
+    return true;
+  });
   const initials = (user?.nombre || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
   return (
@@ -171,7 +180,7 @@ export default function Layout({ user, onLogout, onUserUpdate }) {
           Plataforma ETH-ANH 2026
         </span>
 
-        <span className={`header-role-badge${user?.rol === 'admin' ? ' admin' : ''}`}>
+        <span className={`header-role-badge${isAdmin ? ' admin' : ''}`}>
           {user?.rol || 'usuario'}
         </span>
 

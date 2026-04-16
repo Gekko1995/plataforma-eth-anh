@@ -2,7 +2,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const AUTH_TIMEOUT_MS = 10_000;
 const INVALID_CREDENTIALS_MESSAGE = 'Email o contraseña incorrectos';
-const VALID_ROLES = new Set(['admin', 'usuario']);
+const VALID_ROLES = new Set(['super_root', 'admin', 'usuario', 'Gestor de Contenido']);
 
 const normalizeProfile = (authUser, profile) => {
   const metadata = authUser?.user_metadata || {};
@@ -218,8 +218,8 @@ export async function inviteUser({ nombre, email, rol, grupo }) {
   return callAdminApi('/api/users/create', { nombre, email, rol, grupo });
 }
 
-export async function changeUserPassword(userId, newPassword) {
-  return callAdminApi('/api/users/change-password', { userId, newPassword });
+export async function changeUserPassword(userId, newPassword, enviarCorreo = false) {
+  return callAdminApi('/api/users/change-password', { userId, newPassword, enviarCorreo });
 }
 
 export async function toggleUserStatus(userId, activo) {
@@ -228,6 +228,31 @@ export async function toggleUserStatus(userId, activo) {
 
 export async function deleteUser(userId) {
   return callAdminApi('/api/users/delete', { userId });
+}
+
+export async function updateUser(userId, { nombre, email, rol, grupo }) {
+  return callAdminApi('/api/users/update-user', { userId, nombre, email, rol, grupo });
+}
+
+// ── PERMISOS DE ADMINS (solo super_root) ────────────────────────────
+
+export async function listAdminPermisos() {
+  const accessToken = await getAccessToken();
+  if (!accessToken) return { ok: false, error: 'Sesión inválida.' };
+  try {
+    const res = await fetch('/api/admin-permisos/list', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data) return { ok: false, error: (data && data.error) || 'Error al cargar.' };
+    return { ok: true, admins: data.admins };
+  } catch {
+    return { ok: false, error: 'Error de conexión.' };
+  }
+}
+
+export async function setAdminPermisos(adminId, permisos) {
+  return callAdminApi('/api/admin-permisos/set', { adminId, permisos });
 }
 
 // ── PERMISOS DE MÓDULOS ─────────────────────────────────────────────

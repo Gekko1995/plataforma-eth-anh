@@ -188,84 +188,22 @@ app.use(limiter);
 // Note: if other endpoints need larger payloads, apply express.json selectively to those routes
 app.use(express.json({ limit: '16kb', strict: true }));
 
-const VALID_ROLES = new Set(['admin', 'usuario', 'Gestor de Contenido']);
-const VALID_GROUPS = new Set(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
+// Rutas de usuarios y permisos de admin — delegadas a módulos separados
+const usersCreate      = require('./api/users/create');
+const usersDelete      = require('./api/users/delete');
+const usersChangePwd   = require('./api/users/change-password');
+const usersToggle      = require('./api/users/toggle-status');
+const usersUpdateUser  = require('./api/users/update-user');
+const adminPermisosList = require('./api/admin-permisos/list');
+const adminPermisosSet  = require('./api/admin-permisos/set');
 
-app.post('/api/users/create', async (req, res) => {
-  if (!supabaseAdmin) {
-    return res.status(503).json({ success: false, error: 'Supabase Admin no está configurado en el servidor.' });
-  }
-
-  const authHeader = req.headers.authorization || '';
-  const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-  if (!accessToken) {
-    return res.status(401).json({ success: false, error: 'Token de sesión requerido.' });
-  }
-
-  const { data: authData, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
-  if (authError || !authData?.user?.id) {
-    return res.status(401).json({ success: false, error: 'Sesión inválida.' });
-  }
-
-  const { data: requesterProfile, error: requesterError } = await supabaseAdmin
-    .from('profiles')
-    .select('rol')
-    .eq('id', authData.user.id)
-    .maybeSingle();
-
-  if (requesterError || requesterProfile?.rol !== 'admin') {
-    return res.status(403).json({ success: false, error: 'Solo los administradores pueden crear usuarios.' });
-  }
-
-  const { nombre, email, password, rol, grupo } = req.body || {};
-  const normalizedRole = typeof rol === 'string' ? rol.trim() : '';
-  const normalizedGroup = typeof grupo === 'string' ? grupo.trim().toUpperCase() : '';
-  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
-  const normalizedNombre = typeof nombre === 'string' ? nombre.trim() : '';
-
-  if (
-    !normalizedNombre ||
-    !normalizedEmail ||
-    typeof password !== 'string' ||
-    password.length < 8 ||
-    !VALID_ROLES.has(normalizedRole) ||
-    !VALID_GROUPS.has(normalizedGroup)
-  ) {
-    return res.status(400).json({ success: false, error: 'Datos inválidos para crear el usuario.' });
-  }
-
-  const { data: createdData, error: createError } = await supabaseAdmin.auth.admin.createUser({
-    email: normalizedEmail,
-    password,
-    email_confirm: true,
-    user_metadata: {
-      nombre: normalizedNombre,
-      rol: normalizedRole,
-      grupo: normalizedGroup,
-    },
-  });
-
-  if (createError || !createdData?.user?.id) {
-    return res.status(400).json({ success: false, error: createError?.message || 'No se pudo crear el usuario.' });
-  }
-
-  const { error: upsertProfileError } = await supabaseAdmin.from('profiles').upsert(
-    {
-      id: createdData.user.id,
-      nombre: normalizedNombre,
-      email: normalizedEmail,
-      rol: normalizedRole,
-      grupo: normalizedGroup,
-    },
-    { onConflict: 'id' }
-  );
-
-  if (upsertProfileError) {
-    return res.status(500).json({ success: false, error: 'Usuario creado, pero falló la sincronización del perfil.' });
-  }
-
-  return res.status(201).json({ success: true, user: { id: createdData.user.id, email: normalizedEmail } });
-});
+app.post('/api/users/create',          (req, res) => usersCreate(req, res));
+app.post('/api/users/delete',          (req, res) => usersDelete(req, res));
+app.post('/api/users/change-password', (req, res) => usersChangePwd(req, res));
+app.post('/api/users/toggle-status',   (req, res) => usersToggle(req, res));
+app.post('/api/users/update-user',     (req, res) => usersUpdateUser(req, res));
+app.get('/api/admin-permisos/list',    (req, res) => adminPermisosList(req, res));
+app.post('/api/admin-permisos/set',    (req, res) => adminPermisosSet(req, res));
 
 // ================================================================
 // 6. SERVIR ARCHIVOS ESTÁTICOS DE REACT

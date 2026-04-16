@@ -1,23 +1,22 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { createUser, changeUserPassword, toggleUserStatus, deleteUser } from '../utils/auth';
+import { createUser, changeUserPassword, toggleUserStatus, deleteUser, updateUser } from '../utils/auth';
 
-const ROLES  = ['admin', 'usuario', 'Gestor de Contenido'];
+const ROLES_ADMIN     = ['admin', 'usuario', 'Gestor de Contenido'];
+const ROLES_SUPERROOT = ['super_root', 'admin', 'usuario', 'Gestor de Contenido'];
 const GRUPOS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
 const MODAL_NONE   = null;
 const MODAL_CREAR  = 'crear';
+const MODAL_EDITAR = 'editar';
 const MODAL_PWD    = 'pwd';
 const MODAL_BORRAR = 'borrar';
 
 function Badge({ activo }) {
   return (
     <span style={{
-      display: 'inline-block',
-      padding: '2px 10px',
-      borderRadius: '999px',
-      fontSize: '12px',
-      fontWeight: 600,
+      display: 'inline-block', padding: '2px 10px', borderRadius: '999px',
+      fontSize: '12px', fontWeight: 600,
       background: activo ? '#dcfce7' : '#fee2e2',
       color:      activo ? '#15803d' : '#dc2626',
     }}>
@@ -26,7 +25,18 @@ function Badge({ activo }) {
   );
 }
 
-export default function GestionUsuarios({ isMobile }) {
+export default function GestionUsuarios({ isMobile, user }) {
+  const p = user?.adminPermisos || {};
+  const isSuperRoot = user?.rol === 'super_root';
+
+  const canCreate  = isSuperRoot || !!p.puede_crear_usuarios;
+  const canDelete  = isSuperRoot || !!p.puede_eliminar_usuarios;
+  const canEdit    = isSuperRoot || !!p.puede_modificar_usuarios;
+  const canPwd     = isSuperRoot || !!p.puede_cambiar_password;
+  const canToggle  = isSuperRoot || !!p.puede_activar_desactivar;
+
+  const availableRoles = isSuperRoot ? ROLES_SUPERROOT : ROLES_ADMIN;
+
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [modal, setModal]       = useState(MODAL_NONE);
@@ -37,7 +47,10 @@ export default function GestionUsuarios({ isMobile }) {
   const [formError, setFormError] = useState('');
   const [saving, setSaving]     = useState(false);
 
-  const [pwdForm, setPwdForm]   = useState({ nueva: '', confirmar: '' });
+  const [editForm, setEditForm] = useState({ nombre: '', email: '', rol: '', grupo: '' });
+  const [editError, setEditError] = useState('');
+
+  const [pwdForm, setPwdForm]   = useState({ nueva: '', confirmar: '', enviarCorreo: false });
   const [pwdError, setPwdError] = useState('');
 
   const fetchUsuarios = useCallback(async () => {
@@ -63,9 +76,16 @@ export default function GestionUsuarios({ isMobile }) {
     setModal(MODAL_CREAR);
   }
 
+  function openEditar(u) {
+    setSelected(u);
+    setEditForm({ nombre: u.nombre, email: u.email, rol: u.rol, grupo: u.grupo });
+    setEditError('');
+    setModal(MODAL_EDITAR);
+  }
+
   function openPwd(u) {
     setSelected(u);
-    setPwdForm({ nueva: '', confirmar: '' });
+    setPwdForm({ nueva: '', confirmar: '', enviarCorreo: false });
     setPwdError('');
     setModal(MODAL_PWD);
   }
@@ -87,11 +107,8 @@ export default function GestionUsuarios({ isMobile }) {
 
     setSaving(true);
     const result = await createUser({
-      nombre:       form.nombre.trim(),
-      email:        form.email.trim(),
-      password:     form.password,
-      rol:          form.rol,
-      grupo:        form.grupo,
+      nombre: form.nombre.trim(), email: form.email.trim(),
+      password: form.password, rol: form.rol, grupo: form.grupo,
       enviarCorreo: form.enviarCorreo,
     });
     setSaving(false);
@@ -105,19 +122,42 @@ export default function GestionUsuarios({ isMobile }) {
     }
   }
 
-  async function handleCambiarPwd(e) {
+  async function handleEditar(e) {
     e.preventDefault();
-    setPwdError('');
-    if (pwdForm.nueva.length < 8)              return setPwdError('Mínimo 8 caracteres.');
-    if (pwdForm.nueva !== pwdForm.confirmar)   return setPwdError('Las contraseñas no coinciden.');
+    setEditError('');
+    if (!editForm.nombre.trim()) return setEditError('El nombre no puede estar vacío.');
 
     setSaving(true);
-    const result = await changeUserPassword(selected.id, pwdForm.nueva);
+    const result = await updateUser(selected.id, {
+      nombre: editForm.nombre.trim(),
+      email:  editForm.email.trim(),
+      rol:    editForm.rol,
+      grupo:  editForm.grupo,
+    });
     setSaving(false);
 
     if (result.ok) {
       closeModal();
-      showMsg('Contraseña actualizada. El usuario recibirá un correo de notificación.');
+      showMsg('Usuario actualizado.');
+      fetchUsuarios();
+    } else {
+      setEditError(result.error);
+    }
+  }
+
+  async function handleCambiarPwd(e) {
+    e.preventDefault();
+    setPwdError('');
+    if (pwdForm.nueva.length < 8)            return setPwdError('Mínimo 8 caracteres.');
+    if (pwdForm.nueva !== pwdForm.confirmar) return setPwdError('Las contraseñas no coinciden.');
+
+    setSaving(true);
+    const result = await changeUserPassword(selected.id, pwdForm.nueva, pwdForm.enviarCorreo);
+    setSaving(false);
+
+    if (result.ok) {
+      closeModal();
+      showMsg('Contraseña actualizada.');
     } else {
       setPwdError(result.error);
     }
@@ -147,6 +187,19 @@ export default function GestionUsuarios({ isMobile }) {
     }
   }
 
+  // Determina si el usuario actual puede operar sobre el target
+  function canOperateOn(targetUser) {
+    if (isSuperRoot) return true;
+    return targetUser?.rol !== 'super_root' && targetUser?.rol !== 'admin';
+  }
+
+  const inputStyle = { display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' };
+  const errBox = (msg) => msg ? (
+    <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '8px', fontSize: '13px', color: '#dc2626' }}>
+      {msg}
+    </div>
+  ) : null;
+
   return (
     <div>
       {msg.text && (
@@ -160,9 +213,11 @@ export default function GestionUsuarios({ isMobile }) {
         </div>
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-        <button className="btn btn-primary" onClick={openCrear}>+ Crear usuario</button>
-      </div>
+      {canCreate && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+          <button className="btn btn-primary" onClick={openCrear}>+ Crear usuario</button>
+        </div>
+      )}
 
       {loading ? (
         <p style={{ color: 'var(--content-text-muted)' }}>Cargando usuarios…</p>
@@ -187,9 +242,10 @@ export default function GestionUsuarios({ isMobile }) {
                 <span className="badge" style={{ background: '#f1f5f9', color: '#475569' }}>Grupo {u.grupo}</span>
               </div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button className="btn btn-secondary btn-sm" onClick={() => openPwd(u)}>Cambiar contraseña</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleToggle(u)}>{u.activo ? 'Desactivar' : 'Activar'}</button>
-                <button className="btn btn-danger btn-sm" onClick={() => openBorrar(u)}>Eliminar</button>
+                {canEdit  && canOperateOn(u) && <button className="btn btn-secondary btn-sm" onClick={() => openEditar(u)}>Editar</button>}
+                {canPwd   && canOperateOn(u) && <button className="btn btn-secondary btn-sm" onClick={() => openPwd(u)}>Contraseña</button>}
+                {canToggle && canOperateOn(u) && <button className="btn btn-ghost btn-sm" onClick={() => handleToggle(u)}>{u.activo ? 'Desactivar' : 'Activar'}</button>}
+                {canDelete && canOperateOn(u) && <button className="btn btn-danger btn-sm" onClick={() => openBorrar(u)}>Eliminar</button>}
               </div>
             </div>
           ))}
@@ -216,10 +272,11 @@ export default function GestionUsuarios({ isMobile }) {
                   <td style={{ padding: '11px 12px', fontSize: '14px', color: '#64748b' }}>{u.grupo}</td>
                   <td style={{ padding: '11px 12px' }}><Badge activo={u.activo} /></td>
                   <td style={{ padding: '11px 12px' }}>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button className="btn btn-secondary btn-sm" onClick={() => openPwd(u)}>Contraseña</button>
-                      <button className="btn btn-ghost btn-sm" onClick={() => handleToggle(u)}>{u.activo ? 'Desactivar' : 'Activar'}</button>
-                      <button className="btn btn-danger btn-sm" onClick={() => openBorrar(u)}>Eliminar</button>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {canEdit   && canOperateOn(u) && <button className="btn btn-secondary btn-sm" onClick={() => openEditar(u)}>Editar</button>}
+                      {canPwd    && canOperateOn(u) && <button className="btn btn-secondary btn-sm" onClick={() => openPwd(u)}>Contraseña</button>}
+                      {canToggle && canOperateOn(u) && <button className="btn btn-ghost btn-sm" onClick={() => handleToggle(u)}>{u.activo ? 'Desactivar' : 'Activar'}</button>}
+                      {canDelete && canOperateOn(u) && <button className="btn btn-danger btn-sm" onClick={() => openBorrar(u)}>Eliminar</button>}
                     </div>
                   </td>
                 </tr>
@@ -243,57 +300,92 @@ export default function GestionUsuarios({ isMobile }) {
             <form onSubmit={handleCrear}>
               <div className="modal-body">
                 <div className="form-group" style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Nombre completo</label>
+                  <label style={inputStyle}>Nombre completo</label>
                   <input className="form-input" placeholder="Ej: María González" value={form.nombre} onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))} />
                 </div>
                 <div className="form-group" style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Correo electrónico</label>
+                  <label style={inputStyle}>Correo electrónico</label>
                   <input className="form-input" type="email" placeholder="correo@ejemplo.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                   <div className="form-group">
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Contraseña temporal</label>
+                    <label style={inputStyle}>Contraseña temporal</label>
                     <input className="form-input" type="password" placeholder="Mín. 8 caracteres" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
                   </div>
                   <div className="form-group">
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Confirmar</label>
+                    <label style={inputStyle}>Confirmar</label>
                     <input className="form-input" type="password" placeholder="Repite la contraseña" value={form.confirmar} onChange={e => setForm(f => ({ ...f, confirmar: e.target.value }))} />
                   </div>
                 </div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', cursor: 'pointer', userSelect: 'none' }}>
-                  <input
-                    type="checkbox"
-                    checked={form.enviarCorreo}
-                    onChange={e => setForm(f => ({ ...f, enviarCorreo: e.target.checked }))}
-                    style={{ width: '16px', height: '16px', accentColor: '#2563eb', cursor: 'pointer' }}
-                  />
-                  <span style={{ fontSize: '13px', color: '#374151' }}>
-                    Enviar correo de bienvenida con credenciales
-                  </span>
+                  <input type="checkbox" checked={form.enviarCorreo} onChange={e => setForm(f => ({ ...f, enviarCorreo: e.target.checked }))} style={{ width: '16px', height: '16px', accentColor: '#2563eb', cursor: 'pointer' }} />
+                  <span style={{ fontSize: '13px', color: '#374151' }}>Enviar correo de bienvenida con credenciales</span>
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group">
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Rol</label>
+                    <label style={inputStyle}>Rol</label>
                     <select className="form-select" value={form.rol} onChange={e => setForm(f => ({ ...f, rol: e.target.value }))}>
-                      {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+                      {availableRoles.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Grupo</label>
+                    <label style={inputStyle}>Grupo</label>
                     <select className="form-select" value={form.grupo} onChange={e => setForm(f => ({ ...f, grupo: e.target.value }))}>
                       {GRUPOS.map(g => <option key={g} value={g}>Grupo {g}</option>)}
                     </select>
                   </div>
                 </div>
-                {formError && (
-                  <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '8px', fontSize: '13px', color: '#dc2626' }}>
-                    {formError}
-                  </div>
-                )}
+                {errBox(formError)}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={closeModal}>Cancelar</button>
                 <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Creando…' : 'Crear usuario'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EDITAR */}
+      {modal === MODAL_EDITAR && selected && (
+        <div className="modal-overlay" style={{ zIndex: 2000 }}>
+          <div className="modal">
+            <div className="modal-header">
+              <div>
+                <div className="modal-title">Editar usuario</div>
+                <div className="modal-subtitle">{selected.nombre}</div>
+              </div>
+              <button className="modal-close" onClick={closeModal}>×</button>
+            </div>
+            <form onSubmit={handleEditar}>
+              <div className="modal-body">
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={inputStyle}>Nombre completo</label>
+                  <input className="form-input" value={editForm.nombre} onChange={e => setEditForm(f => ({ ...f, nombre: e.target.value }))} />
+                </div>
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={inputStyle}>Correo electrónico</label>
+                  <input className="form-input" type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="form-group">
+                    <label style={inputStyle}>Rol</label>
+                    <select className="form-select" value={editForm.rol} onChange={e => setEditForm(f => ({ ...f, rol: e.target.value }))}>
+                      {availableRoles.map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label style={inputStyle}>Grupo</label>
+                    <select className="form-select" value={editForm.grupo} onChange={e => setEditForm(f => ({ ...f, grupo: e.target.value }))}>
+                      {GRUPOS.map(g => <option key={g} value={g}>Grupo {g}</option>)}
+                    </select>
+                  </div>
+                </div>
+                {errBox(editError)}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-ghost" onClick={closeModal}>Cancelar</button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Guardando…' : 'Guardar cambios'}</button>
               </div>
             </form>
           </div>
@@ -314,21 +406,18 @@ export default function GestionUsuarios({ isMobile }) {
             <form onSubmit={handleCambiarPwd}>
               <div className="modal-body">
                 <div className="form-group" style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Nueva contraseña</label>
+                  <label style={inputStyle}>Nueva contraseña</label>
                   <input className="form-input" type="password" placeholder="Mínimo 8 caracteres" value={pwdForm.nueva} onChange={e => setPwdForm(f => ({ ...f, nueva: e.target.value }))} />
                 </div>
-                <div className="form-group">
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '5px', color: '#374151' }}>Confirmar contraseña</label>
+                <div className="form-group" style={{ marginBottom: '12px' }}>
+                  <label style={inputStyle}>Confirmar contraseña</label>
                   <input className="form-input" type="password" placeholder="Repite la contraseña" value={pwdForm.confirmar} onChange={e => setPwdForm(f => ({ ...f, confirmar: e.target.value }))} />
                 </div>
-                {pwdError && (
-                  <div style={{ marginTop: '12px', padding: '10px 14px', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '8px', fontSize: '13px', color: '#dc2626' }}>
-                    {pwdError}
-                  </div>
-                )}
-                <p style={{ marginTop: '12px', fontSize: '12px', color: '#64748b' }}>
-                  El usuario recibirá un correo y deberá cambiar su contraseña al ingresar.
-                </p>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', cursor: 'pointer', userSelect: 'none' }}>
+                  <input type="checkbox" checked={pwdForm.enviarCorreo} onChange={e => setPwdForm(f => ({ ...f, enviarCorreo: e.target.checked }))} style={{ width: '16px', height: '16px', accentColor: '#2563eb', cursor: 'pointer' }} />
+                  <span style={{ fontSize: '13px', color: '#374151' }}>Notificar al usuario por correo</span>
+                </label>
+                {errBox(pwdError)}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-ghost" onClick={closeModal}>Cancelar</button>

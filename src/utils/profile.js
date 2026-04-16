@@ -1,5 +1,17 @@
 import { supabase } from '../lib/supabase';
 
+const DEFAULT_PERMISOS = {
+  puede_crear_usuarios:     false,
+  puede_eliminar_usuarios:  false,
+  puede_modificar_usuarios: false,
+  puede_cambiar_password:   false,
+  puede_activar_desactivar: false,
+  puede_ver_historial:      false,
+  puede_gestionar_permisos: false,
+};
+
+const ALL_PERMISOS = Object.fromEntries(Object.keys(DEFAULT_PERMISOS).map(k => [k, true]));
+
 /**
  * Obtiene flags adicionales del perfil que auth.js no incluye.
  */
@@ -7,13 +19,28 @@ export async function getProfileFlags(userId) {
   if (!supabase || !userId) return { debe_cambiar_password: false };
   const { data } = await supabase
     .from('profiles')
-    .select('debe_cambiar_password, activo')
+    .select('debe_cambiar_password, activo, rol')
     .eq('id', userId)
     .maybeSingle();
-  return {
+
+  const flags = {
     debe_cambiar_password: data?.debe_cambiar_password ?? false,
     activo: data?.activo ?? true,
+    adminPermisos: null,
   };
+
+  if (data?.rol === 'super_root') {
+    flags.adminPermisos = { ...ALL_PERMISOS };
+  } else if (data?.rol === 'admin') {
+    const { data: p } = await supabase
+      .from('permisos_admin')
+      .select('*')
+      .eq('admin_id', userId)
+      .maybeSingle();
+    flags.adminPermisos = p ? { ...DEFAULT_PERMISOS, ...p } : { ...DEFAULT_PERMISOS };
+  }
+
+  return flags;
 }
 
 /**

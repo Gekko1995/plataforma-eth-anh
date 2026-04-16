@@ -1,7 +1,8 @@
-const { getSupabaseAdmin, verifyAdmin } = require('../_auth');
+const { getSupabaseAdmin, verifyPermission } = require('../_auth');
 const { sendEmail, bienvenidaHtml } = require('../_email');
 
-const VALID_ROLES  = new Set(['admin', 'usuario', 'Gestor de Contenido']);
+const VALID_ROLES_ADMIN     = new Set(['admin', 'usuario', 'Gestor de Contenido']);
+const VALID_ROLES_SUPERROOT = new Set(['super_root', 'admin', 'usuario', 'Gestor de Contenido']);
 const VALID_GRUPOS = new Set(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
 
 module.exports = async (req, res) => {
@@ -10,7 +11,7 @@ module.exports = async (req, res) => {
   const supabaseAdmin = getSupabaseAdmin();
   if (!supabaseAdmin) return res.status(503).json({ success: false, error: 'Servidor no configurado.' });
 
-  const auth = await verifyAdmin(req, supabaseAdmin);
+  const auth = await verifyPermission(req, supabaseAdmin, 'puede_crear_usuarios');
   if (!auth.ok) return res.status(auth.status).json({ success: false, error: auth.error });
 
   const { nombre, email, password, rol, grupo, enviarCorreo } = req.body || {};
@@ -19,13 +20,15 @@ module.exports = async (req, res) => {
   const e = typeof email  === 'string' ? email.trim()  : '';
   const g = typeof grupo  === 'string' ? grupo.trim().toUpperCase() : '';
 
-  if (!n)                          return res.status(400).json({ success: false, error: 'El nombre es requerido.' });
-  if (!e)                          return res.status(400).json({ success: false, error: 'El email es requerido.' });
+  if (!n) return res.status(400).json({ success: false, error: 'El nombre es requerido.' });
+  if (!e) return res.status(400).json({ success: false, error: 'El email es requerido.' });
   if (!password || password.length < 8) return res.status(400).json({ success: false, error: 'La contraseña debe tener mínimo 8 caracteres.' });
-  if (!VALID_ROLES.has(rol))       return res.status(400).json({ success: false, error: 'Rol inválido.' });
-  if (g && !VALID_GRUPOS.has(g))   return res.status(400).json({ success: false, error: 'Grupo inválido.' });
+  if (g && !VALID_GRUPOS.has(g)) return res.status(400).json({ success: false, error: 'Grupo inválido.' });
 
-  // Crear usuario con contraseña — email ya confirmado por el admin
+  // admin no puede crear super_root
+  const validRoles = auth.rol === 'super_root' ? VALID_ROLES_SUPERROOT : VALID_ROLES_ADMIN;
+  if (!validRoles.has(rol)) return res.status(400).json({ success: false, error: 'Rol inválido.' });
+
   const { data, error } = await supabaseAdmin.auth.admin.createUser({
     email: e,
     password,
@@ -35,7 +38,6 @@ module.exports = async (req, res) => {
 
   if (error) return res.status(400).json({ success: false, error: error.message });
 
-  // Guardar perfil con flag de cambio obligatorio de contraseña
   await supabaseAdmin.from('profiles').upsert({
     id:                    data.user.id,
     nombre:                n,
@@ -46,7 +48,14 @@ module.exports = async (req, res) => {
     debe_cambiar_password: true,
   }, { onConflict: 'id' });
 
-  // Enviar correo de bienvenida solo si el admin lo autorizó
+  // Si es admin, crear registro en permisos_admin con todo en false
+  if (rol === 'admin') {
+    await supabaseAdmin.from('permisos_admin').upsert({
+      admin_id:   data.user.id,
+      updated_by: auth.requesterId,
+    }, { onConflict: 'admin_id' });
+  }
+
   if (enviarCorreo === true) {
     await sendEmail({
       to:      e,

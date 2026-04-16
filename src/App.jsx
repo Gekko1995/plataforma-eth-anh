@@ -12,6 +12,7 @@ import PresentacionVistaPage from './pages/PresentacionVistaPage';
 import PresentacionEditorPage from './pages/PresentacionEditorPage';
 import HistorialPage from './pages/HistorialPage';
 import PerfilPage from './pages/PerfilPage';
+import PermisosAdminPage from './pages/PermisosAdminPage';
 import {
   authUser,
   addLog,
@@ -167,7 +168,15 @@ export default function App() {
           />
           <Route
             path="historial"
-            element={user?.rol === 'admin' ? <HistorialPage /> : <Navigate to="/dashboard" replace />}
+            element={
+              user?.adminPermisos?.puede_ver_historial || user?.rol === 'super_root'
+                ? <HistorialPage />
+                : <Navigate to="/dashboard" replace />
+            }
+          />
+          <Route
+            path="permisos-admin"
+            element={user?.rol === 'super_root' ? <PermisosAdminPage /> : <Navigate to="/dashboard" replace />}
           />
         </Route>
 
