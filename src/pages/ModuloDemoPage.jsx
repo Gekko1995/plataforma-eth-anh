@@ -342,6 +342,50 @@ function KpiCard({ kpi, moduleId, idx, theme }) {
   );
 }
 
+// ─── Acciones por módulo ──────────────────────────────────────────────
+// Cada entrada: [acción primaria, acción secundaria, acción terciaria]
+const MODULE_ACTIONS = {
+  1:  ['Nueva caracterización', 'Ver mapa territorial',    'Exportar'],
+  2:  ['Nuevo indicador',       'Generar reporte',         'Exportar'],
+  3:  ['Abrir visor GIS',       'Nueva capa',              'Exportar'],
+  4:  ['Nuevo clúster',         'Ver ranking',             'Exportar'],
+  5:  ['Nueva ficha de campo',  'Sincronizar datos',       'Exportar'],
+  6:  ['Nuevo estudio',         'Repositorio',             'Exportar'],
+  7:  ['Nueva iniciativa',      'Ver avance',              'Exportar'],
+  8:  ['Nueva alerta',          'Nueva mesa de diálogo',   'Exportar'],
+  9:  ['Nuevo proyecto MGA',    'Árbol de problemas',      'Exportar'],
+  10: ['Nueva ruta',            'Certificados',            'Exportar'],
+  11: ['Nueva formación',       'Ver participantes',       'Exportar'],
+  12: ['Nueva inducción',       'Cumplimiento HSE',        'Exportar'],
+  13: ['Nuevo plan de negocio', 'Ferias internacionales',  'Exportar'],
+  14: ['Nuevo beneficiario',    'Generar QR',              'Exportar'],
+  15: ['Nuevo actor',           'Buscar en directorio',    'Exportar'],
+  16: ['Nueva consulta previa', 'Ver protocolos',          'Exportar'],
+  17: ['Nueva vacante',         'Recibir CVs',             'Exportar'],
+  18: ['Nueva novedad',         'Liquidar nómina',         'Exportar'],
+  19: ['Nueva alianza',         'Ver compromisos',         'Exportar'],
+  20: ['Nuevo usuario',         'Ver auditoría',           'Exportar logs'],
+  21: ['Nuevo hito',            'Ver semáforo',            'Exportar'],
+  22: ['Nuevo movimiento',      'Ver ejecución',           'Exportar'],
+  23: ['Nueva cuenta de cobro', 'Verificar SS',            'Exportar'],
+  24: ['Nueva sesión',          'Nueva acta',              'Exportar'],
+  25: ['Nuevo contrato',        'Ver TdR',                 'Exportar'],
+  26: ['Nuevo riesgo',          'Mapa de calor',           'Exportar'],
+  27: ['Radicar informe',       'Pendientes de aprobación','Exportar'],
+  28: ['Compilar desembolso',   'Estado desembolsos',      'Exportar'],
+  29: ['Nuevo caso de éxito',   'Repositorio',             'Exportar'],
+  30: ['Nuevo evento',          'Convocar asistentes',     'Exportar'],
+  31: ['Nueva solicitud',       'Calcular costo',          'Exportar'],
+  32: ['Nueva pieza digital',   'Ver métricas',            'Exportar'],
+  33: ['Reportar incidente',    'Protocolos HSE',          'Exportar'],
+  34: ['Subir documento',       'Analizar con IA',         'Exportar'],
+  35: ['Nuevo activo',          'Escanear QR',             'Exportar'],
+  36: ['Nueva póliza',          'Ver renovaciones',        'Exportar'],
+  37: ['Actualizar checklist',  'Generar acta',            'Exportar'],
+  38: ['Nuevo ticket',          'Ver SLA',                 'Exportar'],
+  39: ['Ver backups',           'Monitor disponibilidad',  'Exportar'],
+};
+
 // ─── Lookups ──────────────────────────────────────────────────────────
 const moduloMap = Object.fromEntries(modulos.map(m => [String(m.id), m]));
 const grupoMap  = Object.fromEntries(GROUPS.map(g => [g.id, g]));
@@ -361,6 +405,14 @@ export default function ModuloDemoPage() {
     ...(GROUP_LIGHT[modulo?.grupo] || {}),
   }), [modulo?.grupo]);
 
+  const numId = Number(id);
+
+  const [toast, setToast] = useState(null);
+  function showToast(label) {
+    setToast(label);
+    setTimeout(() => setToast(null), 2200);
+  }
+
   if (!modulo || !demo) {
     return (
       <div style={{ padding: '48px 24px', textAlign: 'center', color: BASE.muted }}>
@@ -372,13 +424,11 @@ export default function ModuloDemoPage() {
     );
   }
 
-  const numId = Number(id);
-
   return (
     <div style={{ background: theme.bg, minHeight: '100%' }}>
 
-      {/* ── Botón volver ── */}
-      <div style={{ marginBottom: '20px' }}>
+      {/* ── Barra superior: volver + acciones ── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => navigate('/modulos')}
@@ -386,7 +436,55 @@ export default function ModuloDemoPage() {
         >
           ← Volver a módulos
         </button>
+
+        {/* Acciones del módulo */}
+        {MODULE_ACTIONS[numId] && (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {MODULE_ACTIONS[numId].map((label, i) => (
+              <button
+                key={label}
+                onClick={() => showToast(label)}
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  padding: '6px 14px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  border: i === 0
+                    ? 'none'
+                    : `1px solid ${color}40`,
+                  background: i === 0
+                    ? color
+                    : i === 1
+                      ? color + '12'
+                      : 'transparent',
+                  color: i === 0 ? '#fff' : color,
+                  transition: 'opacity .15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.82'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* ── Toast demo ── */}
+      {toast && (
+        <div style={{
+          position: 'fixed', bottom: '28px', right: '28px', zIndex: 999,
+          background: BASE.text, color: '#fff',
+          borderRadius: '10px', padding: '12px 20px',
+          fontSize: '13px', fontWeight: 500,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+          animation: 'fadeInUp .2s ease',
+        }}>
+          <span style={{ opacity: 0.55, marginRight: '6px' }}>Demo —</span>
+          {toast}
+        </div>
+      )}
 
       <div style={{ maxWidth: '900px' }}>
 
