@@ -45,7 +45,7 @@ export default function PresentacionVistaPage() {
 
   useEffect(() => {
     if (modulo && user) addLog(user, 'VER_PRESENTACION', `#${modulo.id} — ${modulo.nombre}`);
-  }, [modulo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [modulo?.id]);
 
   useEffect(() => {
     if (!modulo) return;

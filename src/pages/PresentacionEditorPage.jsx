@@ -33,7 +33,7 @@ export default function PresentacionEditorPage() {
   // Log al entrar al editor
   useEffect(() => {
     if (modulo && user) addLog(user, 'EDITAR_PRESENTACION', `#${modulo.id} — ${modulo.nombre}`);
-  }, [modulo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [modulo?.id]);
 
   // Cargar presentación existente
   useEffect(() => {

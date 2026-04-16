@@ -614,7 +614,7 @@ export default function ModuloDemoPage() {
   // Log al entrar a la demo
   useEffect(() => {
     if (modulo && user) addLog(user, 'VER_DEMO', `#${modulo.id} — ${modulo.nombre}`);
-  }, [modulo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [modulo?.id]);
 
   function showToast(label) {
     setToast(label);
