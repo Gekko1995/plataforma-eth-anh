@@ -377,6 +377,12 @@ html, body, #root {
   grid-area: main;
   padding: 24px;
   overflow-y: auto;
+  /* Topographic watermark — azul petróleo #074A6A at 7 % opacity (see topographic-pattern.svg) */
+  background-image: url('./topographic-pattern.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-attachment: local;
 }
 
 
