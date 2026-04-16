@@ -654,34 +654,54 @@ export default function ModuloDemoPage() {
 
       <div style={{ maxWidth: '1100px' }}>
 
-        {/* Header con imagen */}
-        {modulo.imagen && (
-          <div style={{ borderRadius: '14px', overflow: 'hidden', marginBottom: '22px', position: 'relative', height: '180px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-            <img src={modulo.imagen} alt={modulo.nombre}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%)',
-            }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: color }} />
-            <div style={{ position: 'absolute', inset: 0, padding: '24px 28px', display: 'flex', alignItems: 'flex-end' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <span style={{ background: color, color: '#fff', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px' }}>
-                    {modulo.id}
-                  </span>
-                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#fff', background: 'rgba(0,0,0,0.35)', padding: '3px 10px', borderRadius: '20px', backdropFilter: 'blur(4px)' }}>
-                    Grupo {modulo.grupo} · {grupo?.name}
-                  </span>
-                </div>
-                <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#fff', margin: 0, textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
-                  {modulo.nombre}
-                </h1>
-              </div>
+        {/* ── Header de módulo (gradiente) ── */}
+        <div style={{
+          borderRadius: '14px', overflow: 'hidden',
+          marginBottom: '22px', position: 'relative',
+          height: '140px',
+          background: `linear-gradient(135deg, ${color} 0%, ${color}99 100%)`,
+          boxShadow: `0 4px 24px ${color}30`,
+        }}>
+          {/* Trama de puntos decorativa */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+          }} />
+          {/* Brillo esquina superior derecha */}
+          <div style={{
+            position: 'absolute', top: '-60px', right: '-60px',
+            width: '220px', height: '220px',
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.07)',
+          }} />
+
+          {/* Contenido */}
+          <div style={{ position: 'absolute', inset: 0, padding: '22px 28px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <span style={{
+                background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(6px)',
+                color: '#fff', width: '34px', height: '34px', borderRadius: '9px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: '15px', border: '1px solid rgba(255,255,255,0.3)',
+                flexShrink: 0,
+              }}>
+                {modulo.id}
+              </span>
+              <span style={{
+                fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.80)',
+                background: 'rgba(255,255,255,0.15)', padding: '3px 10px',
+                borderRadius: '20px', backdropFilter: 'blur(4px)',
+                border: '1px solid rgba(255,255,255,0.20)',
+              }}>
+                Grupo {modulo.grupo} · {grupo?.name}
+              </span>
             </div>
+            <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.01em' }}>
+              {modulo.nombre}
+            </h1>
           </div>
-        )}
+        </div>
 
         {/* Disclaimer */}
         <div style={{
