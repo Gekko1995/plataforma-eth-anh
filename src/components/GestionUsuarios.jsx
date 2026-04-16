@@ -55,13 +55,20 @@ export default function GestionUsuarios({ isMobile, user }) {
 
   const fetchUsuarios = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from('profiles')
       .select('id, nombre, email, rol, grupo, activo, debe_cambiar_password')
       .order('nombre');
+
+    // Los admins no ven cuentas super_root ni otros admins
+    if (!isSuperRoot) {
+      query = query.not('rol', 'in', '("super_root","admin")');
+    }
+
+    const { data, error } = await query;
     if (!error) setUsuarios(data || []);
     setLoading(false);
-  }, []);
+  }, [isSuperRoot]);
 
   useEffect(() => { fetchUsuarios(); }, [fetchUsuarios]);
 
