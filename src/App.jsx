@@ -10,6 +10,7 @@ import CambiarPassword from './pages/CambiarPassword';
 import ModuloDemoPage from './pages/ModuloDemoPage';
 import PresentacionVistaPage from './pages/PresentacionVistaPage';
 import PresentacionEditorPage from './pages/PresentacionEditorPage';
+import HistorialPage from './pages/HistorialPage';
 import {
   authUser,
   addLog,
@@ -151,6 +152,10 @@ export default function App() {
           <Route
             path="permisos"
             element={user?.rol === 'admin' ? <PermisosPage /> : <Navigate to="/dashboard" replace />}
+          />
+          <Route
+            path="historial"
+            element={user?.rol === 'admin' ? <HistorialPage /> : <Navigate to="/dashboard" replace />}
           />
         </Route>
 
