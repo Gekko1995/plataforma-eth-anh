@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { addLog } from '../utils/auth';
 import {
   ResponsiveContainer,
   LineChart, Line,
@@ -593,6 +594,7 @@ const grupoMap  = Object.fromEntries(GROUPS.map(g => [g.id, g]));
 export default function ModuloDemoPage() {
   const { id }   = useParams();
   const navigate = useNavigate();
+  const { user } = useOutletContext();
 
   const modulo = moduloMap[id];
   const demo   = demos[Number(id)];
@@ -608,9 +610,16 @@ export default function ModuloDemoPage() {
 
   const [descAbierta, setDescAbierta] = useState(false);
   const [toast, setToast] = useState(null);
+
+  // Log al entrar a la demo
+  useEffect(() => {
+    if (modulo && user) addLog(user, 'VER_DEMO', `#${modulo.id} — ${modulo.nombre}`);
+  }, [modulo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function showToast(label) {
     setToast(label);
     setTimeout(() => setToast(null), 2200);
+    if (user && modulo) addLog(user, 'ACCION_MODULO', `#${modulo.id} — ${label}`);
   }
 
   if (!modulo || !demo) {

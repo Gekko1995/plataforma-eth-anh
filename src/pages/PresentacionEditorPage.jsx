@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { addLog } from '../utils/auth';
 import { modulos } from '../data/modulos';
 import { GROUPS } from '../data/constants';
 import { getPresentacion, savePresentacion } from '../utils/presentaciones';
@@ -28,6 +29,11 @@ export default function PresentacionEditorPage() {
   const [loading,  setLoading]  = useState(true);
   const [saving,   setSaving]   = useState(false);
   const [msg,      setMsg]      = useState(null); // { tipo: 'ok'|'error', texto }
+
+  // Log al entrar al editor
+  useEffect(() => {
+    if (modulo && user) addLog(user, 'EDITAR_PRESENTACION', `#${modulo.id} — ${modulo.nombre}`);
+  }, [modulo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Cargar presentación existente
   useEffect(() => {

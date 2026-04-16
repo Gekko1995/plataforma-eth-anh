@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { addLog } from '../utils/auth';
 import { modulos } from '../data/modulos';
 import { GROUPS } from '../data/constants';
 import { getPresentacion } from '../utils/presentaciones';
@@ -41,6 +42,10 @@ export default function PresentacionVistaPage() {
   const [titulo,   setTitulo]   = useState('');
   const [loading,  setLoading]  = useState(true);
   const [vacio,    setVacio]    = useState(false);
+
+  useEffect(() => {
+    if (modulo && user) addLog(user, 'VER_PRESENTACION', `#${modulo.id} — ${modulo.nombre}`);
+  }, [modulo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!modulo) return;

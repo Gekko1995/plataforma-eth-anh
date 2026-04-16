@@ -107,7 +107,7 @@ export async function getAccessToken() {
  * Guarda registro de acceso en localStorage y en Supabase.
  * Retorna una promesa que resuelve cuando el insert remoto termina (o null si no aplica).
  */
-export function addLog(user, accion) {
+export function addLog(user, accion, detalle = null) {
   // Persistencia local (fallback / cache)
   const log = JSON.parse(localStorage.getItem('eth_log') || '[]');
   log.unshift({
@@ -115,6 +115,7 @@ export function addLog(user, accion) {
     nombre: user.nombre,
     rol: user.rol,
     modulo: accion,
+    detalle,
     ts: new Date().toISOString(),
   });
   localStorage.setItem('eth_log', JSON.stringify(log.slice(0, 300)));
@@ -127,6 +128,7 @@ export function addLog(user, accion) {
       user_nombre: user.nombre,
       user_rol:    user.rol,
       accion,
+      detalle,
     }).then(({ error }) => {
       if (error) console.warn('Failed to save user activity log:', error.message);
     }).catch(err => {

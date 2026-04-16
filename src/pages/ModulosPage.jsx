@@ -4,6 +4,7 @@ import { useModulosVisibles } from '../hooks/useModulosVisibles';
 import { GROUPS } from '../data/constants';
 import { modulos as MODULOS_DATA } from '../data/modulos';
 import ModuloModal from '../components/ModuloModal';
+import { addLog } from '../utils/auth';
 
 // Lookup rápido id → datos ricos del módulo
 const moduloMap = Object.fromEntries(MODULOS_DATA.map(m => [m.id, m]));
@@ -25,6 +26,7 @@ export default function ModulosPage() {
     const richData = moduloMap[m.id];
     if (!richData) return;
     setSelectedModulo({ ...richData, grupoColor: g.color, grupoNombre: g.name });
+    addLog(user, 'ABRIR_MODULO', `#${m.id} — ${m.name}`);
   }
 
   if (loading) {
