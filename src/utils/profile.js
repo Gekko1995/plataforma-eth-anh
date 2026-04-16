@@ -1,5 +1,4 @@
 import { supabase } from '../lib/supabase';
-import { getAccessToken } from './auth';
 
 /**
  * Obtiene flags adicionales del perfil que auth.js no incluye.
@@ -19,60 +18,49 @@ export async function getProfileFlags(userId) {
 
 /**
  * El usuario actualiza su propio nombre y/o correo.
+ * Usa Supabase directamente — no requiere rutas API ni token manual.
  */
 export async function updateOwnProfile({ nombre, email }) {
-  const accessToken = await getAccessToken();
-  if (!accessToken) return { ok: false, error: 'Sesión inválida. Inicia sesión nuevamente.' };
+  if (!supabase) return { ok: false, error: 'Supabase no está configurado.' };
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10_000);
   try {
-    const res = await fetch('/api/users/update-profile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ nombre, email }),
-      signal: controller.signal,
-    });
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data) return { ok: false, error: data?.error || 'Error al actualizar el perfil.' };
-    return data.success ? { ok: true } : { ok: false, error: data.error || 'Error desconocido.' };
+    // Obtener sesión activa
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return { ok: false, error: 'Sesión expirada. Recarga la página e intenta de nuevo.' };
+
+    // Actualizar nombre en tabla profiles
+    if (nombre !== undefined) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ nombre })
+        .eq('id', user.id);
+      if (error) return { ok: false, error: error.message };
+    }
+
+    // Actualizar correo vía Supabase Auth (envía email de confirmación)
+    if (email !== undefined) {
+      const { error } = await supabase.auth.updateUser({ email });
+      if (error) return { ok: false, error: error.message };
+    }
+
+    return { ok: true };
   } catch (err) {
-    if (err.name === 'AbortError') return { ok: false, error: 'Tiempo de espera agotado.' };
-    return { ok: false, error: 'Error de conexión.' };
-  } finally {
-    clearTimeout(timer);
+    return { ok: false, error: err.message || 'Error desconocido.' };
   }
 }
 
 /**
- * El usuario cambia su propia contraseña (primer login o voluntario).
+ * El usuario cambia su propia contraseña.
+ * Usa Supabase Auth directamente — no requiere rutas API ni token manual.
  */
 export async function changeOwnPassword(newPassword) {
-  const accessToken = await getAccessToken();
-  if (!accessToken) return { ok: false, error: 'Sesión inválida. Inicia sesión nuevamente.' };
+  if (!supabase) return { ok: false, error: 'Supabase no está configurado.' };
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10_000);
   try {
-    const res = await fetch('/api/users/change-own-password', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ newPassword }),
-      signal: controller.signal,
-    });
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data) return { ok: false, error: data?.error || 'Error al cambiar la contraseña.' };
-    return data.success ? { ok: true } : { ok: false, error: data.error || 'Error desconocido.' };
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
   } catch (err) {
-    if (err.name === 'AbortError') return { ok: false, error: 'Tiempo de espera agotado.' };
-    return { ok: false, error: 'Error de conexión.' };
-  } finally {
-    clearTimeout(timer);
+    return { ok: false, error: err.message || 'Error desconocido.' };
   }
 }
