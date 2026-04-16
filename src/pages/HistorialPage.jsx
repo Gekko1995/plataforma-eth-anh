@@ -41,8 +41,10 @@ function downloadCSV(content, filename) {
 
 function AccionBadge({ accion }) {
   const styles = {
-    LOGIN:  { bg: '#dcfce7', color: '#15803d' },
-    LOGOUT: { bg: '#fee2e2', color: '#dc2626' },
+    LOGIN:        { bg: '#dcfce7', color: '#15803d' },
+    LOGOUT:       { bg: '#fee2e2', color: '#dc2626' },
+    MODULO_VISTA: { bg: '#eff6ff', color: '#1d4ed8' },
+    MODULO_DEMO:  { bg: '#faf5ff', color: '#7e22ce' },
   };
   const s = styles[accion] || { bg: '#f1f5f9', color: '#475569' };
   return (
@@ -197,6 +199,8 @@ export default function HistorialPage() {
           <option value="">Todas las acciones</option>
           <option value="LOGIN">LOGIN</option>
           <option value="LOGOUT">LOGOUT</option>
+          <option value="MODULO_VISTA">MODULO_VISTA</option>
+          <option value="MODULO_DEMO">MODULO_DEMO</option>
         </select>
         <input
           type="date"

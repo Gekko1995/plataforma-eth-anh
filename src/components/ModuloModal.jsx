@@ -1,23 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { addLog } from '../utils/auth';
 
 /**
  * Modal de detalle de módulo.
  * Props:
  *   modulo      — objeto completo de modulos.js + grupoColor + grupoNombre
  *   onClose     — función para cerrar
+ *   user        — usuario autenticado (para registrar visita en el historial)
  */
-export default function ModuloModal({ modulo, onClose }) {
+export default function ModuloModal({ modulo, onClose, user }) {
   const navigate = useNavigate();
   const { id, nombre, descripcion, stack, grupoColor, grupoNombre, url, imagen } = modulo;
   const tieneUrl = Boolean(url);
+  const openedAt = useRef(Date.now());
+
+  // Registra en el historial cuánto tiempo estuvo abierto el modal al cerrarlo
+  function logVista() {
+    if (!user) return;
+    const segundos = Math.round((Date.now() - openedAt.current) / 1000);
+    addLog(user, 'MODULO_VISTA', `${nombre} · ${segundos}s`);
+  }
 
   // Cierra con ESC
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const handleKey = (e) => { if (e.key === 'Escape') handleClose(); };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  }, [onClose]); // eslint-disable-line
 
   // Bloquea scroll del body mientras el modal está abierto
   useEffect(() => {
@@ -25,7 +35,13 @@ export default function ModuloModal({ modulo, onClose }) {
     return () => { document.body.style.overflow = ''; };
   }, []);
 
+  function handleClose() {
+    logVista();
+    onClose();
+  }
+
   function irADemo() {
+    logVista();
     onClose();
     navigate(`/modulos/${id}/demo`);
   }
@@ -33,7 +49,7 @@ export default function ModuloModal({ modulo, onClose }) {
   return (
     <div
       className="modal-overlay"
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={e => { if (e.target === e.currentTarget) handleClose(); }}
     >
       <div
         className="modal"
@@ -79,7 +95,7 @@ export default function ModuloModal({ modulo, onClose }) {
           </div>
           {/* Botón cerrar */}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Cerrar"
             style={{
               position: 'absolute', top: '12px', right: '12px',
@@ -181,7 +197,7 @@ export default function ModuloModal({ modulo, onClose }) {
 
         {/* Footer */}
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>
+          <button className="btn btn-ghost" onClick={handleClose}>
             Cerrar
           </button>
           <button

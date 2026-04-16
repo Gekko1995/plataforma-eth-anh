@@ -151,6 +151,7 @@ export default function ModulosPage() {
         <ModuloModal
           modulo={selectedModulo}
           onClose={() => setSelectedModulo(null)}
+          user={user}
         />
       )}
     </div>

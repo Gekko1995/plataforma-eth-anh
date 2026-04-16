@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import {
   ResponsiveContainer,
   LineChart, Line,
@@ -15,6 +15,7 @@ import {
 import { modulos } from '../data/modulos';
 import { GROUPS } from '../data/constants';
 import { demos } from '../data/demos';
+import { addLog } from '../utils/auth';
 
 // ─── Paleta base clara ────────────────────────────────────────────────
 const BASE = {
@@ -593,6 +594,7 @@ const grupoMap  = Object.fromEntries(GROUPS.map(g => [g.id, g]));
 export default function ModuloDemoPage() {
   const { id }   = useParams();
   const navigate = useNavigate();
+  const { user } = useOutletContext();
 
   const modulo = moduloMap[id];
   const demo   = demos[Number(id)];
@@ -605,6 +607,17 @@ export default function ModuloDemoPage() {
   }), [modulo?.grupo]);
 
   const numId = Number(id);
+
+  // Registra visita y duración al salir de la demo
+  const openedAt = useRef(Date.now());
+  useEffect(() => {
+    return () => {
+      if (user && modulo) {
+        const segundos = Math.round((Date.now() - openedAt.current) / 1000);
+        addLog(user, 'MODULO_DEMO', `${modulo.nombre} · ${segundos}s`);
+      }
+    };
+  }, []); // eslint-disable-line
 
   const [toast, setToast] = useState(null);
   function showToast(label) {
