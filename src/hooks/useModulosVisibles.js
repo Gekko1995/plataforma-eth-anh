@@ -19,8 +19,8 @@ export function useModulosVisibles(user) {
       return;
     }
 
-    if (user.rol === 'admin') {
-      // Admin ve todo sin consultar la base de datos
+    if (user.rol === 'admin' || user.rol === 'super_root') {
+      // Admin y super_root ven todo sin consultar la base de datos
       const todos = GROUPS.flatMap(g =>
         g.modules.map(m => ({ ...m, grupoId: g.id, grupoName: g.name, grupoColor: g.color }))
       );

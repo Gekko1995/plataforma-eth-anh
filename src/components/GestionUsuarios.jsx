@@ -6,6 +6,17 @@ const ROLES_ADMIN     = ['admin', 'usuario', 'Gestor de Contenido'];
 const ROLES_SUPERROOT = ['super_root', 'admin', 'usuario', 'Gestor de Contenido'];
 const GRUPOS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
+// Convierte campo grupo (string "A,B,C" o "A") a array
+function parseGrupos(g) {
+  if (!g) return [];
+  return g.split(',').map(x => x.trim()).filter(Boolean);
+}
+
+// Convierte array a string para guardar
+function joinGrupos(arr) {
+  return arr.join(',');
+}
+
 const MODAL_NONE   = null;
 const MODAL_CREAR  = 'crear';
 const MODAL_EDITAR = 'editar';
@@ -43,11 +54,11 @@ export default function GestionUsuarios({ isMobile, user }) {
   const [selected, setSelected] = useState(null);
   const [msg, setMsg]           = useState({ text: '', ok: true });
 
-  const [form, setForm]         = useState({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupo: 'A', enviarCorreo: false });
+  const [form, setForm]         = useState({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupos: ['A'], enviarCorreo: false });
   const [formError, setFormError] = useState('');
   const [saving, setSaving]     = useState(false);
 
-  const [editForm, setEditForm] = useState({ nombre: '', email: '', rol: '', grupo: '' });
+  const [editForm, setEditForm] = useState({ nombre: '', email: '', rol: '', grupos: [] });
   const [editError, setEditError] = useState('');
 
   const [pwdForm, setPwdForm]   = useState({ nueva: '', confirmar: '', enviarCorreo: false });
@@ -78,14 +89,14 @@ export default function GestionUsuarios({ isMobile, user }) {
   }
 
   function openCrear() {
-    setForm({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupo: 'A', enviarCorreo: false });
+    setForm({ nombre: '', email: '', password: '', confirmar: '', rol: 'Gestor de Contenido', grupos: ['A'], enviarCorreo: false });
     setFormError('');
     setModal(MODAL_CREAR);
   }
 
   function openEditar(u) {
     setSelected(u);
-    setEditForm({ nombre: u.nombre, email: u.email, rol: u.rol, grupo: u.grupo });
+    setEditForm({ nombre: u.nombre, email: u.email, rol: u.rol, grupos: parseGrupos(u.grupo) });
     setEditError('');
     setModal(MODAL_EDITAR);
   }
@@ -111,11 +122,12 @@ export default function GestionUsuarios({ isMobile, user }) {
     if (!form.email.trim())               return setFormError('El email es requerido.');
     if (form.password.length < 8)         return setFormError('La contraseña debe tener mínimo 8 caracteres.');
     if (form.password !== form.confirmar) return setFormError('Las contraseñas no coinciden.');
+    if (form.grupos.length === 0)         return setFormError('Selecciona al menos un grupo.');
 
     setSaving(true);
     const result = await createUser({
       nombre: form.nombre.trim(), email: form.email.trim(),
-      password: form.password, rol: form.rol, grupo: form.grupo,
+      password: form.password, rol: form.rol, grupo: joinGrupos(form.grupos),
       enviarCorreo: form.enviarCorreo,
     });
     setSaving(false);
@@ -134,12 +146,14 @@ export default function GestionUsuarios({ isMobile, user }) {
     setEditError('');
     if (!editForm.nombre.trim()) return setEditError('El nombre no puede estar vacío.');
 
+    if (editForm.grupos.length === 0) return setEditError('Selecciona al menos un grupo.');
+
     setSaving(true);
     const result = await updateUser(selected.id, {
       nombre: editForm.nombre.trim(),
       email:  editForm.email.trim(),
       rol:    editForm.rol,
-      grupo:  editForm.grupo,
+      grupo:  joinGrupos(editForm.grupos),
     });
     setSaving(false);
 
@@ -246,7 +260,9 @@ export default function GestionUsuarios({ isMobile, user }) {
               </div>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
                 <span className="badge" style={{ background: '#eff6ff', color: '#1d4ed8' }}>{u.rol}</span>
-                <span className="badge" style={{ background: '#f1f5f9', color: '#475569' }}>Grupo {u.grupo}</span>
+                {parseGrupos(u.grupo).map(g => (
+                  <span key={g} className="badge" style={{ background: '#f1f5f9', color: '#475569' }}>Grupo {g}</span>
+                ))}
               </div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {canEdit  && canOperateOn(u) && <button className="btn btn-secondary btn-sm" onClick={() => openEditar(u)}>Editar</button>}
@@ -276,7 +292,13 @@ export default function GestionUsuarios({ isMobile, user }) {
                   </td>
                   <td style={{ padding: '11px 12px', fontSize: '13px', color: '#64748b' }}>{u.email}</td>
                   <td style={{ padding: '11px 12px' }}><span className="badge" style={{ background: '#eff6ff', color: '#1d4ed8' }}>{u.rol}</span></td>
-                  <td style={{ padding: '11px 12px', fontSize: '14px', color: '#64748b' }}>{u.grupo}</td>
+                  <td style={{ padding: '11px 12px' }}>
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {parseGrupos(u.grupo).map(g => (
+                        <span key={g} className="badge" style={{ background: '#f1f5f9', color: '#475569' }}>{g}</span>
+                      ))}
+                    </div>
+                  </td>
                   <td style={{ padding: '11px 12px' }}><Badge activo={u.activo} /></td>
                   <td style={{ padding: '11px 12px' }}>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -328,18 +350,24 @@ export default function GestionUsuarios({ isMobile, user }) {
                   <input type="checkbox" checked={form.enviarCorreo} onChange={e => setForm(f => ({ ...f, enviarCorreo: e.target.checked }))} style={{ width: '16px', height: '16px', accentColor: '#2563eb', cursor: 'pointer' }} />
                   <span style={{ fontSize: '13px', color: '#374151' }}>Enviar correo de bienvenida con credenciales</span>
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div className="form-group">
-                    <label style={inputStyle}>Rol</label>
-                    <select className="form-select" value={form.rol} onChange={e => setForm(f => ({ ...f, rol: e.target.value }))}>
-                      {availableRoles.map(r => <option key={r} value={r}>{r}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label style={inputStyle}>Grupo</label>
-                    <select className="form-select" value={form.grupo} onChange={e => setForm(f => ({ ...f, grupo: e.target.value }))}>
-                      {GRUPOS.map(g => <option key={g} value={g}>Grupo {g}</option>)}
-                    </select>
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={inputStyle}>Rol</label>
+                  <select className="form-select" value={form.rol} onChange={e => setForm(f => ({ ...f, rol: e.target.value }))}>
+                    {availableRoles.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={{ ...inputStyle, marginBottom: '8px' }}>Grupos</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {GRUPOS.map(g => {
+                      const checked = form.grupos.includes(g);
+                      return (
+                        <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', border: `1px solid ${checked ? '#2563eb' : '#d1d5db'}`, background: checked ? '#eff6ff' : '#f9fafb', fontSize: '13px', fontWeight: 600, color: checked ? '#1d4ed8' : '#374151', userSelect: 'none' }}>
+                          <input type="checkbox" checked={checked} onChange={() => setForm(f => ({ ...f, grupos: checked ? f.grupos.filter(x => x !== g) : [...f.grupos, g] }))} style={{ display: 'none' }} />
+                          {g}
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
                 {errBox(formError)}
@@ -374,18 +402,24 @@ export default function GestionUsuarios({ isMobile, user }) {
                   <label style={inputStyle}>Correo electrónico</label>
                   <input className="form-input" type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div className="form-group">
-                    <label style={inputStyle}>Rol</label>
-                    <select className="form-select" value={editForm.rol} onChange={e => setEditForm(f => ({ ...f, rol: e.target.value }))}>
-                      {availableRoles.map(r => <option key={r} value={r}>{r}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label style={inputStyle}>Grupo</label>
-                    <select className="form-select" value={editForm.grupo} onChange={e => setEditForm(f => ({ ...f, grupo: e.target.value }))}>
-                      {GRUPOS.map(g => <option key={g} value={g}>Grupo {g}</option>)}
-                    </select>
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={inputStyle}>Rol</label>
+                  <select className="form-select" value={editForm.rol} onChange={e => setEditForm(f => ({ ...f, rol: e.target.value }))}>
+                    {availableRoles.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+                <div className="form-group" style={{ marginBottom: '14px' }}>
+                  <label style={{ ...inputStyle, marginBottom: '8px' }}>Grupos</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {GRUPOS.map(g => {
+                      const checked = editForm.grupos.includes(g);
+                      return (
+                        <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', border: `1px solid ${checked ? '#2563eb' : '#d1d5db'}`, background: checked ? '#eff6ff' : '#f9fafb', fontSize: '13px', fontWeight: 600, color: checked ? '#1d4ed8' : '#374151', userSelect: 'none' }}>
+                          <input type="checkbox" checked={checked} onChange={() => setEditForm(f => ({ ...f, grupos: checked ? f.grupos.filter(x => x !== g) : [...f.grupos, g] }))} style={{ display: 'none' }} />
+                          {g}
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
                 {errBox(editError)}

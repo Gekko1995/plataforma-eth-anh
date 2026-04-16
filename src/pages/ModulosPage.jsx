@@ -43,7 +43,12 @@ export default function ModulosPage() {
     return coincideGrupo && coincideBusqueda;
   });
 
-  const gruposConModulos = GROUPS
+  // Grupos que el usuario tiene acceso (para el dropdown)
+  const gruposAccesibles = GROUPS.filter(g =>
+    modulosVisibles.some(m => m.grupoId === g.id)
+  );
+
+  const gruposConModulos = gruposAccesibles
     .map(g => ({
       ...g,
       modulos: modulosFiltrados.filter(m => m.grupoId === g.id),
@@ -72,7 +77,7 @@ export default function ModulosPage() {
           onChange={e => setFiltroGrupo(e.target.value)}
         >
           <option value="">Todos los grupos</option>
-          {GROUPS.map(g => (
+          {gruposAccesibles.map(g => (
             <option key={g.id} value={g.id}>{g.id} — {g.name}</option>
           ))}
         </select>

@@ -18,12 +18,15 @@ module.exports = async (req, res) => {
 
   const n = typeof nombre === 'string' ? nombre.trim() : '';
   const e = typeof email  === 'string' ? email.trim()  : '';
-  const g = typeof grupo  === 'string' ? grupo.trim().toUpperCase() : '';
+  // grupo puede ser "A" o "A,B,C" — validar cada parte
+  const g = typeof grupo === 'string' ? grupo.trim().toUpperCase() : '';
+  const gruposParts = g ? g.split(',').map(x => x.trim()).filter(Boolean) : [];
 
   if (!n) return res.status(400).json({ success: false, error: 'El nombre es requerido.' });
   if (!e) return res.status(400).json({ success: false, error: 'El email es requerido.' });
   if (!password || password.length < 8) return res.status(400).json({ success: false, error: 'La contraseña debe tener mínimo 8 caracteres.' });
-  if (g && !VALID_GRUPOS.has(g)) return res.status(400).json({ success: false, error: 'Grupo inválido.' });
+  if (gruposParts.length === 0) return res.status(400).json({ success: false, error: 'Debe seleccionar al menos un grupo.' });
+  if (!gruposParts.every(x => VALID_GRUPOS.has(x))) return res.status(400).json({ success: false, error: 'Grupo inválido.' });
 
   // admin no puede crear super_root
   const validRoles = auth.rol === 'super_root' ? VALID_ROLES_SUPERROOT : VALID_ROLES_ADMIN;
@@ -43,7 +46,7 @@ module.exports = async (req, res) => {
     nombre:                n,
     email:                 e,
     rol,
-    grupo:                 g,
+    grupo:                 gruposParts.join(','),
     activo:                true,
     debe_cambiar_password: true,
   }, { onConflict: 'id' });

@@ -57,9 +57,10 @@ module.exports = async (req, res) => {
   }
 
   if (grupo !== undefined) {
-    const g = grupo.trim().toUpperCase();
-    if (g && !VALID_GRUPOS.has(g)) return res.status(400).json({ success: false, error: 'Grupo inválido.' });
-    patch.grupo = g;
+    const gruposParts = grupo.trim().toUpperCase().split(',').map(x => x.trim()).filter(Boolean);
+    if (gruposParts.length === 0) return res.status(400).json({ success: false, error: 'Debe seleccionar al menos un grupo.' });
+    if (!gruposParts.every(x => VALID_GRUPOS.has(x))) return res.status(400).json({ success: false, error: 'Grupo inválido.' });
+    patch.grupo = gruposParts.join(',');
   }
 
   if (Object.keys(patch).length === 0) {
