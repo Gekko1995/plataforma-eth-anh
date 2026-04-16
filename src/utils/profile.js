@@ -28,19 +28,24 @@ export async function updateOwnProfile({ nombre, email }) {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) return { ok: false, error: 'Sesión expirada. Recarga la página e intenta de nuevo.' };
 
-    // Actualizar nombre en tabla profiles
-    if (nombre !== undefined) {
+    // Campos a actualizar en la tabla profiles
+    const profilePatch = {};
+    if (nombre !== undefined) profilePatch.nombre = nombre;
+    if (email  !== undefined) profilePatch.email  = email;
+
+    if (Object.keys(profilePatch).length > 0) {
       const { error } = await supabase
         .from('profiles')
-        .update({ nombre })
+        .update(profilePatch)
         .eq('id', user.id);
       if (error) return { ok: false, error: error.message };
     }
 
-    // Actualizar correo vía Supabase Auth (envía email de confirmación)
+    // Actualizar correo en Supabase Auth (requiere confirmación por email)
     if (email !== undefined) {
       const { error } = await supabase.auth.updateUser({ email });
-      if (error) return { ok: false, error: error.message };
+      // No bloqueamos si falla Auth — el profiles ya quedó actualizado
+      if (error) console.warn('Auth email update pending:', error.message);
     }
 
     return { ok: true };

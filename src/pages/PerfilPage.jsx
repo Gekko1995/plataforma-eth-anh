@@ -177,7 +177,7 @@ function EmailForm({ user, onUpdated }) {
         </p>
       </div>
       {error && <ErrorBanner message={error} />}
-      {ok && <SuccessBanner message="Correo actualizado. Revisa tu bandeja para confirmar el cambio." />}
+      {ok && <SuccessBanner message="Correo actualizado. Si recibes un enlace de confirmación en la nueva dirección, ábrelo para activar el cambio en el acceso." />}
       <div style={{ marginTop: '16px' }}>
         <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
           {loading ? 'Guardando…' : 'Actualizar correo'}
