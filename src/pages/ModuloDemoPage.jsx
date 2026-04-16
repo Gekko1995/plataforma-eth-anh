@@ -401,7 +401,7 @@ const MODULE_DESC = {
   3: [
     'Sistema de visualización geoespacial interactivo que superpone capas operativas sobre cartografía oficial del IGAC, DANE y Corporaciones Autónomas Regionales. Genera mapas de calor de concentración de inversión, zonas de riesgo social y cobertura de beneficiarios por municipio.',
     'Permite filtrar por grupo temático, rango de fechas y tipo de intervención. Cruza información de campo con datos de infraestructura vial, fuentes hídricas y límites de resguardos indígenas para apoyar la planificación estratégica y el despliegue territorial del equipo.',
-    'Los mapas se exportan en formatos estándar compatibles con ArcGIS y Google Earth para presentaciones ante autoridades locales y nacionales.',
+    'Los mapas se exportan en formatos estándar (GeoJSON, KML, PDF) para presentaciones ante autoridades locales y nacionales.',
   ],
   4: [
     'Inteligencia de mercados para evaluar el potencial exportador de los clústeres productivos regionales. Analiza costos operativos, matrices de competitividad y tendencias de demanda internacional para productos clave de la región hidrocarburífera.',
