@@ -728,6 +728,32 @@ export default function ModuloDemoPage() {
           Los datos mostrados son completamente ficticios y tienen fines exclusivamente ilustrativos.
         </div>
 
+        {/* Descripción del módulo */}
+        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <p style={{ fontSize: '10px', fontWeight: 700, color: color, textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 14px' }}>
+            Acerca de este módulo
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: modulo.stack?.length > 0 ? '16px' : 0 }}>
+            {(MODULE_DESC[numId] || [modulo.descripcion]).map((parrafo, i) => (
+              <p key={i} style={{ fontSize: '13px', lineHeight: '1.7', color: BASE.text, margin: 0 }}>
+                {parrafo}
+              </p>
+            ))}
+          </div>
+          {modulo.stack?.length > 0 && (
+            <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '14px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', flexShrink: 0 }}>
+                Tecnologías
+              </span>
+              {modulo.stack.map(s => (
+                <span key={s} style={{ fontSize: '11px', fontWeight: 500, color: color, background: color + '12', border: `1px solid ${color}25`, borderRadius: '20px', padding: '3px 10px' }}>
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* KPI grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '22px' }}>
           {demo.kpis.map((kpi, i) => (
@@ -735,49 +761,15 @@ export default function ModuloDemoPage() {
           ))}
         </div>
 
-        {/* ── Chart + Descripción ── */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '22px', alignItems: 'flex-start' }}>
-
-          {/* Chart */}
-          <div style={{ flex: 1, minWidth: 0, background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
-              <p style={{ fontSize: '11px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
-                Tendencia — Enero a Junio 2026
-              </p>
-            </div>
-            <DemoChart grupo={modulo.grupo} moduleId={numId} color={color} />
+        {/* Chart */}
+        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+            <p style={{ fontSize: '11px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+              Tendencia — Enero a Junio 2026
+            </p>
           </div>
-
-          {/* Descripción */}
-          <div style={{ width: '300px', flexShrink: 0, background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: color, textTransform: 'uppercase', letterSpacing: '0.09em' }}>
-                Descripción del módulo
-              </span>
-            </div>
-            {(MODULE_DESC[numId] || [modulo.descripcion]).map((parrafo, i) => (
-              <p key={i} style={{ fontSize: '12.5px', lineHeight: '1.65', color: BASE.text, margin: 0 }}>
-                {parrafo}
-              </p>
-            ))}
-            {/* Stack tecnológico */}
-            {modulo.stack?.length > 0 && (
-              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '12px' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px' }}>
-                  Tecnologías
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                  {modulo.stack.map(s => (
-                    <span key={s} style={{ fontSize: '11px', fontWeight: 500, color: color, background: color + '12', border: `1px solid ${color}25`, borderRadius: '20px', padding: '3px 10px' }}>
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
+          <DemoChart grupo={modulo.grupo} moduleId={numId} color={color} />
         </div>
 
         {/* Tabla */}
