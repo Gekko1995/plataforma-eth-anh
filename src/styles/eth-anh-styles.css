@@ -13,28 +13,36 @@
    ============================================================ */
 :root {
 
-  /* — Sidebar (medio) — */
-  --sidebar-bg:          #1e2535;
-  --sidebar-surface:     #263045;
-  --sidebar-border:      rgba(255, 255, 255, 0.09);
-  --sidebar-text:        #94a3b8;
-  --sidebar-text-active: #e2e8f0;
-  --sidebar-hover:       rgba(255, 255, 255, 0.07);
-  --sidebar-active-bg:   rgba(79, 142, 247, 0.15);
+  /* — Paleta ANH institucional — */
+  --anh-primary:   #074A6A;   /* Azul Petróleo Profundo  */
+  --anh-secondary: #0CAABC;   /* Verde Mar Suave          */
+  --anh-accent:    #C97435;   /* Naranja Terracota        */
+  --anh-sand:      #EBE6DF;   /* Beige Warm Sand          */
+  --anh-mist:      #F3F6F8;   /* Gris Bruma               */
+  --anh-text:      #1B2430;   /* Charcoal Navy            */
+
+  /* — Sidebar (oscuro ANH) — */
+  --sidebar-bg:          #074A6A;
+  --sidebar-surface:     #0A5C80;
+  --sidebar-border:      rgba(255, 255, 255, 0.10);
+  --sidebar-text:        #9ECAD8;
+  --sidebar-text-active: #F0F8FF;
+  --sidebar-hover:       rgba(255, 255, 255, 0.08);
+  --sidebar-active-bg:   rgba(12, 170, 188, 0.20);
   --sidebar-width:       240px;
   --sidebar-width-col:   72px;
 
-  /* — Contenido (claro) — */
-  --content-bg:          #f4f6fb;
+  /* — Contenido (claro ANH) — */
+  --content-bg:          #F3F6F8;
   --content-surface:     #ffffff;
-  --content-border:      #e2e8f0;
-  --content-text:        #1e293b;
-  --content-text-muted:  #64748b;
+  --content-border:      #DDE3E8;
+  --content-text:        #1B2430;
+  --content-text-muted:  #5A6A7A;
   --content-text-hint:   #94a3b8;
 
   /* — Header — */
-  --header-bg:           #ffffff;
-  --header-border:       #e2e8f0;
+  --header-bg:           #074A6A;
+  --header-border:       rgba(255, 255, 255, 0.12);
   --header-height:       60px;
 
   /* — Colores de acento (9 grupos) — */
@@ -146,14 +154,14 @@ html, body, #root {
 .sidebar-logo-mark {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #f5c842, #fb923c);
+  background: linear-gradient(135deg, var(--anh-accent), #E8892A);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: var(--fw-semibold);
   font-size: 12px;
-  color: #0f1117;
+  color: #fff;
   flex-shrink: 0;
 }
 
@@ -189,7 +197,7 @@ html, body, #root {
 .sidebar-section-label {
   font-size: 10px;
   font-weight: var(--fw-medium);
-  color: #334155;
+  color: rgba(255, 255, 255, 0.35);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 12px 8px 4px;
@@ -244,7 +252,7 @@ html, body, #root {
   flex: 1;
   font-weight: 600;
   font-size: 15px;
-  color: var(--content-text);
+  color: #F0F8FF;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -258,7 +266,7 @@ html, body, #root {
 
 .nav-item.active {
   background: var(--sidebar-active-bg);
-  color: var(--accent-a);
+  color: var(--anh-secondary);
   font-weight: var(--fw-medium);
 }
 
@@ -275,8 +283,8 @@ html, body, #root {
 
 .nav-item-badge {
   margin-left: auto;
-  background: rgba(79, 142, 247, 0.15);
-  color: var(--accent-a);
+  background: rgba(12, 170, 188, 0.18);
+  color: var(--anh-secondary);
   font-size: 10px;
   font-weight: var(--fw-medium);
   padding: 2px 7px;
@@ -312,13 +320,13 @@ html, body, #root {
 .header-title {
   font-size: var(--fs-md);
   font-weight: 700;
-  color: var(--content-text);
+  color: #F0F8FF;
   letter-spacing: -0.01em;
 }
 
 .header-breadcrumb {
   font-size: var(--fs-sm);
-  color: var(--content-text-muted);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .header-right {
@@ -331,21 +339,21 @@ html, body, #root {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, #1e40af, #1a2a4a);
+  background: linear-gradient(135deg, var(--anh-accent), #E8892A);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
-  color: #e0eaff;
+  color: #fff;
   cursor: pointer;
-  border: 2px solid rgba(79, 142, 247, 0.35);
-  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(201, 116, 53, 0.35);
   transition: box-shadow var(--ease), transform var(--ease);
 }
 
 .header-avatar:hover {
-  box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
+  box-shadow: 0 4px 14px rgba(201, 116, 53, 0.50);
   transform: scale(1.05);
 }
 
@@ -354,15 +362,15 @@ html, body, #root {
   font-weight: var(--fw-medium);
   padding: 3px 10px;
   border-radius: var(--radius-full);
-  background: #f0f7ff;
-  color: #185fa5;
-  border: 1px solid #bfdbfe;
+  background: rgba(12, 170, 188, 0.20);
+  color: #7DE8F2;
+  border: 1px solid rgba(12, 170, 188, 0.35);
 }
 
 .header-role-badge.admin {
-  background: #fef3c7;
-  color: #92400e;
-  border-color: #fde68a;
+  background: rgba(201, 116, 53, 0.22);
+  color: #F5B07A;
+  border-color: rgba(201, 116, 53, 0.40);
 }
 
 .main-content {
@@ -686,8 +694,8 @@ html, body, #root {
 }
 
 .btn:active { transform: scale(0.98); }
-.btn-primary   { background: #1e40af; color: #fff; border-color: #1e40af; }
-.btn-primary:hover { background: #1d4ed8; box-shadow: var(--shadow-sm); }
+.btn-primary   { background: var(--anh-accent); color: #fff; border-color: var(--anh-accent); }
+.btn-primary:hover { background: #B5652A; box-shadow: var(--shadow-sm); }
 .btn-secondary { background: var(--content-bg); color: var(--content-text); border-color: var(--content-border); }
 .btn-secondary:hover { background: #e2e8f0; }
 .btn-danger    { background: #fff1f2; color: #9f1239; border-color: #fecdd3; }
@@ -730,8 +738,8 @@ html, body, #root {
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: var(--accent-a);
-  box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+  border-color: var(--anh-secondary);
+  box-shadow: 0 0 0 3px rgba(12, 170, 188, 0.15);
 }
 
 .form-textarea { resize: vertical; min-height: 90px; }
