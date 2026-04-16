@@ -12,6 +12,33 @@ function formatFecha(iso) {
   });
 }
 
+function toCSV(rows) {
+  const headers = ['Fecha/Hora', 'Email', 'Nombre', 'Rol', 'Acción', 'Detalle'];
+  const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [
+    headers.map(escape).join(','),
+    ...rows.map(r => [
+      formatFecha(r.created_at),
+      r.user_email,
+      r.user_nombre,
+      r.user_rol,
+      r.accion,
+      r.detalle ?? '',
+    ].map(escape).join(',')),
+  ];
+  return lines.join('\r\n');
+}
+
+function downloadCSV(content, filename) {
+  const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: filename });
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 function AccionBadge({ accion }) {
   const styles = {
     LOGIN:  { bg: '#dcfce7', color: '#15803d' },
@@ -33,17 +60,20 @@ export default function HistorialPage() {
   const [loading, setLoading] = useState(true);
   const [filtroEmail, setFiltroEmail] = useState('');
   const [filtroAccion, setFiltroAccion] = useState('');
+  const [filtroDesde, setFiltroDesde] = useState('');
+  const [filtroHasta, setFiltroHasta] = useState('');
   const [page, setPage]       = useState(0);
   const [total, setTotal]     = useState(0);
   const [msg, setMsg]         = useState({ text: '', ok: true });
   const [clearing, setClearing] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   function showMsg(text, ok = true) {
     setMsg({ text, ok });
     setTimeout(() => setMsg({ text: '', ok: true }), 4000);
   }
 
-  const fetchLogs = useCallback(async (currentPage, email, accion) => {
+  const fetchLogs = useCallback(async (currentPage, email, accion, desde, hasta) => {
     if (!supabase) return;
     setLoading(true);
 
@@ -55,6 +85,8 @@ export default function HistorialPage() {
 
     if (email.trim()) query = query.ilike('user_email', `%${email.trim()}%`);
     if (accion)       query = query.eq('accion', accion);
+    if (desde)        query = query.gte('created_at', desde);
+    if (hasta)        query = query.lte('created_at', hasta + 'T23:59:59');
 
     const { data, error, count } = await query;
     if (!error) {
@@ -65,8 +97,8 @@ export default function HistorialPage() {
   }, []);
 
   useEffect(() => {
-    fetchLogs(page, filtroEmail, filtroAccion);
-  }, [fetchLogs, page, filtroEmail, filtroAccion]);
+    fetchLogs(page, filtroEmail, filtroAccion, filtroDesde, filtroHasta);
+  }, [fetchLogs, page, filtroEmail, filtroAccion, filtroDesde, filtroHasta]);
 
   function handleFiltroEmail(e) {
     setFiltroEmail(e.target.value);
@@ -76,6 +108,41 @@ export default function HistorialPage() {
   function handleFiltroAccion(e) {
     setFiltroAccion(e.target.value);
     setPage(0);
+  }
+
+  function handleFiltroDesde(e) {
+    setFiltroDesde(e.target.value);
+    setPage(0);
+  }
+
+  function handleFiltroHasta(e) {
+    setFiltroHasta(e.target.value);
+    setPage(0);
+  }
+
+  async function handleExport() {
+    if (!supabase) return;
+    setExporting(true);
+    try {
+      let query = supabase
+        .from('activity_log')
+        .select('id, user_email, user_nombre, user_rol, accion, detalle, created_at')
+        .order('created_at', { ascending: false });
+
+      if (filtroEmail.trim()) query = query.ilike('user_email', `%${filtroEmail.trim()}%`);
+      if (filtroAccion)       query = query.eq('accion', filtroAccion);
+      if (filtroDesde)        query = query.gte('created_at', filtroDesde);
+      if (filtroHasta)        query = query.lte('created_at', filtroHasta + 'T23:59:59');
+
+      const { data, error } = await query;
+      if (error) { showMsg('Error al exportar: ' + error.message, false); return; }
+
+      const fecha = new Date().toISOString().slice(0, 10);
+      downloadCSV(toCSV(data || []), `historial_${fecha}.csv`);
+      showMsg(`Exportados ${(data || []).length} registros.`);
+    } finally {
+      setExporting(false);
+    }
   }
 
   async function handleClearAll() {
@@ -89,7 +156,7 @@ export default function HistorialPage() {
     } else {
       showMsg('Historial eliminado.');
       setPage(0);
-      fetchLogs(0, filtroEmail, filtroAccion);
+      fetchLogs(0, filtroEmail, filtroAccion, filtroDesde, filtroHasta);
     }
   }
 
@@ -131,12 +198,40 @@ export default function HistorialPage() {
           <option value="LOGIN">LOGIN</option>
           <option value="LOGOUT">LOGOUT</option>
         </select>
-        {(filtroEmail || filtroAccion) && (
-          <button className="btn btn-ghost btn-sm" onClick={() => { setFiltroEmail(''); setFiltroAccion(''); setPage(0); }}>
+        <input
+          type="date"
+          className="form-input"
+          style={{ maxWidth: '160px' }}
+          title="Desde"
+          value={filtroDesde}
+          onChange={handleFiltroDesde}
+        />
+        <input
+          type="date"
+          className="form-input"
+          style={{ maxWidth: '160px' }}
+          title="Hasta"
+          value={filtroHasta}
+          onChange={handleFiltroHasta}
+        />
+        {(filtroEmail || filtroAccion || filtroDesde || filtroHasta) && (
+          <button className="btn btn-ghost btn-sm" onClick={() => {
+            setFiltroEmail(''); setFiltroAccion('');
+            setFiltroDesde(''); setFiltroHasta('');
+            setPage(0);
+          }}>
             Limpiar filtros
           </button>
         )}
-        <div style={{ marginLeft: 'auto' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={handleExport}
+            disabled={exporting || loading}
+            title="Exportar registros filtrados a CSV"
+          >
+            {exporting ? 'Exportando…' : '⬇ Exportar CSV'}
+          </button>
           <button className="btn btn-danger btn-sm" onClick={handleClearAll} disabled={clearing}>
             {clearing ? 'Limpiando…' : 'Limpiar historial'}
           </button>
