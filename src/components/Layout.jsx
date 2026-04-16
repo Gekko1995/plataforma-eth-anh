@@ -88,15 +88,24 @@ function IconHistorial() {
   );
 }
 
+function IconPerfil() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+    </svg>
+  );
+}
+
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', Icon: IconDashboard },
   { to: '/modulos', label: 'Módulos', Icon: IconModulos },
   { to: '/usuarios', label: 'Usuarios', Icon: IconUsuarios, adminOnly: true },
   { to: '/permisos', label: 'Permisos', Icon: IconPermisos, adminOnly: true },
   { to: '/historial', label: 'Historial', Icon: IconHistorial, adminOnly: true },
+  { to: '/perfil', label: 'Mi perfil', Icon: IconPerfil },
 ];
 
-export default function Layout({ user, onLogout }) {
+export default function Layout({ user, onLogout, onUserUpdate }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -166,14 +175,19 @@ export default function Layout({ user, onLogout }) {
           {user?.rol || 'usuario'}
         </span>
 
-        <div className="header-avatar" title={user?.nombre}>
+        <div
+          className="header-avatar"
+          title={`${user?.nombre} — Mi perfil`}
+          onClick={() => navigate('/perfil')}
+          style={{ cursor: 'pointer' }}
+        >
           {initials}
         </div>
       </header>
 
       {/* Contenido principal */}
       <main className="main-content">
-        <Outlet context={{ user }} />
+        <Outlet context={{ user, onUserUpdate }} />
       </main>
     </div>
   );

@@ -18,6 +18,36 @@ export async function getProfileFlags(userId) {
 }
 
 /**
+ * El usuario actualiza su propio nombre y/o correo.
+ */
+export async function updateOwnProfile({ nombre, email }) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) return { ok: false, error: 'Sesión inválida. Inicia sesión nuevamente.' };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const res = await fetch('/api/users/update-profile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ nombre, email }),
+      signal: controller.signal,
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data) return { ok: false, error: data?.error || 'Error al actualizar el perfil.' };
+    return data.success ? { ok: true } : { ok: false, error: data.error || 'Error desconocido.' };
+  } catch (err) {
+    if (err.name === 'AbortError') return { ok: false, error: 'Tiempo de espera agotado.' };
+    return { ok: false, error: 'Error de conexión.' };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
  * El usuario cambia su propia contraseña (primer login o voluntario).
  */
 export async function changeOwnPassword(newPassword) {
