@@ -8,20 +8,20 @@ import BloqueContenido from '../components/canvas/BloqueContenido';
 const moduloMap = Object.fromEntries(modulos.map(m => [String(m.id), m]));
 const grupoMap  = Object.fromEntries(GROUPS.map(g => [g.id, g]));
 
-// Paleta oscura por grupo (misma de ModuloDemoPage)
-const GROUP_DARK = {
-  A: { bg: '#060f0a', card: '#0b1a13', border: '#163324' },
-  B: { bg: '#120800', card: '#1c1103', border: '#301d07' },
-  C: { bg: '#080519', card: '#100a27', border: '#1f1245' },
-  D: { bg: '#02101c', card: '#051828', border: '#0c3048' },
-  E: { bg: '#140404', card: '#1e0606', border: '#360c0c' },
-  F: { bg: '#030d14', card: '#06151f', border: '#0e2c3f' },
-  G: { bg: '#031008', card: '#071a10', border: '#103020' },
-  H: { bg: '#080418', card: '#0e0824', border: '#1c1042' },
-  I: { bg: '#07090e', card: '#0d1018', border: '#1c2335' },
+// Tinte claro por grupo (misma lógica que ModuloDemoPage)
+const GROUP_LIGHT = {
+  A: { bg: '#f0fdf6', card: '#ffffff', border: '#bbf7d0' },
+  B: { bg: '#fffbeb', card: '#ffffff', border: '#fde68a' },
+  C: { bg: '#faf5ff', card: '#ffffff', border: '#e9d5ff' },
+  D: { bg: '#eff6ff', card: '#ffffff', border: '#bfdbfe' },
+  E: { bg: '#fff5f5', card: '#ffffff', border: '#fecaca' },
+  F: { bg: '#ecfeff', card: '#ffffff', border: '#a5f3fc' },
+  G: { bg: '#f0fdf4', card: '#ffffff', border: '#bbf7d0' },
+  H: { bg: '#f5f3ff', card: '#ffffff', border: '#ddd6fe' },
+  I: { bg: '#f8fafc', card: '#ffffff', border: '#e2e8f0' },
 };
 
-const BASE = { bg: '#0A0E2A', card: '#111836', border: '#1E2A5A', text: '#E2E8F0', muted: '#8892B0' };
+const BASE = { bg: '#f4f6fb', card: '#ffffff', border: '#e2e8f0', text: '#1e293b', muted: '#64748b' };
 
 const CANVAS_W = 1400;
 const CANVAS_H = 900;
@@ -34,7 +34,7 @@ export default function PresentacionVistaPage() {
   const modulo = moduloMap[id];
   const grupo  = grupoMap[modulo?.grupo];
   const color  = grupo?.color || BASE.accent;
-  const gd     = GROUP_DARK[modulo?.grupo] || {};
+  const gd     = GROUP_LIGHT[modulo?.grupo] || {};
   const T      = { ...BASE, ...gd };
 
   const [bloques,  setBloques]  = useState([]);

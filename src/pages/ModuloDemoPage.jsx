@@ -16,33 +16,29 @@ import { modulos } from '../data/modulos';
 import { GROUPS } from '../data/constants';
 import { demos } from '../data/demos';
 
-// ─── Paleta base (invariante) ─────────────────────────────────────────
+// ─── Paleta base clara ────────────────────────────────────────────────
 const BASE = {
-  text:   '#E2E8F0',
-  muted:  '#8892B0',
-  accent: '#4B8EF1',
-  green:  '#00D48B',
-  orange: '#F5A623',
-  red:    '#FF4D6A',
-  // defaults que se sobreescriben por grupo:
-  bg:     '#0A0E2A',
-  card:   '#111836',
-  card2:  '#141c3e',
-  border: '#1E2A5A',
+  bg:     '#f4f6fb',
+  card:   '#ffffff',
+  card2:  '#f8fafc',
+  border: '#e2e8f0',
+  text:   '#1e293b',
+  muted:  '#64748b',
+  hint:   '#94a3b8',
+  orange: '#f59e0b',
 };
 
-// ─── Paleta oscura por grupo (bg · card · card2 · border) ─────────────
-// Cada valor mezcla ~12-20% del color identidad del grupo sobre una base casi negra.
-const GROUP_DARK = {
-  A: { bg: '#060f0a', card: '#0b1a13', card2: '#0e2018', border: '#163324' }, // Verde bosque
-  B: { bg: '#120800', card: '#1c1103', card2: '#211505', border: '#301d07' }, // Ámbar café
-  C: { bg: '#080519', card: '#100a27', card2: '#140e30', border: '#1f1245' }, // Púrpura profundo
-  D: { bg: '#02101c', card: '#051828', card2: '#082030', border: '#0c3048' }, // Azul océano
-  E: { bg: '#140404', card: '#1e0606', card2: '#240808', border: '#360c0c' }, // Carmesí oscuro
-  F: { bg: '#030d14', card: '#06151f', card2: '#091c28', border: '#0e2c3f' }, // Cian profundo
-  G: { bg: '#031008', card: '#071a10', card2: '#0a2015', border: '#103020' }, // Esmeralda oscuro
-  H: { bg: '#080418', card: '#0e0824', card2: '#12092c', border: '#1c1042' }, // Violeta profundo
-  I: { bg: '#07090e', card: '#0d1018', card2: '#12161f', border: '#1c2335' }, // Gris pizarra
+// ─── Tinte claro por grupo (bg · card · border) ───────────────────────
+const GROUP_LIGHT = {
+  A: { bg: '#f0fdf6', card: '#ffffff', card2: '#f5fffe', border: '#bbf7d0' },
+  B: { bg: '#fffbeb', card: '#ffffff', card2: '#fffef5', border: '#fde68a' },
+  C: { bg: '#faf5ff', card: '#ffffff', card2: '#fdfaff', border: '#e9d5ff' },
+  D: { bg: '#eff6ff', card: '#ffffff', card2: '#f5f9ff', border: '#bfdbfe' },
+  E: { bg: '#fff5f5', card: '#ffffff', card2: '#fffafa', border: '#fecaca' },
+  F: { bg: '#ecfeff', card: '#ffffff', card2: '#f5feff', border: '#a5f3fc' },
+  G: { bg: '#f0fdf4', card: '#ffffff', card2: '#f7fffe', border: '#bbf7d0' },
+  H: { bg: '#f5f3ff', card: '#ffffff', card2: '#faf8ff', border: '#ddd6fe' },
+  I: { bg: '#f8fafc', card: '#ffffff', card2: '#fbfcfe', border: '#e2e8f0' },
 };
 
 // ─── Seeded PRNG ──────────────────────────────────────────────────────
@@ -157,40 +153,37 @@ function genChartData(moduleId, grupo) {
   });
 }
 
-// ─── Tooltip oscuro (recibe tema) ─────────────────────────────────────
-function makeDarkTooltip(theme) {
-  return function DarkTooltip({ active, payload, label }) {
-    if (!active || !payload?.length) return null;
-    return (
-      <div style={{
-        background: theme.card2, border: `1px solid ${theme.border}`,
-        borderRadius: '8px', padding: '10px 14px', fontSize: '12px',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
-      }}>
-        {label && <p style={{ color: theme.muted, marginBottom: '6px', fontSize: '11px' }}>{label}</p>}
-        {payload.map((p, i) => (
-          <p key={i} style={{ color: p.color, fontWeight: 600, marginBottom: i < payload.length - 1 ? '3px' : 0 }}>
-            {p.name}: <span style={{ color: theme.text }}>{p.value}</span>
-          </p>
-        ))}
-      </div>
-    );
-  };
+// ─── Tooltip claro ────────────────────────────────────────────────────
+function LightTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: '#fff', border: '1px solid #e2e8f0',
+      borderRadius: '8px', padding: '10px 14px', fontSize: '12px',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+    }}>
+      {label && <p style={{ color: '#94a3b8', marginBottom: '6px', fontSize: '11px' }}>{label}</p>}
+      {payload.map((p, i) => (
+        <p key={i} style={{ color: p.color, fontWeight: 600, marginBottom: i < payload.length - 1 ? '3px' : 0 }}>
+          {p.name}: <span style={{ color: '#1e293b' }}>{p.value}</span>
+        </p>
+      ))}
+    </div>
+  );
 }
 
 // ─── Gráfica por grupo ────────────────────────────────────────────────
-function DemoChart({ grupo, moduleId, color, theme }) {
+function DemoChart({ grupo, moduleId, color }) {
   const data = useMemo(() => genChartData(moduleId, grupo), [moduleId, grupo]);
-  const DarkTooltip = useMemo(() => makeDarkTooltip(theme), [theme]);
 
   const axProps = {
-    tick: { fill: theme.muted, fontSize: 11 },
-    axisLine: { stroke: theme.border },
+    tick: { fill: '#94a3b8', fontSize: 11 },
+    axisLine: { stroke: '#e2e8f0' },
     tickLine: false,
   };
-  const gridProps = { strokeDasharray: '3 3', stroke: theme.border, vertical: false };
-  const tip = <Tooltip content={<DarkTooltip />} cursor={{ stroke: theme.border, strokeWidth: 1 }} />;
-  const leg = <Legend wrapperStyle={{ color: theme.muted, fontSize: 12, paddingTop: '8px' }} />;
+  const gridProps = { strokeDasharray: '3 3', stroke: '#f1f5f9', vertical: false };
+  const tip = <Tooltip content={<LightTooltip />} cursor={{ stroke: '#e2e8f0', strokeWidth: 1 }} />;
+  const leg = <Legend wrapperStyle={{ color: '#64748b', fontSize: 12, paddingTop: '8px' }} />;
   const g1  = `g1_${moduleId}`;
   const g2  = `g2_${moduleId}`;
 
@@ -202,8 +195,8 @@ function DemoChart({ grupo, moduleId, color, theme }) {
           <XAxis dataKey="mes" {...axProps} />
           <YAxis {...axProps} />
           {tip}{leg}
-          <Bar dataKey="Presupuesto" fill={BASE.accent + 'aa'} radius={[4,4,0,0]} />
-          <Bar dataKey="Ejecutado"   fill={BASE.green}         radius={[4,4,0,0]} />
+          <Bar dataKey="Presupuesto" fill={color + '55'} radius={[4,4,0,0]} />
+          <Bar dataKey="Ejecutado"   fill={color}        radius={[4,4,0,0]} />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -212,7 +205,7 @@ function DemoChart({ grupo, moduleId, color, theme }) {
     return (
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={data} layout="vertical">
-          <CartesianGrid strokeDasharray="3 3" stroke={theme.border} horizontal={false} vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} vertical={false} />
           <XAxis type="number" {...axProps} />
           <YAxis dataKey="cat" type="category" width={105} {...axProps} />
           {tip}
@@ -227,20 +220,20 @@ function DemoChart({ grupo, moduleId, color, theme }) {
         <AreaChart data={data}>
           <defs>
             <linearGradient id={g1} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={color}      stopOpacity={0.45} />
-              <stop offset="95%" stopColor={color}      stopOpacity={0.02} />
+              <stop offset="5%"  stopColor={color}  stopOpacity={0.2} />
+              <stop offset="95%" stopColor={color}  stopOpacity={0.02} />
             </linearGradient>
             <linearGradient id={g2} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={BASE.green} stopOpacity={0.45} />
-              <stop offset="95%" stopColor={BASE.green} stopOpacity={0.02} />
+              <stop offset="5%"  stopColor="#10b981" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0.02} />
             </linearGradient>
           </defs>
           <CartesianGrid {...gridProps} />
           <XAxis dataKey="mes" {...axProps} />
           <YAxis {...axProps} />
           {tip}{leg}
-          <Area type="monotone" dataKey="Inscritos"    stroke={color}      fill={`url(#${g1})`} strokeWidth={2} />
-          <Area type="monotone" dataKey="Certificados" stroke={BASE.green} fill={`url(#${g2})`} strokeWidth={2} />
+          <Area type="monotone" dataKey="Inscritos"    stroke={color}    fill={`url(#${g1})`} strokeWidth={2} />
+          <Area type="monotone" dataKey="Certificados" stroke="#10b981"  fill={`url(#${g2})`} strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -251,8 +244,8 @@ function DemoChart({ grupo, moduleId, color, theme }) {
         <AreaChart data={data}>
           <defs>
             <linearGradient id={g1} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={BASE.green} stopOpacity={0.5} />
-              <stop offset="95%" stopColor={BASE.green} stopOpacity={0.03} />
+              <stop offset="5%"  stopColor={color} stopOpacity={0.2} />
+              <stop offset="95%" stopColor={color} stopOpacity={0.02} />
             </linearGradient>
           </defs>
           <CartesianGrid {...gridProps} />
@@ -262,9 +255,7 @@ function DemoChart({ grupo, moduleId, color, theme }) {
           <ReferenceLine y={99.5} stroke={BASE.orange} strokeDasharray="5 3"
             label={{ value: 'SLA 99.5%', fill: BASE.orange, fontSize: 10, position: 'insideTopRight' }}
           />
-          <Area type="monotone" dataKey="Disponibilidad" stroke={BASE.green} fill={`url(#${g1})`}
-            strokeWidth={2} dot={{ fill: BASE.green, r: 3, strokeWidth: 0 }}
-          />
+          <Area type="monotone" dataKey="Disponibilidad" stroke={color} fill={`url(#${g1})`} strokeWidth={2} dot={{ fill: color, r: 3, strokeWidth: 0 }} />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -277,20 +268,20 @@ function DemoChart({ grupo, moduleId, color, theme }) {
           <XAxis dataKey="mes" {...axProps} />
           <YAxis {...axProps} />
           {tip}{leg}
-          <Bar  dataKey="Ejecutado" fill={color + 'cc'} radius={[4,4,0,0]} />
+          <Bar  dataKey="Ejecutado" fill={color + 'aa'} radius={[4,4,0,0]} />
           <Line type="monotone" dataKey="Meta" stroke={BASE.orange} strokeWidth={2} dot={false} strokeDasharray="5 3" />
         </ComposedChart>
       </ResponsiveContainer>
     );
   }
-  // A, G → LineChart
+  // A, G — LineChart
   return (
     <ResponsiveContainer width="100%" height={240}>
       <LineChart data={data}>
         <defs>
-          <linearGradient id={g1} x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%"   stopColor={color} stopOpacity={0.5} />
-            <stop offset="100%" stopColor={color} stopOpacity={1} />
+          <linearGradient id={g1} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor={color} stopOpacity={0.15} />
+            <stop offset="100%" stopColor={color} stopOpacity={0.02} />
           </linearGradient>
         </defs>
         <CartesianGrid {...gridProps} />
@@ -300,9 +291,9 @@ function DemoChart({ grupo, moduleId, color, theme }) {
         <ReferenceLine y={75} stroke={BASE.orange} strokeDasharray="5 3"
           label={{ value: 'Meta 75%', fill: BASE.orange, fontSize: 10, position: 'insideTopRight' }}
         />
-        <Line type="monotone" dataKey="Avance (%)" stroke={`url(#${g1})`} strokeWidth={2.5}
+        <Line type="monotone" dataKey="Avance (%)" stroke={color} strokeWidth={2.5}
           dot={{ fill: color, r: 4, strokeWidth: 0 }}
-          activeDot={{ r: 6, fill: color, stroke: theme.bg, strokeWidth: 2 }}
+          activeDot={{ r: 6, fill: color, stroke: '#fff', strokeWidth: 2 }}
         />
       </LineChart>
     </ResponsiveContainer>
@@ -322,25 +313,25 @@ function KpiCard({ kpi, moduleId, idx, theme }) {
       onMouseLeave={() => setHov(false)}
       style={{
         background: theme.card,
-        border: `1px solid ${hov ? c + '55' : theme.border}`,
+        border: `1px solid ${hov ? c + '60' : theme.border}`,
         borderRadius: '12px',
         padding: '18px 20px 10px',
         borderTop: `3px solid ${c}`,
         transition: 'border-color .2s, box-shadow .2s, transform .2s',
-        transform: hov ? 'translateY(-3px) scale(1.01)' : 'none',
-        boxShadow: hov ? `0 12px 32px ${c}22, 0 0 0 1px ${c}18` : 'none',
+        transform: hov ? 'translateY(-2px)' : 'none',
+        boxShadow: hov ? `0 8px 24px ${c}18` : '0 1px 3px rgba(0,0,0,0.06)',
         display: 'flex', flexDirection: 'column', gap: '3px',
         cursor: 'default',
       }}
     >
-      <p style={{ fontSize: '10px', fontWeight: 700, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.09em', margin: 0 }}>
+      <p style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.09em', margin: 0 }}>
         {kpi.label}
       </p>
-      <p style={{ fontSize: '32px', fontWeight: 700, color: c, lineHeight: 1.1, letterSpacing: '-0.02em', margin: '4px 0 2px' }}>
+      <p style={{ fontSize: '30px', fontWeight: 700, color: c, lineHeight: 1.1, letterSpacing: '-0.02em', margin: '4px 0 2px' }}>
         {displayed}
       </p>
-      <p style={{ fontSize: '11px', color: theme.muted, margin: 0 }}>{kpi.sub}</p>
-      <div style={{ marginTop: '10px', height: '36px', opacity: 0.65 }}>
+      <p style={{ fontSize: '11px', color: BASE.hint, margin: 0 }}>{kpi.sub}</p>
+      <div style={{ marginTop: '10px', height: '36px', opacity: 0.5 }}>
         <ResponsiveContainer width="100%" height={36}>
           <LineChart data={spark}>
             <Line type="monotone" dataKey="v" stroke={c} strokeWidth={1.5} dot={false} isAnimationActive={false} />
@@ -363,19 +354,18 @@ export default function ModuloDemoPage() {
   const modulo = moduloMap[id];
   const demo   = demos[Number(id)];
   const grupo  = grupoMap[modulo?.grupo];
-  const color  = grupo?.color || BASE.accent;
+  const color  = grupo?.color || '#4f8ef7';
 
-  // Tema derivado del grupo
   const theme = useMemo(() => ({
     ...BASE,
-    ...(GROUP_DARK[modulo?.grupo] || {}),
+    ...(GROUP_LIGHT[modulo?.grupo] || {}),
   }), [modulo?.grupo]);
 
   if (!modulo || !demo) {
     return (
-      <div style={{ margin: '-24px', padding: '48px 24px', minHeight: '100vh', background: theme.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: theme.muted, fontSize: '14px' }}>No se encontró la demo para este módulo.</p>
-        <button onClick={() => navigate('/modulos')} style={{ marginTop: '16px', fontSize: '13px', fontWeight: 600, color: BASE.accent, background: 'transparent', border: `1px solid ${BASE.accent}`, borderRadius: '8px', padding: '8px 16px', cursor: 'pointer' }}>
+      <div style={{ padding: '48px 24px', textAlign: 'center', color: BASE.muted }}>
+        <p>No se encontró la demo para este módulo.</p>
+        <button className="btn btn-ghost" style={{ marginTop: '16px' }} onClick={() => navigate('/modulos')}>
           ← Volver a módulos
         </button>
       </div>
@@ -385,70 +375,43 @@ export default function ModuloDemoPage() {
   const numId = Number(id);
 
   return (
-    <div style={{ margin: '-24px', minHeight: '100vh', background: theme.bg, color: theme.text }}>
+    <div style={{ background: theme.bg, minHeight: '100%' }}>
 
-      {/* ── Top bar sticky ───────────────────────────────────────── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 20,
-        background: theme.bg + 'f0',
-        backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-        borderBottom: `1px solid ${theme.border}`,
-        padding: '10px 24px',
-        display: 'flex', alignItems: 'center', gap: '12px',
-      }}>
+      {/* ── Botón volver ── */}
+      <div style={{ marginBottom: '20px' }}>
         <button
+          className="btn btn-ghost btn-sm"
           onClick={() => navigate('/modulos')}
-          onMouseEnter={e => { e.currentTarget.style.color = theme.text; e.currentTarget.style.borderColor = color; }}
-          onMouseLeave={e => { e.currentTarget.style.color = theme.muted; e.currentTarget.style.borderColor = theme.border; }}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: '5px',
-            fontSize: '13px', fontWeight: 600, color: theme.muted,
-            background: 'transparent', border: `1px solid ${theme.border}`,
-            borderRadius: '8px', padding: '6px 12px', cursor: 'pointer',
-            transition: 'color .15s, border-color .15s', flexShrink: 0,
-          }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
-          ← Volver
+          ← Volver a módulos
         </button>
-        <span style={{ fontSize: '13px', color: theme.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          Módulo {modulo.id} · {modulo.nombre}
-        </span>
-        <span style={{
-          marginLeft: 'auto', fontSize: '10px', fontWeight: 700,
-          color: color, background: color + '18',
-          padding: '3px 10px', borderRadius: '20px',
-          border: `1px solid ${color}30`,
-          textTransform: 'uppercase', letterSpacing: '0.08em', flexShrink: 0,
-        }}>
-          Vista Demo
-        </span>
       </div>
 
-      {/* ── Contenido ────────────────────────────────────────────── */}
-      <div style={{ padding: '28px 24px', maxWidth: '980px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '900px' }}>
 
-        {/* Image header */}
+        {/* Header con imagen */}
         {modulo.imagen && (
-          <div style={{ borderRadius: '14px', overflow: 'hidden', marginBottom: '22px', position: 'relative', height: '180px' }}>
+          <div style={{ borderRadius: '14px', overflow: 'hidden', marginBottom: '22px', position: 'relative', height: '180px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
             <img src={modulo.imagen} alt={modulo.nombre}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'brightness(0.4) saturate(1.3)' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
             <div style={{
               position: 'absolute', inset: 0,
-              background: `linear-gradient(120deg, ${theme.bg}ee 0%, ${theme.bg}55 55%, ${theme.bg}22 100%)`,
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%)',
             }} />
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: color }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: color }} />
             <div style={{ position: 'absolute', inset: 0, padding: '24px 28px', display: 'flex', alignItems: 'flex-end' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                  <span style={{ background: color, color: '#fff', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <span style={{ background: color, color: '#fff', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px' }}>
                     {modulo.id}
                   </span>
-                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#fff', background: 'rgba(0,0,0,0.45)', padding: '3px 10px', borderRadius: '20px', backdropFilter: 'blur(6px)' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#fff', background: 'rgba(0,0,0,0.35)', padding: '3px 10px', borderRadius: '20px', backdropFilter: 'blur(4px)' }}>
                     Grupo {modulo.grupo} · {grupo?.name}
                   </span>
                 </div>
-                <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.25, textShadow: '0 2px 12px rgba(0,0,0,0.7)' }}>
+                <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#fff', margin: 0, textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
                   {modulo.nombre}
                 </h1>
               </div>
@@ -458,9 +421,9 @@ export default function ModuloDemoPage() {
 
         {/* Disclaimer */}
         <div style={{
-          background: color + '12', border: `1px solid ${color}25`,
+          background: '#fffbeb', border: '1px solid #fde68a',
           borderRadius: '8px', padding: '10px 16px',
-          fontSize: '12px', color: color + 'cc',
+          fontSize: '12px', color: '#92400e',
           display: 'flex', alignItems: 'center', gap: '8px',
           marginBottom: '24px',
         }}>
@@ -469,28 +432,28 @@ export default function ModuloDemoPage() {
         </div>
 
         {/* KPI grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(205px, 1fr))', gap: '14px', marginBottom: '22px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '22px' }}>
           {demo.kpis.map((kpi, i) => (
             <KpiCard key={i} kpi={kpi} moduleId={numId} idx={i} theme={theme} />
           ))}
         </div>
 
         {/* Chart */}
-        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '22px' }}>
-          <div style={{ marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}`, flexShrink: 0 }} />
-            <p style={{ fontSize: '11px', fontWeight: 700, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+            <p style={{ fontSize: '11px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
               Tendencia — Enero a Junio 2026
             </p>
           </div>
-          <DemoChart grupo={modulo.grupo} moduleId={numId} color={color} theme={theme} />
+          <DemoChart grupo={modulo.grupo} moduleId={numId} color={color} />
         </div>
 
         {/* Tabla */}
-        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', overflow: 'hidden' }}>
+        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <div style={{ padding: '13px 20px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}`, flexShrink: 0 }} />
-            <span style={{ fontSize: '11px', fontWeight: 700, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+            <span style={{ fontSize: '11px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Datos de muestra
             </span>
           </div>
@@ -501,10 +464,9 @@ export default function ModuloDemoPage() {
                   {demo.tabla.columnas.map((col, i) => (
                     <th key={i} style={{
                       padding: '10px 16px', textAlign: 'left',
-                      fontSize: '10px', fontWeight: 700, color: theme.muted,
+                      fontSize: '10px', fontWeight: 700, color: BASE.muted,
                       textTransform: 'uppercase', letterSpacing: '0.07em',
-                      whiteSpace: 'nowrap',
-                      background: theme.bg,
+                      whiteSpace: 'nowrap', background: theme.card2,
                       borderBottom: `1px solid ${theme.border}`,
                     }}>
                       {col}
@@ -514,9 +476,9 @@ export default function ModuloDemoPage() {
               </thead>
               <tbody>
                 {demo.tabla.filas.map((fila, ri) => (
-                  <tr key={ri} style={{ borderBottom: `1px solid ${theme.border}22`, background: ri % 2 === 0 ? 'transparent' : theme.card2 }}>
+                  <tr key={ri} style={{ borderBottom: `1px solid ${theme.border}`, background: ri % 2 === 0 ? 'transparent' : theme.card2 }}>
                     {fila.map((celda, ci) => (
-                      <td key={ci} style={{ padding: '10px 16px', color: theme.text, whiteSpace: 'nowrap' }}>
+                      <td key={ci} style={{ padding: '10px 16px', color: BASE.text, whiteSpace: 'nowrap' }}>
                         {celda}
                       </td>
                     ))}
@@ -527,7 +489,7 @@ export default function ModuloDemoPage() {
           </div>
         </div>
 
-        <div style={{ height: '48px' }} />
+        <div style={{ height: '40px' }} />
       </div>
     </div>
   );
