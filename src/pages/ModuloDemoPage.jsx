@@ -386,6 +386,205 @@ const MODULE_ACTIONS = {
   39: ['Ver backups',           'Monitor disponibilidad',  'Exportar'],
 };
 
+// ─── Descripciones extendidas por módulo ─────────────────────────────
+const MODULE_DESC = {
+  1: [
+    'Plataforma centralizada para la caracterización socioeconómica y ambiental de los territorios de intervención. Integra datos de encuestas de campo, fuentes oficiales del DANE e IGAC, y capas satelitales para construir un perfil territorial completo por municipio y región.',
+    'Facilita el mapeo estratégico de actores: comunidades, operadoras, autoridades étnicas y gremios. Identifica variables de conflictividad, superposición de intereses y zonas de alta sensibilidad social, generando insumos para la toma de decisiones de intervención.',
+    'Los resultados se visualizan en dashboards interactivos y se exportan como reportes de diagnóstico para el supervisor técnico y la ANH.',
+  ],
+  2: [
+    'Herramienta analítica para medir el avance y cierre de brechas en los KPIs estratégicos alineados a la cadena de valor del DNP. Opera bajo metodología MGA y genera semáforos de cumplimiento por componente, región y período de desembolso.',
+    'Permite comparar línea base vs. situación actual, detectar rezagos en indicadores críticos y generar alertas tempranas antes de que se comprometa la meta del desembolso. Trazabilidad completa desde el indicador hasta el registro de campo que lo soporta.',
+    'Produce los reportes de impacto requeridos por ANH y los órganos de control, con firmas digitales y control de versiones.',
+  ],
+  3: [
+    'Sistema de visualización geoespacial interactivo que superpone capas operativas sobre cartografía oficial del IGAC, DANE y Corporaciones Autónomas Regionales. Genera mapas de calor de concentración de inversión, zonas de riesgo social y cobertura de beneficiarios por municipio.',
+    'Permite filtrar por grupo temático, rango de fechas y tipo de intervención. Cruza información de campo con datos de infraestructura vial, fuentes hídricas y límites de resguardos indígenas para apoyar la planificación estratégica y el despliegue territorial del equipo.',
+    'Los mapas se exportan en formatos estándar compatibles con ArcGIS y Google Earth para presentaciones ante autoridades locales y nacionales.',
+  ],
+  4: [
+    'Inteligencia de mercados para evaluar el potencial exportador de los clústeres productivos regionales. Analiza costos operativos, matrices de competitividad y tendencias de demanda internacional para productos clave de la región hidrocarburífera.',
+    'Genera rankings de exportación por clúster, identifica aliados estratégicos en cadenas globales de valor y orienta la estructuración de planes de comercialización. Cruza datos de operadoras locales con inteligencia de mercados internacionales para detectar oportunidades de diversificación económica.',
+    'Sirve de insumo directo para la Aceleradora Exportadora y los planes de negocio de los beneficiarios del programa.',
+  ],
+  5: [
+    'Solución digital para la captura de datos en territorio mediante formularios PWA que funcionan sin conexión y se sincronizan automáticamente al recuperar señal. Gestiona fichas de producto, validaciones fitosanitarias y registros de beneficiarios directamente desde dispositivos móviles en campo.',
+    'Consolida encuestas de múltiples coordinadores regionales en una sola base de datos centralizada con validación automática, detección de duplicados y alertas de inconsistencias. Reduce los tiempos de digitación manual en oficina y elimina errores de transcripción.',
+    'Los datos capturados alimentan en tiempo real los módulos de Línea Diagnóstica, Padrón de Beneficiarios y Evaluación de Impacto.',
+  ],
+  6: [
+    'Repositorio digital para la gestión de planes de trabajo con Corporaciones Autónomas Regionales (CARs) y estudios técnicos de Exploración y Producción (E&P). Centraliza protocolos ambientales, Planes de Manejo Ambiental (PMA) y documentos de línea base exigidos por la normativa vigente.',
+    'Incluye control de versiones, alertas de vencimiento de compromisos y flujo estructurado de aprobación para cada documento técnico por región y operadora. Garantiza que ningún plazo ambiental quede sin atención y que toda la documentación esté disponible para auditorías externas.',
+    'Cumple con los estándares de archivo requeridos por la ANLA, el MADS y las CARs de las 8 regiones del convenio.',
+  ],
+  7: [
+    'Herramienta para estructurar y hacer seguimiento a iniciativas de inversión social orientadas a la diversificación económica en comunidades productoras de hidrocarburos. Registra evidencias de ejecución en tiempo real: beneficiarios, desembolsos, productos entregados y registros audiovisuales.',
+    'Genera reportes con métricas de impacto territorial para respaldar la gestión de relaciones comunitarias, la rendición de cuentas ante la ANH y el cumplimiento de los compromisos de Responsabilidad Social Empresarial de las operadoras vinculadas.',
+    'Integra con Gestión Financiera para cruzar ejecución física con ejecución presupuestal por iniciativa y por región.',
+  ],
+  8: [
+    'Sistema de alertas tempranas y monitoreo de acuerdos derivados de mesas de diálogo con comunidades, grupos étnicos y autoridades locales. Registra cada sesión: agenda, participantes, compromisos adquiridos, responsables y fechas de cumplimiento.',
+    'Genera alertas automáticas cuando un acuerdo está próximo a vencer sin evidencia de cumplimiento, y produce el historial completo de cada proceso de diálogo como respaldo ante el Ministerio del Interior o procesos judiciales. Diferencia por tipo de actor: comunidades campesinas, étnicas, municipios y operadoras.',
+    'Reduce el riesgo de escalamiento de conflictos al garantizar trazabilidad y seguimiento sistemático de cada compromiso social adquirido.',
+  ],
+  9: [
+    'Entorno estructurado para el diseño de proyectos bajo metodología MGA-DNP, con árboles de problemas, árboles de objetivos y matrices de marco lógico. Guía al equipo en cada fase: análisis de situación, definición de resultados, actividades, indicadores, riesgos y supuestos.',
+    'Genera automáticamente la ficha MGA compatible con el banco de programas del DNP y produce el presupuesto por actividad en formato requerido para aprobación del Comité Directivo. Integra con el módulo de Monitoreo del Plan Operativo para hacer seguimiento a los proyectos formulados.',
+    'Incluye biblioteca de marcos lógicos validados en proyectos anteriores de la Fundación para acelerar la formulación de nuevas iniciativas.',
+  ],
+  10: [
+    'Plataforma de aprendizaje modular con rutas de formación en emprendimiento, procesos de exportación, gestión financiera básica y asociatividad para beneficiarios directos del programa. Incluye cursos grabados, evaluaciones, biblioteca de recursos y certificación automática al superar el umbral de aprobación.',
+    'Rastrea el progreso de cada usuario, genera reportes de graduación por cohorte y región, y permite personalizar el contenido por sector productivo. Los certificados digitales incluyen código QR de verificación y son reconocidos por aliados del ecosistema de emprendimiento.',
+    'Alimenta los indicadores del componente de formación requeridos en los informes de desembolso ante la ANH.',
+  ],
+  11: [
+    'Plataforma de e-learning con enfoque diferencial para comunidades étnicas, centrada en derechos colectivos, transición energética justa, manejo ambiental comunitario y participación ciudadana. Los contenidos se adaptan a contextos culturales y lingüísticos con materiales audiovisuales accesibles.',
+    'Registra la participación comunitaria por resguardo y cabildo, generando los indicadores del componente étnico exigidos por el convenio. Permite descargar los módulos para uso offline en comunidades sin acceso permanente a internet.',
+    'Cumple con los lineamientos del enfoque diferencial establecidos por el MINSALUD, el Ministerio del Interior y los estándares del Convenio 169 de la OIT.',
+  ],
+  12: [
+    'Plataforma de inducción obligatoria y formación continua para todo el personal vinculado al convenio. Gestiona protocolos HSE, seguridad en campo, políticas de cumplimiento y procedimientos específicos por rol.',
+    'Bloquea el acceso a módulos sensibles de la plataforma hasta que el colaborador complete los cursos obligatorios de su perfil. Genera reportes de cumplimiento para el supervisor técnico de la ANH y los auditores de calidad, con evidencia de cada evaluación aprobada.',
+    'Reduce la curva de aprendizaje del nuevo personal y garantiza que todos los integrantes del equipo operen bajo los mismos estándares de seguridad y calidad desde el primer día.',
+  ],
+  13: [
+    'Gestión integral de planes de negocio, participación en ferias internacionales, trámites de exportación y comercialización de productos regionales. Acompaña a cada exportador a través del pipeline de aceleración: diagnóstico, formulación del plan, rueda de negocios, gestión aduanera y primera exportación.',
+    'Integra contactos de misiones de compradores, rondas de negocios y cámaras de comercio aliadas. Registra evidencia de cada hito del proceso exportador con documentos soporte que respaldan el cumplimiento de las metas de diversificación económica ante la ANH.',
+    'Genera métricas de impacto: número de empresas exportadoras, valor FOB exportado, nuevos mercados abiertos y empleos generados por la actividad exportadora.',
+  ],
+  14: [
+    'Registro centralizado de beneficiarios directos con consentimientos informados digitales, perfilamiento socioeconómico y clasificación por tarjeta de puntaje de vulnerabilidad. Genera carnets de identidad digital con código QR para control de asistencia en eventos y actividades del programa.',
+    'Gestiona deduplicación, actualizaciones, retiros y reemplazos con trazabilidad completa y cumplimiento de la Ley 1581 de Habeas Data. Permite segmentar la base por género, etnia, municipio, nivel de vulnerabilidad y sector productivo para focalizar intervenciones.',
+    'Es el registro maestro del que se alimentan el CRM de Actores, Campus Virtual y los módulos de seguimiento de impacto.',
+  ],
+  15: [
+    'Directorio integral de operadoras, comunidades étnicas y campesinas, autoridades locales y nacionales, gremios y entidades aliadas. Registra perfiles institucionales, áreas de influencia, tipo de relación con el convenio e historial de interacciones.',
+    'Permite segmentación inteligente para convocatorias, gestión de eventos y generación de mapas de actores por región, componente y tipo de actor. Incluye alertas de renovación de acuerdos de cooperación y recordatorios de fechas clave con cada aliado estratégico.',
+    'Es la base de datos relacional que alimenta todos los módulos que requieren identificar o contactar actores del territorio: Consulta Previa, Agenda Territorial, Inversión Social y Gestión de Alianzas.',
+  ],
+  16: [
+    'Sistema de seguimiento a procesos de consulta previa con comunidades indígenas y afrocolombianas, en cumplimiento del Convenio 169 de la OIT y la jurisprudencia de la Corte Constitucional. Documenta cada etapa procedimental: apertura, socialización, deliberación, acuerdos y seguimiento post-acuerdo.',
+    'Registra protocolos notariales, listas de asistencia, actas firmadas y compromisos adquiridos por la operadora o entidad consultante. Genera alertas automáticas para plazos reglamentarios y produce el expediente completo requerido por el Ministerio del Interior.',
+    'Reduce el riesgo legal de nulidades procesales al garantizar el cumplimiento de cada paso del procedimiento con evidencia documental trazable y auditada.',
+  ],
+  17: [
+    'Plataforma de reclutamiento para los cargos asociados al convenio. Gestiona publicación de vacantes, recepción de hojas de vida, puntuación automática de perfiles con base en matrices de calificación definidas por el área de talento humano, y programación de entrevistas.',
+    'Genera ranking comparativo de candidatos por cargo, registra las decisiones del panel evaluador y alimenta automáticamente el módulo de Administración de Personal cuando se confirma la vinculación. Almacena el historial de procesos como respaldo ante posibles impugnaciones.',
+    'Garantiza transparencia y trazabilidad en los procesos de selección, cumpliendo con los requisitos de equidad, enfoque diferencial y priorización de talento local exigidos por el convenio.',
+  ],
+  18: [
+    'Gestión integral del personal vinculado: contratos, afiliaciones a seguridad social, salarios, prestaciones y novedades de nómina. Emite alertas de vencimiento de contratos y pólizas, valida mes a mes las cotizaciones de seguridad social para el flujo de cuentas de cobro, y genera la liquidación de nómina por período de desembolso.',
+    'Mantiene hoja de vida laboral completa por colaborador, con todos los documentos soporte del proceso de vinculación. Permite generar certificados laborales, colillas de pago y constancias de afiliación de forma automatizada.',
+    'Integra con el módulo de Cuentas de Cobro para la validación de aportes y con Adquisiciones ESAL para el control de honorarios de contratistas.',
+  ],
+  19: [
+    'Dashboard de seguimiento a los compromisos adquiridos con las CARs en las 8 regiones de intervención, entidades nacionales y socios estratégicos del convenio. Monitorea cada producto comprometido vs. ejecutado, el presupuesto asociado y las fechas de cumplimiento contractual.',
+    'Genera reportes automatizados para las sesiones del Comité Directivo y activa alertas cuando un compromiso está en riesgo de incumplimiento. Registra evidencias de ejecución por alianza: actas, informes técnicos, registros fotográficos y productos entregables.',
+    'Facilita la negociación de adendas y la gestión proactiva de las relaciones institucionales al mantener visibilidad en tiempo real del estado de cada acuerdo interinstitucional.',
+  ],
+  20: [
+    'Administración de usuarios con roles granulares, permisos por módulo, autenticación multifactor (MFA) y auditoría completa de todos los eventos del sistema. Implementa los protocolos de Habeas Data para tratamiento de datos personales y genera los registros de acceso requeridos por la normativa de ciberseguridad colombiana.',
+    'Gestiona incidentes de seguridad, recuperación de cuentas y políticas de bloqueo automático por intentos fallidos. Permite configurar perfiles de acceso diferenciados por rol: coordinador regional, profesional temático, supervisor técnico y administrador del sistema.',
+    'Genera reportes de auditoría listos para presentar ante la ANH, la Contraloría o cualquier ente de control que requiera evidencia del control de accesos y la integridad de los datos del convenio.',
+  ],
+  21: [
+    'Monitoreo en tiempo real del plan operativo del convenio: actividades, hitos, porcentaje de avance físico y semáforos de cumplimiento alineados a los cuatro desembolsos ANH (20/35/70/100%). Muestra el estado por componente, por región y por período, cruzando avance físico con ejecución financiera.',
+    'Activa alertas cuando una actividad está rezagada respecto a la meta del próximo desembolso, sugiriendo acciones de recuperación. Genera el cuadro de seguimiento al plan operativo en el formato exigido por la supervisión técnica de la ANH para cada informe de desembolso.',
+    'Es la vista ejecutiva principal del Comité Directivo para tomar decisiones de reasignación de recursos, ajuste de metas y gestión de riesgos de ejecución.',
+  ],
+  22: [
+    'Control total de la ejecución presupuestal en los 3 ítems de inversión más la contrapartida del convenio. Gestiona el flujo de desembolsos (20/30/40/10%), registra cada gasto con soporte documental, valida elegibilidad por ítem y genera los estados financieros para la ANH y los órganos de control.',
+    'Incluye herramientas de proyección presupuestal, alertas de sub-ejecución o sobre-ejecución por ítem, y conciliación automatizada de movimientos bancarios. Permite generar el informe financiero del desembolso con solo seleccionar el período y el componente.',
+    'Cumple con los estándares contables de las ESAL en Colombia y con los requisitos de transparencia financiera del Manual Operativo de la ANH.',
+  ],
+  23: [
+    'Flujo de radicación y procesamiento mensual de cuentas de cobro con garantía de trámite en 5 días hábiles. Recibe documentos, valida automáticamente los aportes a seguridad social del prestador de servicios, enruta para revisión del supervisor financiero y genera la orden de pago.',
+    'Mantiene trazabilidad completa de cada cuenta desde la radicación hasta el pago efectivo, con registro de observaciones, rechazos y correcciones. Genera automáticamente los soportes de pago que deben adjuntarse al informe de desembolso.',
+    'Reduce los tiempos de gestión de pagos, elimina errores de validación de seguridad social y garantiza que el flujo de caja del convenio opere sin interrupciones.',
+  ],
+  24: [
+    'Gestión integral de las sesiones mensuales del Comité Directivo: convocatoria, agenda, quórum, actas, compromisos adquiridos y seguimiento de cumplimiento. Administra también la aprobación de subcontratos y reportes especiales que requieren aval del Comité.',
+    'Archiva todos los documentos con firma digital de los miembros, gestiona los quórums decisorios y genera recordatorios automáticos a los integrantes. Proporciona el libro de actas digital del Comité como respaldo ante auditorías de la ANH o la Contraloría.',
+    'Agiliza la toma de decisiones del órgano máximo del convenio al mantener toda la información previa, los documentos soporte y el historial de decisiones en un solo lugar accesible para todos los miembros.',
+  ],
+  25: [
+    'Gestión de las adquisiciones del convenio bajo el régimen de las ESAL colombianas: elaboración de términos de referencia, proceso de selección de contratistas, evaluación, contratación y seguimiento a la ejecución. Administra la biblioteca de minutas estándar para los tipos de contrato más frecuentes.',
+    'El flujo de aprobación para contratos que superen los umbrales definidos se enruta automáticamente al Comité Directivo. Valida RUT, certificados de experiencia y estados de proveedor ante la DIAN antes de generar el contrato. Mantiene el registro de contratos activos, sus montos, plazos y productos entregables.',
+    'Genera el informe de adquisiciones requerido por la ANH para cada desembolso y facilita las auditorías al mantener toda la cadena documental de cada contratación.',
+  ],
+  26: [
+    'Matriz de riesgos bajo la metodología CONPES 3714 para la gestión de riesgos operacionales, regulatorios, comunitarios, ambientales y de fuerza mayor del convenio. Evalúa probabilidad e impacto, genera mapas de calor por categoría de riesgo y asigna propietarios y planes de mitigación a cada riesgo identificado.',
+    'Monitorea la efectividad de los controles implementados y actualiza el riesgo residual con base en los avances reportados por los responsables. Genera alertas cuando un riesgo sube de categoría y activa el protocolo de escalamiento al Comité Directivo.',
+    'Produce el informe de gestión de riesgos requerido por la ANH en cada desembolso y facilita la actualización periódica de la matriz conforme evoluciona el contexto territorial y operativo del convenio.',
+  ],
+  27: [
+    'Flujo digital de radicación, revisión técnica y aprobación de los informes elaborados por los profesionales del convenio. Gestiona versiones de documentos, plazos de revisión y notificaciones en cada etapa del proceso editorial.',
+    'El supervisor técnico puede aprobar, devolver con observaciones o rechazar cada informe directamente en la plataforma, dejando trazabilidad de cada decisión. Genera métricas de tiempo promedio de aprobación por profesional y por componente, facilitando la detección de cuellos de botella.',
+    'Reduce los tiempos de entrega de informes finales a la ANH al eliminar el intercambio de correos y versiones sueltas, manteniendo toda la cadena documental en un repositorio centralizado con control de acceso.',
+  ],
+  28: [
+    'Compilador automático de los 4 informes de desembolso ante la ANH: D1 plan de trabajo, D2 al 35%, D3 al 70% y D4 informe final. Agrega la información física, financiera y narrativa de todos los módulos para generar la estructura documental requerida por el Manual Operativo de la ANH.',
+    'Valida la completitud de cada sección antes de permitir la generación del informe, alertando sobre componentes o regiones con información pendiente. Genera automáticamente la tabla de contenido, los anexos y los formatos estandarizados de la ANH.',
+    'Elimina el proceso manual de consolidación que históricamente toma semanas, reduciendo el tiempo de preparación de cada informe de desembolso a horas y minimizando el riesgo de errores de compilación.',
+  ],
+  29: [
+    'Repositorio institucional de metodologías validadas, casos de éxito documentados, buenas prácticas y lecciones aprendidas de todas las regiones del convenio. Permite búsqueda por tema, región, componente y tipo de intervención para facilitar la réplica de soluciones efectivas.',
+    'Incluye un banco de herramientas con plantillas editables, guías técnicas y marcos metodológicos probados en campo. Cada caso de éxito registra el contexto, la intervención, los resultados y las condiciones de replicabilidad para que otros equipos puedan adoptarlo con las adaptaciones necesarias.',
+    'Construye la memoria institucional del convenio, garantizando que el conocimiento generado no se pierda con la rotación de personal y quede disponible para futuros proyectos de la Fundación y de la ANH.',
+  ],
+  30: [
+    'Gestión integral de todos los eventos territoriales del convenio: talleres, foros, ferias productivas, entregas de bienes y visitas de campo. Administra convocatorias, registro de asistentes, registro de asistencia con QR, actas de reunión y registros fotográficos geolocalizados.',
+    'Genera el informe de cada evento con indicadores de cobertura: número de participantes desagregado por género, etnia y municipio. Integra con el módulo de Gestión Logística para el presupuesto asociado a cada actividad y con el Padrón de Beneficiarios para el registro de asistencia.',
+    'Produce las listas de asistencia firmadas, las actas de compromiso y los reportes de eventos requeridos como soportes en los informes de desembolso ante la ANH.',
+  ],
+  31: [
+    'Control de costos y gestión logística por evento y por región: transporte, alojamiento, refrigerios, equipos audiovisuales e insumos. Calcula el costo total de cada actividad con base en tarifas precargadas por región y genera los soportes de gasto por rubro presupuestal.',
+    'Realiza seguimiento al pago de proveedores logísticos y genera la comparación presupuesto vs. real por componente operativo. Permite aprobar solicitudes logísticas con el flujo de autorización definido antes de comprometer recursos del convenio.',
+    'Integra con Gestión Financiera para actualizar la ejecución presupuestal del ítem logístico en tiempo real, y con Agenda Territorial para tener el costo unitario de cada evento del programa.',
+  ],
+  32: [
+    'Gestión de piezas de comunicación por iniciativa: contenidos para redes sociales, comunicados de prensa, pendones de eventos y material audiovisual. Administra la campaña de comunicaciones del convenio en sus tres etapas: expectativa, cubrimiento de hitos y presencia digital continua.',
+    'Rastrea métricas de impacto mediático: alcance, impresiones, clips de prensa y menciones en medios. Mantiene la biblioteca de activos digitales por región y actividad, con trazabilidad de derechos de imagen y autorización de uso de datos personales para cada pieza que incluya beneficiarios.',
+    'Cumple con los lineamientos de visibilidad de la ANH y genera el informe de comunicaciones requerido en cada desembolso con evidencias de la estrategia ejecutada.',
+  ],
+  33: [
+    'Gestión de protocolos de seguridad en campo, reporte de incidentes (casi accidentes, accidentes, emergencias ambientales) y administración del Plan de Emergencias SG-SST del convenio. Genera notificaciones automáticas al coordinador de área y al supervisor técnico cuando se registra un incidente.',
+    'Hace seguimiento a las acciones correctivas y preventivas derivadas de cada incidente, con plazos de cierre y evidencias de implementación. Genera las estadísticas OSHA obligatorias y el registro de inspecciones de seguridad, simulacros y capacitaciones HSE por región.',
+    'Reduce la ocurrencia de accidentes al garantizar que cada evento de seguridad sea documentado, investigado y resuelto sistemáticamente, cumpliendo con la Resolución 0312 de 2019 del Ministerio de Trabajo.',
+  ],
+  34: [
+    'Repositorio cloud con estructura jerárquica región > municipio > componente, búsqueda semántica con inteligencia artificial y clasificación automática de documentos al momento de la carga. Detecta duplicados, versiones desactualizadas y documentos próximos a vencer antes de que generen incumplimientos.',
+    'Permite consultas en lenguaje natural: "mostrar todos los permisos ambientales del Casanare que vencen en 2026". La IA extrae información clave de documentos extensos y genera resúmenes ejecutivos para agilizar la revisión. Incluye control de acceso granular por perfil y registro de préstamo digital.',
+    'Cumple con la Ley 594 de 2000 (Ley General de Archivos) y los protocolos de gestión documental de la Función Pública colombiana.',
+  ],
+  35: [
+    'Gestión de los bienes adquiridos con recursos ANH: equipos, insumos, semillas, materiales de construcción y maquinaria entregada a comunidades. Utiliza escaneo QR y código de barras para el registro de entradas y salidas, y genera actas de entrega por beneficiario y comunidad con firma digital.',
+    'Mantiene trazabilidad completa de cada bien desde la compra hasta la entrega final, con fotografías, coordenadas GPS y datos del receptor. Genera el inventario periódico requerido por el contrato de supervisión de la ANH y facilita las visitas de verificación física de los activos.',
+    'Alertas automáticas para revisiones técnicas preventivas de maquinaria, renovación de garantías y seguimiento al estado de conservación de los bienes entregados a comunidades.',
+  ],
+  36: [
+    'Monitoreo de las pólizas obligatorias del convenio: cumplimiento (20%), calidad (10%) y salarios (5%). Genera alertas automáticas 60, 30 y 15 días antes del vencimiento de cada póliza, enruta el flujo de renovación al área jurídica y mantiene el historial de versiones de cada póliza con sus respectivos certificados.',
+    'Valida la suficiencia de los amparos frente a los montos del convenio y registra cualquier siniestro o reclamación. Produce el reporte de estado de pólizas requerido como soporte en cada informe de desembolso ante la ANH.',
+    'Elimina el riesgo de que el convenio quede sin cobertura asegurada, situación que puede generar incumplimiento contractual y bloqueo de desembolsos por parte de la ANH.',
+  ],
+  37: [
+    'Checklist transversal para la liquidación ordenada del convenio: verificación de entregables por componente, balance financiero final, registro de pasivos pendientes, certificados de paz y salvo de aliados y proveedores, y generación del acta de liquidación oficial.',
+    'Guía al equipo de coordinación a través de cada paso del proceso en orden secuencial, bloqueando el avance hasta que cada requisito sea validado con su respectivo soporte documental. Genera el acta de liquidación final en el formato requerido por la ANH lista para firma digital de ambas partes.',
+    'Garantiza que el cierre del convenio se realice sin pasivos ocultos, cumpliendo todos los requisitos jurídicos, contables y técnicos para que la Fundación quede en paz y salvo ante la ANH y los órganos de control.',
+  ],
+  38: [
+    'Sistema multicanal de soporte técnico (web, chat, correo) con gestión de tickets, monitoreo de SLA y base de conocimiento por rol de usuario. Clasifica los tickets por severidad, los asigna a agentes de soporte y activa alertas cuando el SLA está en riesgo de incumplirse.',
+    'Ofrece guías de autoservicio por módulo con capturas de pantalla y videos paso a paso, reduciendo las consultas recurrentes al equipo técnico. Los coordinadores regionales y profesionales pueden resolver el 70% de sus dudas sin abrir un ticket, a través de la base de conocimiento y el chatbot de primer nivel.',
+    'Garantiza que todas las personas usuarias del sistema puedan aprovecharlo al máximo, independientemente de su nivel de alfabetización digital, con soporte disponible 24/7 para las regiones con diferencia horaria significativa.',
+  ],
+  39: [
+    'Gestión de la infraestructura cloud de Google Workspace, backups automatizados diarios con verificación de integridad y monitoreo de disponibilidad con SLA del 99.5%. Administra certificados SSL, configuraciones de dominio y el plan de recuperación ante desastres tecnológicos.',
+    'Genera reportes mensuales de infraestructura con métricas de disponibilidad, tiempo de restauración de backups e incidentes técnicos resueltos. El panel de monitoreo en tiempo real detecta degradaciones de rendimiento y activa alertas antes de que el problema afecte a los usuarios.',
+    'Garantiza la continuidad operativa del convenio incluso ante fallas de conectividad regional, con sincronización offline para los módulos críticos y recuperación total de datos en menos de 4 horas ante cualquier incidente mayor.',
+  ],
+};
+
 // ─── Lookups ──────────────────────────────────────────────────────────
 const moduloMap = Object.fromEntries(modulos.map(m => [String(m.id), m]));
 const grupoMap  = Object.fromEntries(GROUPS.map(g => [g.id, g]));
@@ -486,7 +685,7 @@ export default function ModuloDemoPage() {
         </div>
       )}
 
-      <div style={{ maxWidth: '900px' }}>
+      <div style={{ maxWidth: '1100px' }}>
 
         {/* Header con imagen */}
         {modulo.imagen && (
@@ -536,15 +735,49 @@ export default function ModuloDemoPage() {
           ))}
         </div>
 
-        {/* Chart */}
-        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
-            <p style={{ fontSize: '11px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
-              Tendencia — Enero a Junio 2026
-            </p>
+        {/* ── Chart + Descripción ── */}
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '22px', alignItems: 'flex-start' }}>
+
+          {/* Chart */}
+          <div style={{ flex: 1, minWidth: 0, background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+              <p style={{ fontSize: '11px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+                Tendencia — Enero a Junio 2026
+              </p>
+            </div>
+            <DemoChart grupo={modulo.grupo} moduleId={numId} color={color} />
           </div>
-          <DemoChart grupo={modulo.grupo} moduleId={numId} color={color} />
+
+          {/* Descripción */}
+          <div style={{ width: '300px', flexShrink: 0, background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: color, textTransform: 'uppercase', letterSpacing: '0.09em' }}>
+                Descripción del módulo
+              </span>
+            </div>
+            {(MODULE_DESC[numId] || [modulo.descripcion]).map((parrafo, i) => (
+              <p key={i} style={{ fontSize: '12.5px', lineHeight: '1.65', color: BASE.text, margin: 0 }}>
+                {parrafo}
+              </p>
+            ))}
+            {/* Stack tecnológico */}
+            {modulo.stack?.length > 0 && (
+              <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '12px' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px' }}>
+                  Tecnologías
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {modulo.stack.map(s => (
+                    <span key={s} style={{ fontSize: '11px', fontWeight: 500, color: color, background: color + '12', border: `1px solid ${color}25`, borderRadius: '20px', padding: '3px 10px' }}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
         </div>
 
         {/* Tabla */}
