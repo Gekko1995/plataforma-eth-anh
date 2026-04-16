@@ -377,6 +377,11 @@ html, body, #root {
   grid-area: main;
   padding: 24px;
   overflow-y: auto;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='800'><path d='M-100 700 C150 610 350 580 600 620 C850 660 1000 610 1300 640' fill='none' stroke='%23074A6A' stroke-width='2' stroke-opacity='0.07'/><path d='M-100 620 C180 525 380 498 600 542 C820 586 980 535 1300 562' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 540 C200 442 400 418 600 464 C800 510 960 460 1300 484' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 460 C220 360 420 338 600 386 C780 434 940 385 1300 406' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 380 C240 278 440 258 600 308 C760 358 920 310 1300 328' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 300 C260 196 460 178 600 230 C740 282 900 235 1300 250' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 220 C280 114 480 98 600 152 C720 206 880 160 1300 172' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 140 C300 32 500 18 600 74 C700 130 860 85 1300 94' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 760 C120 688 320 666 600 698 C880 730 1060 684 1300 706' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/><path d='M-100 60 C310 -48 510 -60 600 -4 C690 52 850 10 1300 16' fill='none' stroke='%23074A6A' stroke-width='1.5' stroke-opacity='0.07'/></svg>");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-attachment: local;
 }
 
 
