@@ -626,8 +626,8 @@ export default function ModuloDemoPage() {
   return (
     <div style={{ background: theme.bg, minHeight: '100%' }}>
 
-      {/* ── Barra superior: volver + acciones ── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+      {/* ── Barra superior: solo volver ── */}
+      <div style={{ marginBottom: '20px' }}>
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => navigate('/modulos')}
@@ -635,39 +635,6 @@ export default function ModuloDemoPage() {
         >
           ← Volver a módulos
         </button>
-
-        {/* Acciones del módulo */}
-        {MODULE_ACTIONS[numId] && (
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {MODULE_ACTIONS[numId].map((label, i) => (
-              <button
-                key={label}
-                onClick={() => showToast(label)}
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  padding: '6px 14px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  border: i === 0
-                    ? 'none'
-                    : `1px solid ${color}40`,
-                  background: i === 0
-                    ? color
-                    : i === 1
-                      ? color + '12'
-                      : 'transparent',
-                  color: i === 0 ? '#fff' : color,
-                  transition: 'opacity .15s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.opacity = '0.82'; }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* ── Toast demo ── */}
@@ -753,6 +720,40 @@ export default function ModuloDemoPage() {
             </div>
           )}
         </div>
+
+        {/* ── Toolbox de acciones ── */}
+        {MODULE_ACTIONS[numId] && (
+          <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '16px 20px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 12px' }}>
+              Acciones disponibles
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+              {MODULE_ACTIONS[numId].map((label, i) => (
+                <button
+                  key={label}
+                  onClick={() => showToast(label)}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    border: `1px solid ${i === 0 ? color : color + '35'}`,
+                    background: i === 0 ? color : i === 1 ? color + '0e' : 'transparent',
+                    color: i === 0 ? '#fff' : color,
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    textAlign: 'center',
+                    lineHeight: 1.3,
+                    transition: 'opacity .15s, transform .15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.opacity = '0.82'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = '1';    e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* KPI grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '22px' }}>
