@@ -606,6 +606,7 @@ export default function ModuloDemoPage() {
 
   const numId = Number(id);
 
+  const [descAbierta, setDescAbierta] = useState(false);
   const [toast, setToast] = useState(null);
   function showToast(label) {
     setToast(label);
@@ -715,28 +716,54 @@ export default function ModuloDemoPage() {
           Los datos mostrados son completamente ficticios y tienen fines exclusivamente ilustrativos.
         </div>
 
-        {/* Descripción del módulo */}
-        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '20px 24px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: '10px', fontWeight: 700, color: color, textTransform: 'uppercase', letterSpacing: '0.09em', margin: '0 0 14px' }}>
-            Acerca de este módulo
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: modulo.stack?.length > 0 ? '16px' : 0 }}>
-            {(MODULE_DESC[numId] || [modulo.descripcion]).map((parrafo, i) => (
-              <p key={i} style={{ fontSize: '13px', lineHeight: '1.7', color: BASE.text, margin: 0 }}>
-                {parrafo}
-              </p>
-            ))}
-          </div>
-          {modulo.stack?.length > 0 && (
-            <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '14px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', flexShrink: 0 }}>
-                Tecnologías
-              </span>
-              {modulo.stack.map(s => (
-                <span key={s} style={{ fontSize: '11px', fontWeight: 500, color: color, background: color + '12', border: `1px solid ${color}25`, borderRadius: '20px', padding: '3px 10px' }}>
-                  {s}
-                </span>
-              ))}
+        {/* Descripción del módulo — desplegable */}
+        <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: '12px', marginBottom: '22px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          {/* Cabecera clicable */}
+          <button
+            onClick={() => setDescAbierta(v => !v)}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 20px', background: 'transparent', border: 'none', cursor: 'pointer',
+              gap: '12px',
+            }}
+          >
+            <span style={{ fontSize: '11px', fontWeight: 700, color: color, textTransform: 'uppercase', letterSpacing: '0.09em' }}>
+              Acerca de este módulo
+            </span>
+            <span style={{
+              width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
+              background: color + '15', border: `1px solid ${color}30`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '11px', color: color, fontWeight: 700,
+              transform: descAbierta ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform .2s ease',
+            }}>
+              ▾
+            </span>
+          </button>
+
+          {/* Contenido colapsable */}
+          {descAbierta && (
+            <div style={{ padding: '0 20px 18px', borderTop: `1px solid ${theme.border}` }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '14px', marginBottom: modulo.stack?.length > 0 ? '16px' : 0 }}>
+                {(MODULE_DESC[numId] || [modulo.descripcion]).map((parrafo, i) => (
+                  <p key={i} style={{ fontSize: '13px', lineHeight: '1.7', color: BASE.text, margin: 0 }}>
+                    {parrafo}
+                  </p>
+                ))}
+              </div>
+              {modulo.stack?.length > 0 && (
+                <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '14px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: BASE.muted, textTransform: 'uppercase', letterSpacing: '0.08em', flexShrink: 0 }}>
+                    Tecnologías
+                  </span>
+                  {modulo.stack.map(s => (
+                    <span key={s} style={{ fontSize: '11px', fontWeight: 500, color: color, background: color + '12', border: `1px solid ${color}25`, borderRadius: '20px', padding: '3px 10px' }}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
