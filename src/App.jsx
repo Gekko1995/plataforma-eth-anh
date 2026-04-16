@@ -8,6 +8,8 @@ import UsuariosPage from './pages/UsuariosPage';
 import PermisosPage from './pages/PermisosPage';
 import CambiarPassword from './pages/CambiarPassword';
 import ModuloDemoPage from './pages/ModuloDemoPage';
+import PresentacionVistaPage from './pages/PresentacionVistaPage';
+import PresentacionEditorPage from './pages/PresentacionEditorPage';
 import {
   authUser,
   addLog,
@@ -137,6 +139,11 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="modulos" element={<ModulosPage />} />
           <Route path="modulos/:id/demo" element={<ModuloDemoPage />} />
+          <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
+          <Route
+            path="modulos/:id/presentacion/editar"
+            element={user?.rol === 'admin' ? <PresentacionEditorPage /> : <Navigate to="/dashboard" replace />}
+          />
           <Route
             path="usuarios"
             element={user?.rol === 'admin' ? <UsuariosPage /> : <Navigate to="/dashboard" replace />}
