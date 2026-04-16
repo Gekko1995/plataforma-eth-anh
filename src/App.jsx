@@ -156,15 +156,15 @@ export default function App() {
           <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
           <Route
             path="modulos/:id/presentacion/editar"
-            element={user?.rol === 'admin' ? <PresentacionEditorPage /> : <Navigate to="/dashboard" replace />}
+            element={['admin','super_root'].includes(user?.rol) ? <PresentacionEditorPage /> : <Navigate to="/dashboard" replace />}
           />
           <Route
             path="usuarios"
-            element={user?.rol === 'admin' ? <UsuariosPage /> : <Navigate to="/dashboard" replace />}
+            element={['admin','super_root'].includes(user?.rol) ? <UsuariosPage /> : <Navigate to="/dashboard" replace />}
           />
           <Route
             path="permisos"
-            element={user?.rol === 'admin' ? <PermisosPage /> : <Navigate to="/dashboard" replace />}
+            element={['admin','super_root'].includes(user?.rol) ? <PermisosPage /> : <Navigate to="/dashboard" replace />}
           />
           <Route
             path="historial"
