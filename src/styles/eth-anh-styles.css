@@ -428,15 +428,6 @@ html, body, #root {
   border-color: #cbd5e1;
 }
 
-.module-card-image {
-  width: calc(100% + 2.5rem);
-  margin: -1.1rem -1.25rem 0.75rem;
-  height: 110px;
-  object-fit: cover;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  display: block;
-  border-bottom: 1px solid var(--content-border);
-}
 
 .module-card-header {
   display: flex;
