@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MODULE_ICONS } from '../data/moduleIcons';
 
 /**
  * Modal de detalle de módulo.
@@ -9,8 +10,9 @@ import { useNavigate } from 'react-router-dom';
  */
 export default function ModuloModal({ modulo, onClose }) {
   const navigate = useNavigate();
-  const { id, nombre, descripcion, stack, grupoColor, grupoNombre, url, imagen } = modulo;
+  const { id, nombre, descripcion, stack, grupoColor, grupoNombre, url } = modulo;
   const tieneUrl = Boolean(url);
+  const Icon = MODULE_ICONS[id] || (() => null);
 
   // Cierra con ESC
   useEffect(() => {
@@ -40,50 +42,57 @@ export default function ModuloModal({ modulo, onClose }) {
         style={{ maxWidth: '540px', display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Cabecera de gradiente */}
+        {/* Cabecera — isotipo + letra difuminada */}
         <div style={{
-          position: 'relative', height: '150px', flexShrink: 0, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${grupoColor} 0%, ${grupoColor}88 100%)`,
+          position: 'relative', height: '160px', flexShrink: 0, overflow: 'hidden',
+          background: `linear-gradient(150deg, ${grupoColor}e6 0%, ${grupoColor}99 55%, ${grupoColor}18 100%)`,
         }}>
-          {/* Trama de puntos */}
+          {/* Shine superior */}
           <div style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px)',
-            backgroundSize: '22px 22px',
+            position: 'absolute', top: 0, left: 0, right: 0, height: '45%',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, transparent 100%)',
+            pointerEvents: 'none',
           }} />
-          {/* Brillo esquina */}
+          {/* Letra difuminada del grupo */}
+          <span style={{
+            position: 'absolute', fontSize: '140px', fontWeight: 900,
+            color: 'rgba(255,255,255,0.07)', lineHeight: 1, userSelect: 'none',
+            bottom: '-20px', right: '12px', fontFamily: 'var(--font)', letterSpacing: '-4px',
+          }}>
+            {modulo.grupo}
+          </span>
+          {/* Ícono único del módulo — centrado arriba */}
           <div style={{
-            position: 'absolute', top: '-50px', right: '-50px',
-            width: '180px', height: '180px', borderRadius: '50%',
-            background: 'rgba(255,255,255,0.08)',
-          }} />
-
-          {/* Etiqueta grupo + título */}
-          <div style={{ position: 'absolute', inset: 0, padding: '18px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <span style={{
-                width: '30px', height: '30px', borderRadius: '8px',
-                background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(6px)',
-                border: '1px solid rgba(255,255,255,0.30)',
-                color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 700, fontSize: '13px', flexShrink: 0,
-              }}>
-                {id}
-              </span>
+            position: 'absolute', top: '22px', left: '50%', transform: 'translateX(-50%)',
+            filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.22))',
+            zIndex: 1,
+          }}>
+            <Icon />
+          </div>
+          {/* Metainfo y título — abajo */}
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0,
+            padding: '0 20px 16px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
               <span style={{
                 fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.85)',
-                background: 'rgba(255,255,255,0.15)', padding: '3px 10px',
+                background: 'rgba(255,255,255,0.15)', padding: '2px 10px',
                 borderRadius: '20px', backdropFilter: 'blur(4px)',
                 border: '1px solid rgba(255,255,255,0.20)',
               }}>
                 Grupo {modulo.grupo} · {grupoNombre}
               </span>
+              <span style={{
+                fontSize: '11px', fontWeight: 500, color: 'rgba(255,255,255,0.65)',
+              }}>
+                #{id}
+              </span>
             </div>
-            <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3 }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.01em', lineHeight: 1.3 }}>
               {nombre}
             </h2>
           </div>
-
           {/* Botón cerrar */}
           <button
             onClick={onClose}
@@ -92,8 +101,8 @@ export default function ModuloModal({ modulo, onClose }) {
               position: 'absolute', top: '12px', right: '12px',
               width: '28px', height: '28px', borderRadius: '50%',
               background: 'rgba(255,255,255,0.20)', border: '1px solid rgba(255,255,255,0.30)',
-              color: '#fff', fontSize: '16px', lineHeight: 1,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: '16px', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               backdropFilter: 'blur(4px)',
             }}
           >
