@@ -41,8 +41,8 @@
   --content-text-hint:   #94a3b8;
 
   /* — Header — */
-  --header-bg:           #074A6A;
-  --header-border:       rgba(255, 255, 255, 0.12);
+  --header-bg:           #053D58;
+  --header-border:       rgba(255, 255, 255, 0.10);
   --header-height:       60px;
 
   /* — Colores de acento (9 grupos) — */
@@ -64,7 +64,7 @@
 
   /* — Tipografía — */
   --font:         'Outfit', sans-serif;
-  --fs-xs:        11px;
+  --fs-xs:        12px;
   --fs-sm:        13px;
   --fs-base:      15px;
   --fs-md:        17px;
@@ -266,7 +266,7 @@ html, body, #root {
 
 .nav-item.active {
   background: var(--sidebar-active-bg);
-  color: var(--anh-secondary);
+  color: #A8EFFF;
   font-weight: var(--fw-medium);
 }
 
@@ -418,7 +418,7 @@ html, body, #root {
   right: 0;
   height: 3px;
   background: var(--card-accent, var(--accent-a));
-  opacity: 0;
+  opacity: 1;
   transition: opacity var(--ease);
 }
 
@@ -428,8 +428,14 @@ html, body, #root {
   border-color: #cbd5e1;
 }
 
-.module-card:hover::before {
-  opacity: 1;
+.module-card-image {
+  width: calc(100% + 2.5rem);
+  margin: -1.1rem -1.25rem 0.75rem;
+  height: 110px;
+  object-fit: cover;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  display: block;
+  border-bottom: 1px solid var(--content-border);
 }
 
 .module-card-header {
@@ -767,6 +773,7 @@ html, body, #root {
 .kpi-card {
   background: var(--content-surface);
   border: 1px solid var(--content-border);
+  border-left: 3px solid var(--anh-secondary);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   display: flex;

@@ -114,8 +114,18 @@ export default function ModulosPage() {
 
           {/* Tarjetas de módulos */}
           <div className="modules-grid">
-            {g.modulos.map(m => (
+            {g.modulos.map(m => {
+              const richData = moduloMap[m.id];
+              return (
               <div key={m.id} className={`module-card group-${g.id.toLowerCase()}`}>
+                {richData?.imagen && (
+                  <img
+                    src={richData.imagen}
+                    alt=""
+                    className="module-card-image"
+                    loading="lazy"
+                  />
+                )}
                 <div style={{ marginBottom: '8px' }}>
                   <span style={{ fontSize: '12px', color: 'var(--content-text-hint)', fontWeight: 500 }}>
                     {m.id}
@@ -148,7 +158,8 @@ export default function ModulosPage() {
                   Abrir módulo →
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ))}

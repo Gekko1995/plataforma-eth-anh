@@ -70,8 +70,8 @@ function SidebarIsotipo() {
       <rect x="25.6" y="10" width="2.2" height="20" rx="1" fill="white" />
       <defs>
         <linearGradient id="sidebarGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#f5c842" />
-          <stop offset="1" stopColor="#fb923c" />
+          <stop stopColor="#C97435" />
+          <stop offset="1" stopColor="#E8892A" />
         </linearGradient>
       </defs>
     </svg>
