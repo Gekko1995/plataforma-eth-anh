@@ -17,7 +17,15 @@ import LineaDiagnosticaPage  from './pages/modulos/modulo-1/LineaDiagnosticaPage
 import EvaluacionImpactoPage from './pages/modulos/modulo-2/EvaluacionImpactoPage';
 import GeoreferenciaPage     from './pages/modulos/modulo-3/GeoreferenciaPage';
 import ClusterProductivoPage from './pages/modulos/modulo-4/ClusterProductivoPage';
-import RecaboCampoPage       from './pages/modulos/modulo-5/RecaboCampoPage';
+import RecaboCampoPage            from './pages/modulos/modulo-5/RecaboCampoPage';
+import LineamientosAmbientalesPage from './pages/modulos/modulo-6/LineamientosAmbientalesPage';
+import InversionSocialPage         from './pages/modulos/modulo-7/InversionSocialPage';
+import PrevencionDialogoPage       from './pages/modulos/modulo-8/PrevencionDialogoPage';
+import MarcoLogicoPage             from './pages/modulos/modulo-9/MarcoLogicoPage';
+import CampusBeneficiariosPage     from './pages/modulos/modulo-10/CampusBeneficiariosPage';
+import CampusComunidadesPage       from './pages/modulos/modulo-11/CampusComunidadesPage';
+import CampusPersonalPage          from './pages/modulos/modulo-12/CampusPersonalPage';
+import AceleradoraExportadoraPage  from './pages/modulos/modulo-13/AceleradoraExportadoraPage';
 import {
   authUser,
   addLog,
@@ -162,7 +170,15 @@ export default function App() {
           <Route path="modulos/2/app" element={<EvaluacionImpactoPage />} />
           <Route path="modulos/3/app" element={<GeoreferenciaPage />} />
           <Route path="modulos/4/app" element={<ClusterProductivoPage />} />
-          <Route path="modulos/5/app" element={<RecaboCampoPage />} />
+          <Route path="modulos/5/app"  element={<RecaboCampoPage />} />
+          <Route path="modulos/6/app"  element={<LineamientosAmbientalesPage />} />
+          <Route path="modulos/7/app"  element={<InversionSocialPage />} />
+          <Route path="modulos/8/app"  element={<PrevencionDialogoPage />} />
+          <Route path="modulos/9/app"  element={<MarcoLogicoPage />} />
+          <Route path="modulos/10/app" element={<CampusBeneficiariosPage />} />
+          <Route path="modulos/11/app" element={<CampusComunidadesPage />} />
+          <Route path="modulos/12/app" element={<CampusPersonalPage />} />
+          <Route path="modulos/13/app" element={<AceleradoraExportadoraPage />} />
           <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
           <Route
             path="modulos/:id/presentacion/editar"

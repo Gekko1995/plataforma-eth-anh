@@ -10,7 +10,7 @@ import EmptyState from '../components/EmptyState';
 import ErrorState from '../components/ErrorState';
 
 // Módulos con página dedicada (ruta /modulos/:id/app)
-const MODULOS_CON_APP = new Set([1, 2, 3, 4, 5]);
+const MODULOS_CON_APP = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
 
 const moduloMap = Object.fromEntries(MODULOS_DATA.map(m => [m.id, m]));
 
