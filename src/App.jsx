@@ -13,7 +13,11 @@ import PresentacionEditorPage from './pages/PresentacionEditorPage';
 import HistorialPage from './pages/HistorialPage';
 import PerfilPage from './pages/PerfilPage';
 import PermisosAdminPage from './pages/PermisosAdminPage';
-import LineaDiagnosticaPage from './pages/modulos/modulo-1/LineaDiagnosticaPage';
+import LineaDiagnosticaPage  from './pages/modulos/modulo-1/LineaDiagnosticaPage';
+import EvaluacionImpactoPage from './pages/modulos/modulo-2/EvaluacionImpactoPage';
+import GeoreferenciaPage     from './pages/modulos/modulo-3/GeoreferenciaPage';
+import ClusterProductivoPage from './pages/modulos/modulo-4/ClusterProductivoPage';
+import RecaboCampoPage       from './pages/modulos/modulo-5/RecaboCampoPage';
 import {
   authUser,
   addLog,
@@ -155,6 +159,10 @@ export default function App() {
           <Route path="modulos" element={<ModulosPage />} />
           <Route path="modulos/:id/demo" element={<ModuloDemoPage />} />
           <Route path="modulos/1/app" element={<LineaDiagnosticaPage />} />
+          <Route path="modulos/2/app" element={<EvaluacionImpactoPage />} />
+          <Route path="modulos/3/app" element={<GeoreferenciaPage />} />
+          <Route path="modulos/4/app" element={<ClusterProductivoPage />} />
+          <Route path="modulos/5/app" element={<RecaboCampoPage />} />
           <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
           <Route
             path="modulos/:id/presentacion/editar"
