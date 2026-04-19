@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { signOutUser } from '../utils/auth';
+import AccesibilidadMenu from './AccesibilidadMenu';
 
 /* ── Isotipos SVG minimalistas ── */
 function IconDashboard() {
@@ -179,6 +180,8 @@ export default function Layout({ user, onLogout, onUserUpdate }) {
         <span className="header-title">
           Plataforma ETH-ANH 2026
         </span>
+
+        <AccesibilidadMenu />
 
         <span className={`header-role-badge${isAdmin ? ' admin' : ''}`}>
           {user?.rol || 'usuario'}

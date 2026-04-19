@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './components/Login';
+import IdleWarningModal from './components/IdleWarningModal';
+import { useIdleTimeout } from './hooks/useIdleTimeout';
 import Dashboard from './pages/Dashboard';
 import ModulosPage from './pages/ModulosPage';
 import UsuariosPage from './pages/UsuariosPage';
@@ -67,6 +69,17 @@ export default function App() {
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
+  async function handleLogout() {
+    if (user) await addLog(user, 'LOGOUT');
+    await signOutUser();
+    setUser(null);
+  }
+
+  const { showWarning, secondsLeft, resetTimer } = useIdleTimeout({
+    onLogout: handleLogout,
+    enabled: !!user,
+  });
+
   // Restaurar sesión al cargar
   useEffect(() => {
     let mounted = true;
@@ -121,16 +134,6 @@ export default function App() {
     setAuthLoading(false);
   }
 
-  async function handleLogout() {
-    if (user) {
-      // Await the LOGOUT log so the insert completes before the session ends
-      // (RLS requires auth.uid() = user_id, which is null after signOut)
-      await addLog(user, 'LOGOUT');
-    }
-    await signOutUser();
-    setUser(null);
-  }
-
   function handlePasswordChanged() {
     setUser(u => ({ ...u, debe_cambiar_password: false }));
   }
@@ -152,6 +155,14 @@ export default function App() {
   }
 
   return (
+    <>
+    {showWarning && (
+      <IdleWarningModal
+        secondsLeft={secondsLeft}
+        onStay={resetTimer}
+        onLogout={handleLogout}
+      />
+    )}
     <BrowserRouter>
       <Routes>
         {/* Login */}
@@ -261,5 +272,6 @@ export default function App() {
         <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
