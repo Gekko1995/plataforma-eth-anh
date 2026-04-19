@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { modulos } from '../../../data/modulos';
+import ModuloInfoBanner from '../../../components/ModuloInfoBanner';
 
 const COLOR = '#7C3AED';
 const META  = modulos.find(m => m.id === 13);
@@ -48,23 +49,6 @@ const IconStar = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="cur
 const TH = { textAlign:'left', padding:'9px 12px', fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'.04em', borderBottom:'2px solid #e2e8f0', whiteSpace:'nowrap' };
 const TD = { padding:'9px 12px', fontSize:13, color:'#475569' };
 
-function InfoBanner() {
-  if (!META) return null;
-  return (
-    <div style={{ background:'#f5f3ff', border:'1px solid #ddd6fe', borderRadius:12, padding:'14px 18px', marginBottom:20 }}>
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-        <span style={{ fontSize:11, fontWeight:700, background:'#ede9fe', color:'#5b21b6', border:'1px solid #ddd6fe', borderRadius:999, padding:'2px 9px', letterSpacing:'.05em', textTransform:'uppercase' }}>DEMO</span>
-        <span style={{ fontSize:14, fontWeight:700, color:'#4c1d95' }}>Módulo {META.id} — {META.nombre}</span>
-      </div>
-      <p style={{ margin:'0 0 8px', fontSize:13, color:'#5b21b6', lineHeight:1.55 }}>{META.descripcion}</p>
-      {META.puntosClave?.length > 0 && (
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-          {META.puntosClave.map((p,i) => <span key={i} style={{ fontSize:11, background:'#ede9fe', color:'#5b21b6', border:'1px solid #ddd6fe', borderRadius:6, padding:'2px 8px' }}>{p}</span>)}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function Modal({ title, onClose, children, wide }) {
   return (
@@ -302,7 +286,7 @@ export default function AceleradoraExportadoraPage() {
         <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>Aceleradora Exportadora</span>
       </div>
 
-      <InfoBanner />
+      <ModuloInfoBanner meta={META} color={COLOR} />
 
       <div style={{ display:'flex', gap:0, borderBottom:'2px solid #e2e8f0', marginBottom:24 }} role="tablist">
         {TABS.map(t => (

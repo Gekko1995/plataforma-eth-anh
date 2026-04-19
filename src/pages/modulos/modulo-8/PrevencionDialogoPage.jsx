@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { modulos } from '../../../data/modulos';
+import ModuloInfoBanner from '../../../components/ModuloInfoBanner';
 
 const COLOR = '#B45309';
 const META  = modulos.find(m => m.id === 8);
@@ -76,23 +77,6 @@ function Toast({ msg, ok }) {
   return <div style={{ position:'fixed', bottom:20, right:20, zIndex:1200, padding:'12px 18px', borderRadius:10, fontSize:13, fontWeight:500, background:ok?'#dcfce7':'#fee2e2', color:ok?'#15803d':'#dc2626', border:`1px solid ${ok?'#86efac':'#fca5a5'}`, boxShadow:'0 4px 16px rgba(0,0,0,.12)' }}>{ok?'✓ ':'✗ '}{msg}</div>;
 }
 
-function InfoBanner() {
-  if (!META) return null;
-  return (
-    <div style={{ background:'#fffbeb', border:'1px solid #fde68a', borderRadius:12, padding:'14px 18px', marginBottom:20 }}>
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-        <span style={{ fontSize:11, fontWeight:700, background:'#fef9c3', color:'#854d0e', border:'1px solid #fde68a', borderRadius:999, padding:'2px 9px', letterSpacing:'.05em', textTransform:'uppercase' }}>DEMO</span>
-        <span style={{ fontSize:14, fontWeight:700, color:'#92400e' }}>Módulo {META.id} — {META.nombre}</span>
-      </div>
-      <p style={{ margin:'0 0 8px', fontSize:13, color:'#78350f', lineHeight:1.55 }}>{META.descripcion}</p>
-      {META.puntosClave?.length > 0 && (
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-          {META.puntosClave.map((p,i) => <span key={i} style={{ fontSize:11, background:'#fef3c7', color:'#92400e', border:'1px solid #fde68a', borderRadius:6, padding:'2px 8px' }}>{p}</span>)}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function isVencido(caso) {
   if (caso.estado === 'Cerrado') return false;
@@ -267,7 +251,7 @@ export default function PrevencionDialogoPage() {
         <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>Prevención y Diálogo Social</span>
       </div>
 
-      <InfoBanner />
+      <ModuloInfoBanner meta={META} color={COLOR} />
 
       <div style={{ display:'flex', gap:0, borderBottom:'2px solid #e2e8f0', marginBottom:24 }} role="tablist">
         {TABS.map(t => (

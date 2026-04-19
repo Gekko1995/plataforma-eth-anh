@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { modulos } from '../../../data/modulos';
+import ModuloInfoBanner from '../../../components/ModuloInfoBanner';
 
 const COLOR = '#B45309';
 const META  = modulos.find(m => m.id === 9);
@@ -70,23 +71,6 @@ const IconX    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="non
 const TH = { textAlign:'left', padding:'9px 12px', fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'.04em', borderBottom:'2px solid #e2e8f0', whiteSpace:'nowrap' };
 const TD = { padding:'9px 10px', fontSize:12, color:'#475569', verticalAlign:'top' };
 
-function InfoBanner() {
-  if (!META) return null;
-  return (
-    <div style={{ background:'#fffbeb', border:'1px solid #fde68a', borderRadius:12, padding:'14px 18px', marginBottom:20 }}>
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-        <span style={{ fontSize:11, fontWeight:700, background:'#fef9c3', color:'#854d0e', border:'1px solid #fde68a', borderRadius:999, padding:'2px 9px', letterSpacing:'.05em', textTransform:'uppercase' }}>DEMO</span>
-        <span style={{ fontSize:14, fontWeight:700, color:'#92400e' }}>Módulo {META.id} — {META.nombre}</span>
-      </div>
-      <p style={{ margin:'0 0 8px', fontSize:13, color:'#78350f', lineHeight:1.55 }}>{META.descripcion}</p>
-      {META.puntosClave?.length > 0 && (
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-          {META.puntosClave.map((p,i) => <span key={i} style={{ fontSize:11, background:'#fef3c7', color:'#92400e', border:'1px solid #fde68a', borderRadius:6, padding:'2px 8px' }}>{p}</span>)}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ── Tab Árbol ──────────────────────────────────────────────────────────
 function TabArbol() {
@@ -245,7 +229,7 @@ export default function MarcoLogicoPage() {
         <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>Formulación Marco Lógico</span>
       </div>
 
-      <InfoBanner />
+      <ModuloInfoBanner meta={META} color={COLOR} />
 
       <div style={{ display:'flex', gap:0, borderBottom:'2px solid #e2e8f0', marginBottom:24 }} role="tablist">
         {TABS.map(t => (

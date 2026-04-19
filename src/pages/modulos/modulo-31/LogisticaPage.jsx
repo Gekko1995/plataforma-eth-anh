@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { modulos } from '../../../data/modulos';
+import ModuloInfoBanner from '../../../components/ModuloInfoBanner';
 
 const COLOR = '#059669';
 const META  = modulos.find(m => m.id === 31);
@@ -34,23 +35,6 @@ const IconBack = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const TH = { textAlign:'left', padding:'9px 12px', fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'.04em', borderBottom:'2px solid #e2e8f0', whiteSpace:'nowrap' };
 const TD = { padding:'9px 12px', fontSize:13, color:'#475569' };
 
-function InfoBanner() {
-  if (!META) return null;
-  return (
-    <div style={{ background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:12, padding:'14px 18px', marginBottom:20 }}>
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-        <span style={{ fontSize:11, fontWeight:700, background:'#dcfce7', color:'#15803d', border:'1px solid #bbf7d0', borderRadius:999, padding:'2px 9px', letterSpacing:'.05em', textTransform:'uppercase' }}>DEMO</span>
-        <span style={{ fontSize:14, fontWeight:700, color:'#14532d' }}>Módulo {META.id} — {META.nombre}</span>
-      </div>
-      <p style={{ margin:'0 0 8px', fontSize:13, color:'#15803d', lineHeight:1.55 }}>{META.descripcion}</p>
-      {META.puntosClave?.length > 0 && (
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-          {META.puntosClave.map((p,i) => <span key={i} style={{ fontSize:11, background:'#dcfce7', color:'#15803d', border:'1px solid #bbf7d0', borderRadius:6, padding:'2px 8px' }}>{p}</span>)}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function Toast({ msg, ok }) {
   if (!msg) return null;
@@ -170,7 +154,7 @@ export default function LogisticaPage() {
         <span style={{ color:'#cbd5e1' }}>/</span>
         <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>Logística y Movilización</span>
       </div>
-      <InfoBanner />
+      <ModuloInfoBanner meta={META} color={COLOR} />
       <div style={{ display:'flex', gap:0, borderBottom:'2px solid #e2e8f0', marginBottom:24 }} role="tablist">
         {TABS.map(t => <button key={t} role="tab" aria-selected={tab===t} onClick={() => setTab(t)} style={{ background:'none', border:'none', cursor:'pointer', padding:'10px 20px', fontSize:13, fontWeight:600, color:tab===t?COLOR:'#64748b', borderBottom:`2px solid ${tab===t?COLOR:'transparent'}`, marginBottom:-2 }}>{t}</button>)}
       </div>
