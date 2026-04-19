@@ -6,7 +6,6 @@ import { modulos as MODULOS_DATA } from '../data/modulos';
 import ModuloModal from '../components/ModuloModal';
 import { addLog } from '../utils/auth';
 import { MODULE_ICONS } from '../data/moduleIcons';
-import { STATUS_STYLES } from '../data/constants';
 import EmptyState from '../components/EmptyState';
 import ErrorState from '../components/ErrorState';
 
@@ -175,25 +174,8 @@ export default function ModulosPage() {
                 aria-label={`Módulo ${m.id}: ${m.name}`}
               >
                 <ModuleCardHeader moduloId={m.id} grupoId={g.id} grupoColor={g.color} />
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <div style={{ marginBottom: '6px' }}>
                   <span style={{ fontSize: '12px', color: 'var(--content-text-hint)', fontWeight: 500 }}>#{m.id}</span>
-                  {m.status && STATUS_STYLES[m.status] && (
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '4px',
-                      fontSize: '11px', fontWeight: 600,
-                      color: STATUS_STYLES[m.status].c,
-                      background: STATUS_STYLES[m.status].bg,
-                      padding: '2px 8px', borderRadius: '20px',
-                    }}
-                      role="status"
-                      aria-label={`Estado: ${STATUS_STYLES[m.status].l}`}
-                    >
-                      {m.status === 'nuevo'      && '✦ '}
-                      {m.status === 'adaptar'    && '◆ '}
-                      {m.status === 'reutilizar' && '● '}
-                      {STATUS_STYLES[m.status].l}
-                    </span>
-                  )}
                 </div>
                 <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '6px', color: 'var(--content-text)', lineHeight: 1.35 }}>
                   {m.name}
