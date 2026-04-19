@@ -4,77 +4,73 @@ export default function ModuloInfoBanner({ meta, color }) {
   if (!meta) return null;
   const info = MODULE_INFO[meta.id];
 
-  const isDark = (hex) => {
-    const r = parseInt(hex.slice(1,3),16);
-    const g = parseInt(hex.slice(3,5),16);
-    const b = parseInt(hex.slice(5,7),16);
-    return (r*299 + g*587 + b*114) / 1000 < 128;
-  };
-
-  const bg      = color + '12';
-  const border  = color + '44';
-  const textMain= color;
-  const badgeBg = color + '22';
+  const bg     = color + '0f';
+  const border = color + '33';
+  const badge  = color + '20';
 
   return (
-    <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, padding: '16px 20px', marginBottom: 20 }}>
+    <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 12, padding: '18px 22px', marginBottom: 22 }}>
+
       {/* Cabecera */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{
-          fontSize: 11, fontWeight: 700,
-          background: badgeBg, color: textMain,
+          fontSize: 10, fontWeight: 800,
+          background: badge, color,
           border: `1px solid ${border}`,
-          borderRadius: 999, padding: '2px 9px',
-          letterSpacing: '.05em', textTransform: 'uppercase',
+          borderRadius: 999, padding: '2px 10px',
+          letterSpacing: '.08em', textTransform: 'uppercase',
         }}>
           DEMO
         </span>
-        <span style={{ fontSize: 14, fontWeight: 800, color: textMain }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color }}>
           Módulo {meta.id} — {meta.nombre}
         </span>
       </div>
 
-      {/* ¿Qué hace? */}
-      {info?.que && (
-        <div style={{ marginBottom: 10 }}>
-          <span style={{
-            fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '.06em', color: textMain, opacity: .85,
-          }}>
-            ¿Qué hace?
-          </span>
-          <p style={{ margin: '3px 0 0', fontSize: 13, color: textMain, lineHeight: 1.6, opacity: .9 }}>
-            {info.que}
-          </p>
-        </div>
-      )}
-
-      {/* ¿Por qué existe? */}
-      {info?.por && (
-        <div style={{ marginBottom: meta.puntosClave?.length ? 12 : 0 }}>
-          <span style={{
-            fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '.06em', color: textMain, opacity: .7,
-          }}>
-            ¿Por qué existe?
-          </span>
-          <p style={{ margin: '3px 0 0', fontSize: 12, color: textMain, lineHeight: 1.55, opacity: .75 }}>
-            {info.por}
-          </p>
+      {/* ¿Qué hace? y ¿Por qué existe? — dos columnas */}
+      {(info?.que || info?.por) && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 24px', marginBottom: meta.puntosClave?.length ? 14 : 0 }}>
+          {info?.que && (
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 800, color, textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 5 }}>
+                ¿Qué hace?
+              </div>
+              <p style={{ margin: 0, fontSize: 13, color: '#1e293b', lineHeight: 1.65 }}>
+                {info.que}
+              </p>
+            </div>
+          )}
+          {info?.por && (
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 800, color, textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 5 }}>
+                ¿Por qué existe?
+              </div>
+              <p style={{ margin: 0, fontSize: 13, color: '#1e293b', lineHeight: 1.65 }}>
+                {info.por}
+              </p>
+            </div>
+          )}
         </div>
       )}
 
       {/* Puntos clave */}
       {meta.puntosClave?.length > 0 && (
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
-          {meta.puntosClave.map((p, i) => (
-            <span key={i} style={{
-              fontSize: 11, background: badgeBg, color: textMain,
-              border: `1px solid ${border}`, borderRadius: 6, padding: '2px 8px',
-            }}>
-              {p}
-            </span>
-          ))}
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 800, color, textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 6 }}>
+            Puntos clave
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {meta.puntosClave.map((p, i) => (
+              <span key={i} style={{
+                fontSize: 11, fontWeight: 600,
+                background: badge, color,
+                border: `1px solid ${border}`,
+                borderRadius: 6, padding: '3px 10px',
+              }}>
+                {p}
+              </span>
+            ))}
+          </div>
         </div>
       )}
     </div>

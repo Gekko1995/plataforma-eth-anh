@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { modulos } from '../../../data/modulos';
+import ModuloInfoBanner from '../../../components/ModuloInfoBanner';
 
 const COLOR = '#1B6B4A';
 const META  = modulos.find(m => m.id === 5);
@@ -361,29 +362,7 @@ export default function RecaboCampoPage() {
         <span style={{ marginLeft:'auto', fontSize:11, fontWeight:600, background:'#fef9c3', color:'#854d0e', padding:'3px 10px', borderRadius:999, border:'1px solid #fde68a' }}>DEMO</span>
       </div>
 
-      {META && (
-        <div style={{ background:COLOR+'0d', border:`1px solid ${COLOR}30`, borderRadius:12, padding:'16px 20px', marginBottom:20, display:'flex', flexDirection:'column', gap:14 }}>
-          <p style={{ margin:0, fontSize:14, color:'var(--content-text)', lineHeight:1.65 }}>{META.descripcion}</p>
-          <div style={{ display:'flex', gap:24, flexWrap:'wrap' }}>
-            <div style={{ flex:'1 1 200px' }}>
-              <p style={{ margin:'0 0 8px', fontSize:11, fontWeight:700, color:COLOR, textTransform:'uppercase', letterSpacing:'.06em' }}>Puntos clave</p>
-              <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:6 }}>
-                {META.puntosClave.map((p,i)=>(
-                  <li key={i} style={{ display:'flex', alignItems:'flex-start', gap:8, fontSize:13, color:'var(--content-text)' }}>
-                    <span style={{ width:18,height:18,borderRadius:'50%',background:COLOR+'18',color:COLOR,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:11,flexShrink:0,marginTop:1 }}>✓</span>{p}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div style={{ flex:'1 1 200px' }}>
-              <p style={{ margin:'0 0 8px', fontSize:11, fontWeight:700, color:COLOR, textTransform:'uppercase', letterSpacing:'.06em' }}>Componentes tecnológicos</p>
-              <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                {META.stack.map((t,i)=><span key={i} style={{ display:'inline-flex', padding:'4px 12px', borderRadius:20, fontSize:12, fontWeight:600, background:COLOR+'12', color:COLOR, border:`1px solid ${COLOR}30` }}>{t}</span>)}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ModuloInfoBanner meta={META} color={COLOR} />
 
       <div style={{ display:'flex', gap:4, borderBottom:'2px solid #e2e8f0', marginBottom:20, overflowX:'auto' }} role="tablist">
         {TABS.map(t=>(

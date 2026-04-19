@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { modulos } from '../../../data/modulos';
+import ModuloInfoBanner from '../../../components/ModuloInfoBanner';
 
 // ── Colores del módulo (Grupo A) ──────────────────────────────────────
 const COLOR   = '#1B6B4A';
@@ -620,54 +621,7 @@ export default function LineaDiagnosticaPage() {
       </div>
 
       {/* Banner informativo del módulo */}
-      {META && (
-        <div style={{
-          background: COLOR + '0d',
-          border: `1px solid ${COLOR}30`,
-          borderRadius: 12,
-          padding: '16px 20px',
-          marginBottom: 20,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 14,
-        }}>
-          {/* Descripción */}
-          <p style={{ margin: 0, fontSize: 14, color: 'var(--content-text)', lineHeight: 1.65 }}>
-            {META.descripcion}
-          </p>
-
-          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-            {/* Puntos clave */}
-            <div style={{ flex: '1 1 200px' }}>
-              <p style={{ margin: '0 0 8px', fontSize: 11, fontWeight: 700, color: COLOR, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                Puntos clave
-              </p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {META.puntosClave.map((punto, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: 'var(--content-text)' }}>
-                    <span style={{ width: 18, height: 18, borderRadius: '50%', background: COLOR + '18', color: COLOR, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 11, flexShrink: 0, marginTop: 1 }}>✓</span>
-                    {punto}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Stack tecnológico */}
-            <div style={{ flex: '1 1 200px' }}>
-              <p style={{ margin: '0 0 8px', fontSize: 11, fontWeight: 700, color: COLOR, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                Componentes tecnológicos
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {META.stack.map((tool, i) => (
-                  <span key={i} style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: COLOR + '12', color: COLOR, border: `1px solid ${COLOR}30` }}>
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ModuloInfoBanner meta={META} color={COLOR} />
 
       {/* Tabs */}
       <div style={{ display:'flex', gap:4, borderBottom:'2px solid #e2e8f0', marginBottom:20, overflowX:'auto' }} role="tablist">

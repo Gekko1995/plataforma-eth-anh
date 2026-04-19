@@ -232,26 +232,13 @@ export default function ModulosPage() {
                   {m.name}
                 </div>
                 {MODULE_INFO[m.id] && (
-                  <div style={{ marginBottom: '14px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div>
-                      <span style={{ fontSize: '10px', fontWeight: 700, color: g.color, textTransform: 'uppercase', letterSpacing: '.05em' }}>¿Qué hace?</span>
-                      <div style={{
-                        fontSize: '12px', color: 'var(--content-text-muted)', lineHeight: 1.55,
-                        display: '-webkit-box', WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                      }}>
-                        {MODULE_INFO[m.id].que}
-                      </div>
-                    </div>
-                    <div>
-                      <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--content-text-hint)', textTransform: 'uppercase', letterSpacing: '.05em' }}>¿Por qué existe?</span>
-                      <div style={{
-                        fontSize: '11px', color: 'var(--content-text-hint)', lineHeight: 1.5,
-                        display: '-webkit-box', WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                      }}>
-                        {MODULE_INFO[m.id].por}
-                      </div>
+                  <div style={{ marginBottom: '12px', flex: 1 }}>
+                    <div style={{
+                      fontSize: '12px', color: 'var(--content-text-muted)', lineHeight: 1.55,
+                      display: '-webkit-box', WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                    }}>
+                      {MODULE_INFO[m.id].que}
                     </div>
                   </div>
                 )}
