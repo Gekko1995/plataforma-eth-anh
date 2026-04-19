@@ -26,6 +26,32 @@ import CampusBeneficiariosPage     from './pages/modulos/modulo-10/CampusBenefic
 import CampusComunidadesPage       from './pages/modulos/modulo-11/CampusComunidadesPage';
 import CampusPersonalPage          from './pages/modulos/modulo-12/CampusPersonalPage';
 import AceleradoraExportadoraPage  from './pages/modulos/modulo-13/AceleradoraExportadoraPage';
+import GestionBeneficiariosPage    from './pages/modulos/modulo-14/GestionBeneficiariosPage';
+import DirectorioActoresPage       from './pages/modulos/modulo-15/DirectorioActoresPage';
+import ConsultaPreviaPage          from './pages/modulos/modulo-16/ConsultaPreviaPage';
+import ReclutamientoPage           from './pages/modulos/modulo-17/ReclutamientoPage';
+import GestionPersonalPage         from './pages/modulos/modulo-18/GestionPersonalPage';
+import GestionAlianzasPage         from './pages/modulos/modulo-19/GestionAlianzasPage';
+import SeguridadAccesosPage        from './pages/modulos/modulo-20/SeguridadAccesosPage';
+import MonitoreoOperativoPage      from './pages/modulos/modulo-21/MonitoreoOperativoPage';
+import GestionFinancieraPage       from './pages/modulos/modulo-22/GestionFinancieraPage';
+import CuentasCobroPage            from './pages/modulos/modulo-23/CuentasCobroPage';
+import SecretariaComitePage        from './pages/modulos/modulo-24/SecretariaComitePage';
+import AdquisicionesPage           from './pages/modulos/modulo-25/AdquisicionesPage';
+import MatrizRiesgosPage           from './pages/modulos/modulo-26/MatrizRiesgosPage';
+import RevisionInformesPage        from './pages/modulos/modulo-27/RevisionInformesPage';
+import CompiladoresANHPage         from './pages/modulos/modulo-28/CompiladoresANHPage';
+import GestionConocimientoPage     from './pages/modulos/modulo-29/GestionConocimientoPage';
+import AgendaTerritorialPage       from './pages/modulos/modulo-30/AgendaTerritorialPage';
+import LogisticaPage               from './pages/modulos/modulo-31/LogisticaPage';
+import VisibilidadPrensaPage       from './pages/modulos/modulo-32/VisibilidadPrensaPage';
+import HSEPage                     from './pages/modulos/modulo-33/HSEPage';
+import GestionDocumentalPage       from './pages/modulos/modulo-34/GestionDocumentalPage';
+import ControlInventariosPage      from './pages/modulos/modulo-35/ControlInventariosPage';
+import PolizasGarantiasPage        from './pages/modulos/modulo-36/PolizasGarantiasPage';
+import LiquidacionCierrePage       from './pages/modulos/modulo-37/LiquidacionCierrePage';
+import MesaAyudaPage               from './pages/modulos/modulo-38/MesaAyudaPage';
+import InfraestructuraPage         from './pages/modulos/modulo-39/InfraestructuraPage';
 import {
   authUser,
   addLog,
@@ -179,6 +205,32 @@ export default function App() {
           <Route path="modulos/11/app" element={<CampusComunidadesPage />} />
           <Route path="modulos/12/app" element={<CampusPersonalPage />} />
           <Route path="modulos/13/app" element={<AceleradoraExportadoraPage />} />
+          <Route path="modulos/14/app" element={<GestionBeneficiariosPage />} />
+          <Route path="modulos/15/app" element={<DirectorioActoresPage />} />
+          <Route path="modulos/16/app" element={<ConsultaPreviaPage />} />
+          <Route path="modulos/17/app" element={<ReclutamientoPage />} />
+          <Route path="modulos/18/app" element={<GestionPersonalPage />} />
+          <Route path="modulos/19/app" element={<GestionAlianzasPage />} />
+          <Route path="modulos/20/app" element={<SeguridadAccesosPage />} />
+          <Route path="modulos/21/app" element={<MonitoreoOperativoPage />} />
+          <Route path="modulos/22/app" element={<GestionFinancieraPage />} />
+          <Route path="modulos/23/app" element={<CuentasCobroPage />} />
+          <Route path="modulos/24/app" element={<SecretariaComitePage />} />
+          <Route path="modulos/25/app" element={<AdquisicionesPage />} />
+          <Route path="modulos/26/app" element={<MatrizRiesgosPage />} />
+          <Route path="modulos/27/app" element={<RevisionInformesPage />} />
+          <Route path="modulos/28/app" element={<CompiladoresANHPage />} />
+          <Route path="modulos/29/app" element={<GestionConocimientoPage />} />
+          <Route path="modulos/30/app" element={<AgendaTerritorialPage />} />
+          <Route path="modulos/31/app" element={<LogisticaPage />} />
+          <Route path="modulos/32/app" element={<VisibilidadPrensaPage />} />
+          <Route path="modulos/33/app" element={<HSEPage />} />
+          <Route path="modulos/34/app" element={<GestionDocumentalPage />} />
+          <Route path="modulos/35/app" element={<ControlInventariosPage />} />
+          <Route path="modulos/36/app" element={<PolizasGarantiasPage />} />
+          <Route path="modulos/37/app" element={<LiquidacionCierrePage />} />
+          <Route path="modulos/38/app" element={<MesaAyudaPage />} />
+          <Route path="modulos/39/app" element={<InfraestructuraPage />} />
           <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
           <Route
             path="modulos/:id/presentacion/editar"
