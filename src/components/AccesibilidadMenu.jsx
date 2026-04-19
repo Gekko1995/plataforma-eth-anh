@@ -107,29 +107,38 @@ export default function AccesibilidadMenu() {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Botón trigger */}
+      {/* Botón trigger — visible en header oscuro */}
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Opciones de accesibilidad"
         aria-expanded={open}
         title="Accesibilidad (MinTIC Res. 1519)"
         style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer',
-          background: active ? 'rgba(255,255,255,.25)' : 'rgba(255,255,255,.12)',
+          display: 'flex', alignItems: 'center', gap: 7,
+          height: 34, padding: '0 13px',
+          borderRadius: 8, cursor: 'pointer',
+          background: active ? '#0CAABC' : 'rgba(255,255,255,.13)',
+          border: `1.5px solid ${active ? '#0CAABC' : 'rgba(255,255,255,.30)'}`,
           color: '#fff',
-          outline: active ? '2px solid rgba(255,255,255,.6)' : 'none',
-          transition: 'background .15s',
+          fontSize: 12, fontWeight: 700, letterSpacing: '.01em',
+          whiteSpace: 'nowrap',
+          transition: 'background .15s, border-color .15s',
           position: 'relative',
         }}
+        onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,.22)'; }}
+        onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,.13)'; }}
       >
         <IconA11y />
+        <span className="a11y-btn-label">Accesibilidad</span>
         {active && (
           <span style={{
-            position: 'absolute', top: 4, right: 4,
-            width: 7, height: 7, borderRadius: '50%',
-            background: '#0CAABC', border: '1.5px solid #053D58',
-          }} />
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            width: 16, height: 16, borderRadius: '50%',
+            background: '#fff', color: '#0CAABC',
+            fontSize: 10, fontWeight: 900, marginLeft: 2,
+          }}>
+            {[prefs.contraste, prefs.grises, prefs.dislexia, prefs.subrayar, prefs.tamano > 0].filter(Boolean).length}
+          </span>
         )}
       </button>
 

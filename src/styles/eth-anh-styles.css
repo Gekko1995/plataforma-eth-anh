@@ -1164,6 +1164,11 @@ html.a11y-dyslexia * {
   line-height:    1.8   !important;
 }
 
+/* — Botón accesibilidad: ocultar texto en móvil — */
+@media (max-width: 640px) {
+  .a11y-btn-label { display: none; }
+}
+
 /* — Subrayar todos los enlaces — */
 html.a11y-underline a,
 html.a11y-underline [role="link"],
