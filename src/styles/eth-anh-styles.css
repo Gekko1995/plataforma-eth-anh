@@ -960,3 +960,125 @@ html, body, #root {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+
+/* ============================================================
+   13. FOCUS VISIBLE — Navegación por teclado (WCAG 2.2)
+   ============================================================ */
+
+/* Reset: quitar outline por defecto solo cuando no es teclado */
+:focus:not(:focus-visible) { outline: none; }
+
+/* Focus visible universal */
+:focus-visible {
+  outline: 2px solid var(--anh-secondary);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Nav items — focus dentro del sidebar oscuro */
+.nav-item:focus-visible {
+  outline: 2px solid var(--anh-secondary);
+  outline-offset: -2px;
+  background: var(--sidebar-hover);
+}
+
+/* Botones — focus con sombra de color para mayor visibilidad */
+.btn:focus-visible {
+  outline: 2px solid var(--anh-secondary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(12, 170, 188, 0.20);
+}
+
+/* Inputs y selects */
+.form-input:focus-visible,
+.form-select:focus-visible,
+.form-textarea:focus-visible {
+  outline: 2px solid var(--anh-secondary);
+  outline-offset: 0;
+  box-shadow: 0 0 0 3px rgba(12, 170, 188, 0.18);
+}
+
+/* Cards clicables */
+.module-card:focus-visible,
+.kpi-card:focus-visible,
+.group-card-btn:focus-visible {
+  outline: 2px solid var(--anh-secondary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(12, 170, 188, 0.15);
+}
+
+
+/* ============================================================
+   14. TOUCH TARGETS — Mínimo 44×44pt en móvil (WCAG 2.5.5)
+   ============================================================ */
+
+@media (max-width: 640px) {
+  /* Botones generales */
+  .btn        { min-height: 44px; padding: 10px 20px; }
+  .btn-sm     { min-height: 44px; padding: 10px 16px; font-size: var(--fs-sm); }
+  .btn-lg     { min-height: 52px; }
+
+  /* Nav items en sidebar abierto */
+  .nav-item   { min-height: 48px; }
+
+  /* Inputs y selects */
+  .form-input,
+  .form-select { min-height: 44px; font-size: 16px; } /* 16px evita zoom automático en iOS */
+
+  /* Botones de tarjetas de módulo */
+  .module-card button { min-height: 44px !important; padding: 10px 16px !important; }
+
+  /* Avatar del header */
+  .header-avatar { width: 44px; height: 44px; font-size: 14px; }
+
+  /* Modal close button */
+  .modal-close { width: 44px; height: 44px; }
+}
+
+
+/* ============================================================
+   15. SEMÁFOROS ACCESIBLES — Color + forma (no solo color)
+   ============================================================ */
+
+/* Forma distinta por estado: círculo → rombos → triángulo */
+.module-card-status.ok {
+  background: var(--status-ok);
+  border-radius: var(--radius-full);         /* ● círculo */
+}
+.module-card-status.warn {
+  background: var(--status-warn);
+  border-radius: 2px;                        /* ■ cuadrado */
+}
+.module-card-status.danger {
+  background: var(--status-danger);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* ▲ triángulo */
+  border-radius: 0;
+}
+
+/* Semáforo inline — mismo principio de forma */
+.semaforo.ok::before     { background: var(--status-ok);      border-radius: 50%; }
+.semaforo.warn::before   { background: var(--status-warn);    border-radius: 2px; }
+.semaforo.danger::before { background: var(--status-danger);  clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border-radius: 0; }
+.semaforo.pending::before{ background: var(--status-pending); border-radius: 50%; opacity: 0.5; }
+
+/* Etiqueta de estado — texto legible siempre visible */
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+}
+.status-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
+.status-label.ok     { color: #166534; }
+.status-label.ok::before     { background: var(--status-ok);     border-radius: 50%; }
+.status-label.warn   { color: #92400E; }
+.status-label.warn::before   { background: var(--status-warn);   border-radius: 2px; }
+.status-label.danger { color: #9F1239; }
+.status-label.danger::before { background: var(--status-danger); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border-radius: 0; }

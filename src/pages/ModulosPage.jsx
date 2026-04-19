@@ -6,6 +6,7 @@ import { modulos as MODULOS_DATA } from '../data/modulos';
 import ModuloModal from '../components/ModuloModal';
 import { addLog } from '../utils/auth';
 import { MODULE_ICONS } from '../data/moduleIcons';
+import { STATUS_STYLES } from '../data/constants';
 
 const moduloMap = Object.fromEntries(MODULOS_DATA.map(m => [m.id, m]));
 
@@ -132,10 +133,32 @@ export default function ModulosPage() {
 
           <div className="modules-grid">
             {g.modulos.map(m => (
-              <div key={m.id} className={`module-card group-${g.id.toLowerCase()}`}>
+              <div
+                key={m.id}
+                className={`module-card group-${g.id.toLowerCase()}`}
+                role="article"
+                aria-label={`Módulo ${m.id}: ${m.name}`}
+              >
                 <ModuleCardHeader moduloId={m.id} grupoId={g.id} grupoColor={g.color} />
-                <div style={{ marginBottom: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <span style={{ fontSize: '12px', color: 'var(--content-text-hint)', fontWeight: 500 }}>#{m.id}</span>
+                  {m.status && STATUS_STYLES[m.status] && (
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '4px',
+                      fontSize: '11px', fontWeight: 600,
+                      color: STATUS_STYLES[m.status].c,
+                      background: STATUS_STYLES[m.status].bg,
+                      padding: '2px 8px', borderRadius: '20px',
+                    }}
+                      role="status"
+                      aria-label={`Estado: ${STATUS_STYLES[m.status].l}`}
+                    >
+                      {m.status === 'nuevo'      && '✦ '}
+                      {m.status === 'adaptar'    && '◆ '}
+                      {m.status === 'reutilizar' && '● '}
+                      {STATUS_STYLES[m.status].l}
+                    </span>
+                  )}
                 </div>
                 <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '6px', color: 'var(--content-text)', lineHeight: 1.35 }}>
                   {m.name}
