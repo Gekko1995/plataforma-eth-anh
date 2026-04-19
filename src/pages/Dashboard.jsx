@@ -62,7 +62,7 @@ export default function Dashboard() {
 
   const kpis = [
     { label: 'Módulos totales',  value: total,                                  color: '#4f8ef7', bg: '#eff6ff', icon: <IconGrid size={18} color="#4f8ef7" /> },
-    { label: 'Visibles para ti', value: loading ? '…' : modulosVisibles.length, color: '#0369A1', bg: '#f0f9ff', icon: <IconEye  size={18} color="#0369A1" /> },
+    { label: 'Visibles para ti', value: modulosVisibles.length,                 color: '#0369A1', bg: '#f0f9ff', icon: <IconEye  size={18} color="#0369A1" /> },
   ];
 
   return (
@@ -85,7 +85,12 @@ export default function Dashboard() {
 
       {/* KPIs */}
       <div className="kpi-grid" style={{ marginBottom: '32px' }}>
-        {kpis.map(k => (
+        {loading ? Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="skeleton-card">
+            <div style={{ height: '12px', width: '60%' }} className="skeleton" />
+            <div style={{ height: '36px', width: '40%', marginTop: '8px' }} className="skeleton" />
+          </div>
+        )) : kpis.map(k => (
           <div
             key={k.label}
             className="kpi-card"

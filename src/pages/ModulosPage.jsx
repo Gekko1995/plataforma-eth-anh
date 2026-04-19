@@ -7,6 +7,8 @@ import ModuloModal from '../components/ModuloModal';
 import { addLog } from '../utils/auth';
 import { MODULE_ICONS } from '../data/moduleIcons';
 import { STATUS_STYLES } from '../data/constants';
+import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 
 const moduloMap = Object.fromEntries(MODULOS_DATA.map(m => [m.id, m]));
 
@@ -64,8 +66,28 @@ export default function ModulosPage() {
     addLog(user, 'ABRIR_MODULO', `#${m.id} — ${m.name}`);
   }
 
-  if (loading) return <p style={{ color: 'var(--content-text-muted)' }}>Cargando módulos…</p>;
-  if (error)   return <p style={{ color: 'var(--status-danger)' }}>{error}</p>;
+  if (loading) return (
+    <div>
+      <div style={{ height: '32px', width: '120px', marginBottom: '20px' }} className="skeleton" />
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ height: '40px', width: '240px' }} className="skeleton" />
+        <div style={{ height: '40px', width: '180px' }} className="skeleton" />
+      </div>
+      <div className="modules-grid">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="skeleton-card">
+            <div style={{ height: '100px', borderRadius: 'var(--radius-md)' }} className="skeleton" />
+            <div style={{ height: '12px', width: '40%' }} className="skeleton" />
+            <div style={{ height: '16px', width: '85%' }} className="skeleton" />
+            <div style={{ height: '12px', width: '70%' }} className="skeleton" />
+            <div style={{ height: '32px', width: '120px', marginTop: '4px' }} className="skeleton" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />;
 
   const modulosFiltrados = modulosVisibles.filter(m => {
     const coincideGrupo    = !filtroGrupo || m.grupoId === filtroGrupo;
@@ -110,8 +132,21 @@ export default function ModulosPage() {
         )}
       </div>
 
-      {gruposConModulos.length === 0 && (
-        <p style={{ color: 'var(--content-text-muted)' }}>No se encontraron módulos.</p>
+      {gruposConModulos.length === 0 && !search && !filtroGrupo && (
+        <EmptyState
+          icon="lock"
+          title="Sin módulos asignados"
+          description="Tu cuenta aún no tiene módulos habilitados. Contacta al administrador para solicitar acceso."
+        />
+      )}
+
+      {gruposConModulos.length === 0 && (search || filtroGrupo) && (
+        <EmptyState
+          icon="search"
+          title="Sin resultados"
+          description={`No se encontraron módulos${search ? ` para "${search}"` : ''}${filtroGrupo ? ` en el grupo ${filtroGrupo}` : ''}. Prueba con otros términos.`}
+          action={{ label: 'Limpiar filtros', onClick: () => { setSearch(''); setFiltroGrupo(''); } }}
+        />
       )}
 
       {gruposConModulos.map(g => (

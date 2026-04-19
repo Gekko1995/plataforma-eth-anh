@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 
 const PAGE_SIZE = 50;
 
@@ -63,6 +65,7 @@ function AccionBadge({ accion }) {
 export default function HistorialPage() {
   const [logs, setLogs]       = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [filtroEmail, setFiltroEmail] = useState('');
   const [filtroAccion, setFiltroAccion] = useState('');
   const [filtroDesde, setFiltroDesde] = useState('');
@@ -94,7 +97,10 @@ export default function HistorialPage() {
     if (hasta)        query = query.lte('created_at', hasta + 'T23:59:59');
 
     const { data, error, count } = await query;
-    if (!error) {
+    if (error) {
+      setFetchError(error.message);
+    } else {
+      setFetchError(null);
       setLogs(data || []);
       setTotal(count || 0);
     }
@@ -255,9 +261,23 @@ export default function HistorialPage() {
 
       {/* Tabla */}
       {loading ? (
-        <p style={{ color: 'var(--content-text-muted)' }}>Cargando historial…</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} style={{ height: '48px', borderRadius: 'var(--radius-md)' }} className="skeleton" />
+          ))}
+        </div>
+      ) : fetchError ? (
+        <ErrorState
+          message={fetchError}
+          onRetry={() => fetchLogs(page, filtroEmail, filtroAccion, filtroDesde, filtroHasta)}
+        />
       ) : logs.length === 0 ? (
-        <p style={{ color: 'var(--content-text-muted)' }}>No hay registros.</p>
+        <EmptyState
+          icon="history"
+          title={filtroEmail || filtroAccion || filtroDesde || filtroHasta ? 'Sin registros para estos filtros' : 'Sin actividad registrada'}
+          description={filtroEmail || filtroAccion ? 'No se encontraron eventos con los filtros aplicados.' : 'Aquí aparecerá el historial de acciones de los usuarios cuando empiecen a usar la plataforma.'}
+          compact
+        />
       ) : (
         <div className="table-wrapper">
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
