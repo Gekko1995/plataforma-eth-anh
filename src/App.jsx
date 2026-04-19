@@ -13,6 +13,7 @@ import PresentacionEditorPage from './pages/PresentacionEditorPage';
 import HistorialPage from './pages/HistorialPage';
 import PerfilPage from './pages/PerfilPage';
 import PermisosAdminPage from './pages/PermisosAdminPage';
+import LineaDiagnosticaPage from './pages/modulos/modulo-1/LineaDiagnosticaPage';
 import {
   authUser,
   addLog,
@@ -153,6 +154,7 @@ export default function App() {
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="modulos" element={<ModulosPage />} />
           <Route path="modulos/:id/demo" element={<ModuloDemoPage />} />
+          <Route path="modulos/1/app" element={<LineaDiagnosticaPage />} />
           <Route path="modulos/:id/presentacion" element={<PresentacionVistaPage />} />
           <Route
             path="modulos/:id/presentacion/editar"

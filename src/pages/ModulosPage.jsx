@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useOutletContext, useSearchParams } from 'react-router-dom';
+import { useOutletContext, useSearchParams, useNavigate } from 'react-router-dom';
 import { useModulosVisibles } from '../hooks/useModulosVisibles';
 import { GROUPS } from '../data/constants';
 import { modulos as MODULOS_DATA } from '../data/modulos';
@@ -8,6 +8,9 @@ import { addLog } from '../utils/auth';
 import { MODULE_ICONS } from '../data/moduleIcons';
 import EmptyState from '../components/EmptyState';
 import ErrorState from '../components/ErrorState';
+
+// Módulos con página dedicada (ruta /modulos/:id/app)
+const MODULOS_CON_APP = new Set([1]);
 
 const moduloMap = Object.fromEntries(MODULOS_DATA.map(m => [m.id, m]));
 
@@ -51,6 +54,7 @@ export default function ModulosPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [selectedModulo, setSelectedModulo] = useState(null);
+  const navigate = useNavigate();
 
   const filtroGrupo = searchParams.get('grupo') || '';
   const setFiltroGrupo = (val) => {
@@ -59,6 +63,11 @@ export default function ModulosPage() {
   };
 
   function abrirModal(m, g) {
+    if (MODULOS_CON_APP.has(m.id)) {
+      addLog(user, 'ABRIR_MODULO', `#${m.id} — ${m.name}`);
+      navigate(`/modulos/${m.id}/app`);
+      return;
+    }
     const richData = moduloMap[m.id];
     if (!richData) return;
     setSelectedModulo({ ...richData, grupoColor: g.color, grupoNombre: g.name });
