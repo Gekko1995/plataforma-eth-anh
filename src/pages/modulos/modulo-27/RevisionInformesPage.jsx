@@ -9,7 +9,7 @@ const META  = modulos.find(m => m.id === 27);
 const INFORMES = [
   { id:'INF-001', periodo:'Octubre 2024',    tipo:'Mensual',   radicado:'2024-11-05', revisor:'Coord. Técnico', estado:'Aprobado',   version:2, m23_desbloqueada:true },
   { id:'INF-002', periodo:'Noviembre 2024',  tipo:'Mensual',   radicado:'2024-12-03', revisor:'Coord. Técnico', estado:'En revisión',version:1, m23_desbloqueada:false },
-  { id:'INF-003', periodo:'Q3 2024',         tipo:'Trimestral',radicado:'2024-10-15', revisor:'Supervisor ANH', estado:'Aprobado',   version:3, m23_desbloqueada:true },
+  { id:'INF-003', periodo:'Q3 2024',         tipo:'Trimestral',radicado:'2024-10-15', revisor:'Supervisor del convenio', estado:'Aprobado',   version:3, m23_desbloqueada:true },
   { id:'INF-004', periodo:'Diciembre 2024',  tipo:'Mensual',   radicado:null,         revisor:'—',              estado:'Pendiente',  version:0, m23_desbloqueada:false },
 ];
 

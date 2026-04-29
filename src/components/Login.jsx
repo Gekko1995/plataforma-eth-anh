@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ForgotPassword from './ForgotPassword';
 
-/* ── Isotipo ETH-ANH inline SVG ── */
+/* ── Isotipo inline SVG ── */
 function EthAnhIsotipo({ size = 40 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -167,12 +167,14 @@ export default function Login({ onLogin, error, loading }) {
               </h2>
               <p style={{
                 margin: "0 0 8px",
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 600,
                 color: "rgba(255,255,255,0.85)",
                 letterSpacing: "0.04em",
+                lineHeight: 1.35,
               }}>
-                PLATAFORMA ETH-ANH 2026
+                PLATAFORMA DE GESTIÓN Y VIABILIDAD<br />
+                DE PROYECTOS DE INVERSIÓN
               </p>
               <p style={{
                 margin: 0,
@@ -181,7 +183,7 @@ export default function Login({ onLogin, error, loading }) {
                 lineHeight: 1.6,
                 maxWidth: 240,
               }}>
-                Gestión integrada del Convenio ETH-ANH.<br />
+                Plataforma integrada para la gestión de proyectos.<br />
                 Desarrollado por SINAPSIS3D S.A.S.
               </p>
             </div>

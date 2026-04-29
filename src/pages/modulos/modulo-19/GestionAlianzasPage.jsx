@@ -22,7 +22,7 @@ const CARS_ALIANZAS = [
 ];
 
 const ENTIDADES_NAC = [
-  { id:'en1', nombre:'ANH',            tipo:'Contratante',   contacto:'Supervisor TdR', estado:'verde',   ultimo_reporte:'2024-12-02' },
+  { id:'en1', nombre:'Entidad contratante', tipo:'Contratante', contacto:'Supervisor del convenio', estado:'verde',   ultimo_reporte:'2024-12-02' },
   { id:'en2', nombre:'DNP',            tipo:'Técnico',       contacto:'Dir. Inversión', estado:'verde',   ultimo_reporte:'2024-11-25' },
   { id:'en3', nombre:'MINAGRICULTURA', tipo:'Aliado técnico',contacto:'Sec. Técnica',   estado:'amarillo',ultimo_reporte:'2024-10-30' },
   { id:'en4', nombre:'UARIV',          tipo:'Aliado social', contacto:'Dir. Territorial',estado:'verde',  ultimo_reporte:'2024-11-28' },
@@ -54,7 +54,7 @@ function TabCARs({ cars, showToast }) {
     <div>
       {alertas.length > 0 && (
         <div style={{ background:'#fef9c3', border:'1px solid #fde68a', borderRadius:10, padding:'10px 16px', marginBottom:14, display:'flex', gap:8, alignItems:'center' }}>
-          <IconWarn /><span style={{ fontSize:13, fontWeight:700, color:'#92400e' }}>{alertas.length} CAR(s) sin reporte en más de {ALERTA_DIAS} días — incluido en próximo informe ANH</span>
+          <IconWarn /><span style={{ fontSize:13, fontWeight:700, color:'#92400e' }}>{alertas.length} CAR(s) sin reporte en más de {ALERTA_DIAS} días — incluido en próximo informe institucional</span>
         </div>
       )}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:14 }}>

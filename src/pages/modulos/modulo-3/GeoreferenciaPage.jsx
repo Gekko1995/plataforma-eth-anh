@@ -19,7 +19,7 @@ const CAPAS_DEMO = [
   { id:'pdet',      label:'PDET',            color:'#1B6B4A', activa:true,  descripcion:'Municipios PDET activos del área de intervención' },
   { id:'municipios',label:'Municipios',       color:'#0369A1', activa:true,  descripcion:'División político-administrativa municipal' },
   { id:'ben',       label:'Beneficiarios',   color:'#7C3AED', activa:true,  descripcion:'Densidad de beneficiarios directos por municipio' },
-  { id:'ep',        label:'Zonas E&P',        color:'#B45309', activa:false, descripcion:'Bloques exploratorios y de producción ANH' },
+  { id:'ep',        label:'Zonas operativas', color:'#B45309', activa:false, descripcion:'Bloques operativos y áreas de intervención del proyecto' },
   { id:'cars',      label:'CARs',             color:'#0891B2', activa:false, descripcion:'Jurisdicción de corporaciones autónomas regionales' },
   { id:'zomac',     label:'ZOMAC',            color:'#DC2626', activa:false, descripcion:'Zonas más afectadas por el conflicto armado' },
 ];
@@ -330,7 +330,7 @@ function TabAlertas({ puntos }) {
                     <td style={TD}>{p.depto}</td>
                     <td style={TD}>{p.tipo}</td>
                     <td style={TD}>{p.beneficiarios || '—'}</td>
-                    <td style={{ ...TD, color:'#dc2626', fontSize:12 }}>Verificar elegibilidad territorial con ANH</td>
+                    <td style={{ ...TD, color:'#dc2626', fontSize:12 }}>Verificar elegibilidad territorial con el contratante</td>
                   </tr>
                 ))}
               </tbody>

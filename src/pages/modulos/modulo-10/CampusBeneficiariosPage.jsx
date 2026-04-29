@@ -74,13 +74,13 @@ function CertificadoModal({ ben, onClose }) {
         <div style={{ fontSize:11, color:'#94a3b8', marginBottom:20 }}>Certifica que:</div>
         <div style={{ fontSize:22, fontWeight:800, color:'#1e293b', marginBottom:4 }}>{ben.nombre}</div>
         <div style={{ fontSize:13, color:'#64748b', marginBottom:20 }}>Productora(or) — Perfil: <strong>{ben.perfil}</strong></div>
-        <div style={{ fontSize:14, color:'#4c1d95', fontWeight:600, marginBottom:20 }}>Ha completado satisfactoriamente el programa de formación técnica<br/>correspondiente a su perfil productivo dentro del convenio ETH-ANH 2026.</div>
+        <div style={{ fontSize:14, color:'#4c1d95', fontWeight:600, marginBottom:20 }}>Ha completado satisfactoriamente el programa de formación técnica<br/>correspondiente a su perfil productivo dentro del convenio.</div>
         <div style={{ display:'flex', justifyContent:'center', gap:12, marginBottom:24 }}>
           <div style={{ background:'#7c3aed', color:'#fff', borderRadius:8, padding:'6px 14px', fontSize:11, fontWeight:700 }}>QR: {ben.id.toUpperCase()}-CERT-2024</div>
         </div>
         <div style={{ display:'flex', justifyContent:'space-around', borderTop:'1px solid #e2e8f0', paddingTop:16 }}>
           <div style={{ textAlign:'center' }}><div style={{ borderTop:'1px solid #1e293b', width:140, margin:'0 auto 6px' }}/><div style={{ fontSize:11, color:'#64748b' }}>Coordinador Formación</div></div>
-          <div style={{ textAlign:'center' }}><div style={{ borderTop:'1px solid #1e293b', width:140, margin:'0 auto 6px' }}/><div style={{ fontSize:11, color:'#64748b' }}>Dirección ANH</div></div>
+          <div style={{ textAlign:'center' }}><div style={{ borderTop:'1px solid #1e293b', width:140, margin:'0 auto 6px' }}/><div style={{ fontSize:11, color:'#64748b' }}>Dirección del proyecto</div></div>
         </div>
         <div style={{ marginTop:16, fontSize:11, color:'#94a3b8' }}>* Documento demostrativo — no tiene validez jurídica</div>
       </div>

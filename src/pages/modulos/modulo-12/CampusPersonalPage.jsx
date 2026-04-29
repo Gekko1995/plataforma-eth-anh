@@ -12,7 +12,7 @@ const estaVencida = (fecha) => new Date(fecha) < HOY;
 const addMeses = (base, m) => { const d = new Date(base); d.setMonth(d.getMonth()+m); return d.toISOString().slice(0,10); };
 
 const MODULOS_INDUCCION = [
-  { id:'m1', nombre:'Contexto ETH-ANH: misión, visión y marco normativo', duracion:'2h', obligatorio:true  },
+  { id:'m1', nombre:'Contexto institucional: misión, visión y marco normativo', duracion:'2h', obligatorio:true  },
   { id:'m2', nombre:'Roles y responsabilidades del convenio',              duracion:'1h', obligatorio:true  },
   { id:'m3', nombre:'Ética pública y conflictos de interés',               duracion:'1.5h', obligatorio:true },
   { id:'m4', nombre:'Gestión documental y reporte de avances',             duracion:'2h', obligatorio:true  },

@@ -29,7 +29,7 @@ const DEMO_INDICADORES = [
   { id:'i17', cadena:'Impacto',   nombre:'Diversificación productiva',             unidad:'%',       t0:15,    t1:22,    t2:35,    meta:45,   fuente:'Encuesta FWRTS',     tiene_fuente:true },
   { id:'i18', cadena:'Impacto',   nombre:'Hogares con seguridad alimentaria',      unidad:'%',       t0:45,    t1:52,    t2:61,    meta:70,   fuente:'FAO / ICBF',         tiene_fuente:true },
   { id:'i19', cadena:'Impacto',   nombre:'Reducción NBI municipal',                unidad:'pts',     t0:0,     t1:0.8,   t2:1.9,   meta:3,    fuente:'DANE',               tiene_fuente:true },
-  { id:'i20', cadena:'Impacto',   nombre:'Índice de gobernanza territorial',       unidad:'0–100',   t0:32,    t1:41,    t2:54,    meta:65,   fuente:'ETH-ANH',            tiene_fuente:true },
+  { id:'i20', cadena:'Impacto',   nombre:'Índice de gobernanza territorial',       unidad:'0–100',   t0:32,    t1:41,    t2:54,    meta:65,   fuente:'Convenio',           tiene_fuente:true },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -383,12 +383,12 @@ function TabExportador({ indicadores }) {
 
   return (
     <div>
-      {done && <div style={{ padding:'12px 16px', borderRadius:8, background:'#dcfce7', color:'#15803d', border:'1px solid #86efac', marginBottom:16, fontSize:13 }}>✓ Informe de impacto generado (demo). En producción se generaría un PDF ANH.</div>}
+      {done && <div style={{ padding:'12px 16px', borderRadius:8, background:'#dcfce7', color:'#15803d', border:'1px solid #86efac', marginBottom:16, fontSize:13 }}>✓ Informe de impacto generado (demo). En producción se generaría un PDF institucional.</div>}
 
       {sinFuente.length > 0 && (
         <div style={{ padding:'12px 16px', borderRadius:8, background:'#fef9c3', color:'#854d0e', border:'1px solid #fde68a', marginBottom:16, fontSize:13, display:'flex', alignItems:'center', gap:8 }}>
           <IconWarn />
-          <span><strong>{sinFuente.length} indicador{sinFuente.length>1?'es':''}</strong> sin fuente verificable — no se incluirán en el informe ANH: {sinFuente.map(i=>i.id).join(', ')}</span>
+          <span><strong>{sinFuente.length} indicador{sinFuente.length>1?'es':''}</strong> sin fuente verificable — no se incluirán en el informe institucional: {sinFuente.map(i=>i.id).join(', ')}</span>
         </div>
       )}
 
@@ -408,7 +408,7 @@ function TabExportador({ indicadores }) {
       </div>
 
       <div style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:20 }}>
-        <h3 style={{ margin:'0 0 8px', fontSize:15, fontWeight:700, color:'#1e293b' }}>Exportar informe ANH</h3>
+        <h3 style={{ margin:'0 0 8px', fontSize:15, fontWeight:700, color:'#1e293b' }}>Exportar informe institucional</h3>
         <p style={{ margin:'0 0 16px', fontSize:13, color:'#64748b', lineHeight:1.6 }}>
           Genera un PDF estructurado por componente de cadena de valor DNP con semáforos, tablas comparativas t0/t1/t2 y cálculo de brechas. Solo se incluyen indicadores con fuente verificable registrada.
         </p>
@@ -432,7 +432,7 @@ const TABS = [
   { id:'panel',      label:'Semáforo de indicadores', icon:<IconGrid /> },
   { id:'comparativo',label:'Comparativo t0/t1/t2',    icon:<IconChart /> },
   { id:'evolucion',  label:'Evolución por indicador', icon:<IconChart /> },
-  { id:'exportador', label:'Exportador ANH',          icon:<IconExport /> },
+  { id:'exportador', label:'Exportador de informes',  icon:<IconExport /> },
 ];
 
 export default function EvaluacionImpactoPage() {

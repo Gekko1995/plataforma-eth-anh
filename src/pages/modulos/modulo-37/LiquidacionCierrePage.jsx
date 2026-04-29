@@ -14,7 +14,7 @@ const MODULOS_CHECKLIST = Array.from({length:39},(_,i)=>i+1).map(id => ({
     'Campus Comunidades','Campus Personal','Aceleradora Exportadora','Gestión Beneficiarios','Directorio Actores',
     'Consulta Previa CIPRUNNA','Reclutamiento','Gestión Personal','Gestión Alianzas','Seguridad y Accesos',
     'Monitoreo Operativo','Gestión Financiera','Cuentas de Cobro','Secretaría Técnica','Adquisiciones',
-    'Matriz Riesgos','Revisión Informes','Compiladores ANH','Gestión Conocimiento','Agenda Territorial',
+    'Matriz Riesgos','Revisión Informes','Compilador de Informes','Gestión Conocimiento','Agenda Territorial',
     'Logística','Visibilidad y Prensa','HSE','Gestión Documental','Control Inventarios',
     'Pólizas y Garantías','Liquidación y Cierre','Mesa de Ayuda','Infraestructura TI'
   ][id-1],
@@ -23,7 +23,7 @@ const MODULOS_CHECKLIST = Array.from({length:39},(_,i)=>i+1).map(id => ({
 }));
 
 const PAZ_SALVOS = [
-  { entidad:'ANH (contratante)',      estado:'Aprobado',  fecha:'2025-05-10' },
+  { entidad:'Entidad contratante',    estado:'Aprobado',  fecha:'2025-05-10' },
   { entidad:'DIAN',                   estado:'Aprobado',  fecha:'2025-04-28' },
   { entidad:'Seguridad Social',       estado:'Pendiente', fecha:null },
   { entidad:'Proveedores (contratos)',estado:'Pendiente', fecha:null },

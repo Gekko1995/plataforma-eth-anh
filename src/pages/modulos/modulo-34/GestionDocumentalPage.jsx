@@ -8,7 +8,7 @@ const META  = modulos.find(m => m.id === 34);
 
 const CARPETAS = [
   { id:'c1', nombre:'01. Contrato y Adendas',    padre:null, archivos:12, nivel:0 },
-  { id:'c2', nombre:'02. Informes ANH',           padre:null, archivos:8,  nivel:0 },
+  { id:'c2', nombre:'02. Informes Institucionales', padre:null, archivos:8,  nivel:0 },
   { id:'c3', nombre:'03. Financiero',             padre:null, archivos:34, nivel:0 },
   { id:'c4', nombre:'04. Personal',               padre:null, archivos:22, nivel:0 },
   { id:'c5', nombre:'05. Técnico-Operativo',      padre:null, archivos:56, nivel:0 },
@@ -18,11 +18,11 @@ const CARPETAS = [
 ];
 
 const DOCUMENTOS = [
-  { id:'DOC-001', nombre:'ETH-ANH-INF-001-v2-2024-11.pdf', carpeta:'02. Informes ANH', fecha:'2024-11-10', autor:'Ana Gómez', tamano:'4.2 MB', estado:'Aprobado' },
-  { id:'DOC-002', nombre:'ETH-ANH-FIN-CC-001-2024-12.pdf', carpeta:'03. Financiero',   fecha:'2024-12-02', autor:'Dir. Financiero', tamano:'1.1 MB', estado:'Pendiente' },
-  { id:'DOC-003', nombre:'ETH-ANH-TEC-MAP-001-2024-10.shp',carpeta:'05. Técnico-Operativo',fecha:'2024-10-18',autor:'Coord. TI', tamano:'28.4 MB', estado:'Aprobado' },
-  { id:'DOC-004', nombre:'ETH-ANH-PER-HOJ-018-2024-09.pdf',carpeta:'04. Personal',     fecha:'2024-09-01', autor:'RRHH', tamano:'0.8 MB', estado:'Aprobado' },
-  { id:'DOC-005', nombre:'ETH-ANH-LEG-CPRN-016-2024-08.pdf',carpeta:'06. Legal y Jurídico',fecha:'2024-08-20',autor:'Asesor Legal', tamano:'2.3 MB', estado:'Aprobado' },
+  { id:'DOC-001', nombre:'PGV-INF-001-v2-2024-11.pdf',     carpeta:'02. Informes Institucionales', fecha:'2024-11-10', autor:'Ana Gómez', tamano:'4.2 MB', estado:'Aprobado' },
+  { id:'DOC-002', nombre:'PGV-FIN-CC-001-2024-12.pdf',     carpeta:'03. Financiero',   fecha:'2024-12-02', autor:'Dir. Financiero', tamano:'1.1 MB', estado:'Pendiente' },
+  { id:'DOC-003', nombre:'PGV-TEC-MAP-001-2024-10.shp',    carpeta:'05. Técnico-Operativo',fecha:'2024-10-18',autor:'Coord. TI', tamano:'28.4 MB', estado:'Aprobado' },
+  { id:'DOC-004', nombre:'PGV-PER-HOJ-018-2024-09.pdf',    carpeta:'04. Personal',     fecha:'2024-09-01', autor:'RRHH', tamano:'0.8 MB', estado:'Aprobado' },
+  { id:'DOC-005', nombre:'PGV-LEG-CPRN-016-2024-08.pdf',   carpeta:'06. Legal y Jurídico',fecha:'2024-08-20',autor:'Asesor Legal', tamano:'2.3 MB', estado:'Aprobado' },
 ];
 
 const IconBack = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
@@ -58,8 +58,8 @@ function TabArbol({ showToast }) {
         <div style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:18, marginBottom:16 }}>
           <h3 style={{ margin:'0 0 10px', fontSize:14, fontWeight:700 }}>Nomenclatura de archivos</h3>
           <div style={{ fontFamily:'monospace', fontSize:12, background:'#f8fafc', borderRadius:8, padding:12, color:'#475569', lineHeight:2 }}>
-            <div><span style={{ color:COLOR, fontWeight:700 }}>ETH-ANH</span> — <span style={{ color:'#0891b2' }}>ÁREA</span> — <span style={{ color:'#059669' }}>TIPO</span> — <span style={{ color:'#b45309' }}>SEQ</span> — <span style={{ color:'#dc2626' }}>AÑO-MES</span></div>
-            <div style={{ color:'#94a3b8', fontSize:11, marginTop:4 }}>Ej: ETH-ANH-FIN-CC-001-2024-12.pdf</div>
+            <div><span style={{ color:COLOR, fontWeight:700 }}>PGV</span> — <span style={{ color:'#0891b2' }}>ÁREA</span> — <span style={{ color:'#059669' }}>TIPO</span> — <span style={{ color:'#b45309' }}>SEQ</span> — <span style={{ color:'#dc2626' }}>AÑO-MES</span></div>
+            <div style={{ color:'#94a3b8', fontSize:11, marginTop:4 }}>Ej: PGV-FIN-CC-001-2024-12.pdf</div>
           </div>
         </div>
         <div style={{ background:'#f5f3ff', border:'1px solid #ddd6fe', borderRadius:12, padding:18 }}>

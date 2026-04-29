@@ -9,7 +9,7 @@ const META  = modulos.find(m => m.id === 32);
 const PIEZAS = [
   { id:'PZ-001', titulo:'Video institucional ETH 2024',     tipo:'Video',        canal:'YouTube',   fecha:'2024-10-15', alcance:12400, interacciones:890, aprobado:true },
   { id:'PZ-002', titulo:'Infografía beneficiarios Vichada', tipo:'Infografía',   canal:'Instagram', fecha:'2024-11-02', alcance:5600,  interacciones:342, aprobado:true },
-  { id:'PZ-003', titulo:'Nota de prensa D3 ANH',            tipo:'Nota prensa',  canal:'Web',       fecha:'2024-11-20', alcance:3200,  interacciones:145, aprobado:true },
+  { id:'PZ-003', titulo:'Nota de prensa D3',                tipo:'Nota prensa',  canal:'Web',       fecha:'2024-11-20', alcance:3200,  interacciones:145, aprobado:true },
   { id:'PZ-004', titulo:'Reels mingas de trabajo',          tipo:'Reels',        canal:'Instagram', fecha:'2024-12-01', alcance:8900,  interacciones:1240,aprobado:true },
   { id:'PZ-005', titulo:'Brochure proyecto PDF',            tipo:'Brochure',     canal:'WhatsApp',  fecha:'2024-12-03', alcance:1200,  interacciones:89,  aprobado:false },
   { id:'PZ-006', titulo:'Álbum fotográfico campo dic',      tipo:'Fotografías',  canal:'Drive',     fecha:'2024-12-04', alcance:0,     interacciones:0,   aprobado:false },

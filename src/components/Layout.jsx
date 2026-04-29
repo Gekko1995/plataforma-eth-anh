@@ -55,7 +55,7 @@ function IconLogout() {
   );
 }
 
-/* ── Isotipo ETH-ANH para el logo del sidebar ── */
+/* ── Isotipo para el logo del sidebar ── */
 function SidebarIsotipo() {
   return (
     <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -140,8 +140,8 @@ export default function Layout({ user, onLogout, onUserUpdate }) {
         <div className="sidebar-logo">
           <SidebarIsotipo />
           <span className="sidebar-logo-text">
-            <span className="sidebar-logo-title">ETH-ANH 2026</span>
-            <span className="sidebar-logo-sub">Gestión Integrada</span>
+            <span className="sidebar-logo-title">Plataforma PGV</span>
+            <span className="sidebar-logo-sub">Gestión & Viabilidad</span>
           </span>
         </div>
 
@@ -178,7 +178,7 @@ export default function Layout({ user, onLogout, onUserUpdate }) {
         </button>
 
         <span className="header-title">
-          Plataforma ETH-ANH 2026
+          Plataforma de Gestión y Viabilidad de Proyectos de Inversión
         </span>
 
         <AccesibilidadMenu />

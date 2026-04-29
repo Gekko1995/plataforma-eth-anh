@@ -1,5 +1,5 @@
 /* =====================================================================
-   CONFIGURACION DE GRUPOS Y ESTADOS — CONVENIO ETH-ANH 2026
+   CONFIGURACION DE GRUPOS Y ESTADOS — Plataforma de Gestión y Viabilidad
    Los datos de módulos viven en src/data/modulos.js
    ===================================================================== */
 
@@ -28,7 +28,7 @@ const toGroupModules = (grupoId) =>
 // ── Grupos con metadatos visuales ─────────────────────────────────────
 export const GROUPS = [
   { id: "A", name: "Diagnóstico y Territorio",   color: "#1B6B4A", icon: "A", modules: toGroupModules("A") },
-  { id: "B", name: "Núcleo Estratégico ANH",      color: "#B45309", icon: "B", modules: toGroupModules("B") },
+  { id: "B", name: "Núcleo Estratégico",          color: "#B45309", icon: "B", modules: toGroupModules("B") },
   { id: "C", name: "Formación y Capacitación",    color: "#7C3AED", icon: "C", modules: toGroupModules("C") },
   { id: "D", name: "Actores y Talento Humano",    color: "#0369A1", icon: "D", modules: toGroupModules("D") },
   { id: "E", name: "Financiero y Gobernanza",     color: "#DC2626", icon: "E", modules: toGroupModules("E") },

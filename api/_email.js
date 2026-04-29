@@ -38,13 +38,13 @@ function bienvenidaHtml({ nombre, email, password, rol, grupo }) {
   return `
   <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f4f6fb;padding:24px;">
     <div style="background:#1e2535;border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-      <span style="background:linear-gradient(135deg,#f5c842,#fb923c);padding:6px 12px;border-radius:8px;font-weight:700;font-size:16px;color:#0f1117;">ETH</span>
-      <span style="color:#e2e8f0;font-size:17px;font-weight:600;">ANH 2026</span>
+      <span style="background:linear-gradient(135deg,#f5c842,#fb923c);padding:6px 12px;border-radius:8px;font-weight:700;font-size:16px;color:#0f1117;">PGV</span>
+      <span style="color:#e2e8f0;font-size:15px;font-weight:600;">Gestión &amp; Viabilidad</span>
     </div>
 
     <div style="background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
       <h2 style="color:#1e293b;margin:0 0 8px;">Bienvenido/a, ${nombre}</h2>
-      <p style="color:#64748b;margin:0 0 24px;">Tu cuenta ha sido creada en la Plataforma ETH-ANH 2026. A continuación encontrarás tus credenciales de acceso.</p>
+      <p style="color:#64748b;margin:0 0 24px;">Tu cuenta ha sido creada en la Plataforma de Gestión y Viabilidad de Proyectos de Inversión. A continuación encontrarás tus credenciales de acceso.</p>
 
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:20px;">
         <p style="margin:0 0 12px;color:#64748b;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Tus credenciales</p>
@@ -63,7 +63,7 @@ function bienvenidaHtml({ nombre, email, password, rol, grupo }) {
       <p style="color:#64748b;font-size:13px;margin:0;">Si tienes problemas para acceder, comunícate con el administrador de la plataforma.</p>
     </div>
 
-    <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">Fundación WR Tejido Social · SINAPSIS3D · ETH-ANH 2026</p>
+    <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">SINAPSIS3D · Plataforma de Gestión y Viabilidad de Proyectos de Inversión</p>
   </div>`;
 }
 
@@ -71,8 +71,8 @@ function cambioPasswordHtml({ nombre, email }) {
   return `
   <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f4f6fb;padding:24px;">
     <div style="background:#1e2535;border-radius:12px;padding:20px 24px;margin-bottom:20px;">
-      <span style="background:linear-gradient(135deg,#f5c842,#fb923c);padding:6px 12px;border-radius:8px;font-weight:700;font-size:16px;color:#0f1117;">ETH</span>
-      <span style="color:#e2e8f0;font-size:17px;font-weight:600;margin-left:10px;">ANH 2026</span>
+      <span style="background:linear-gradient(135deg,#f5c842,#fb923c);padding:6px 12px;border-radius:8px;font-weight:700;font-size:16px;color:#0f1117;">PGV</span>
+      <span style="color:#e2e8f0;font-size:15px;font-weight:600;margin-left:10px;">Gestión &amp; Viabilidad</span>
     </div>
 
     <div style="background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
@@ -86,7 +86,7 @@ function cambioPasswordHtml({ nombre, email }) {
       <p style="color:#64748b;font-size:13px;margin-top:20px;">Si no solicitaste este cambio, comunícate con el administrador.</p>
     </div>
 
-    <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">Fundación WR Tejido Social · SINAPSIS3D · ETH-ANH 2026</p>
+    <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:16px;">SINAPSIS3D · Plataforma de Gestión y Viabilidad de Proyectos de Inversión</p>
   </div>`;
 }
 

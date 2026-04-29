@@ -307,7 +307,7 @@ export default function LineamientosAmbientalesPage() {
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
           <span style={{ width:32, height:32, borderRadius:8, background:COLOR+'18', color:COLOR, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:800, fontSize:13 }}>B</span>
           <div>
-            <div style={{ fontSize:11, color:'var(--content-text-hint)', fontWeight:500 }}>#6 · Grupo B — Núcleo Estratégico ANH</div>
+            <div style={{ fontSize:11, color:'var(--content-text-hint)', fontWeight:500 }}>#6 · Grupo B — Núcleo Estratégico</div>
             <h1 style={{ margin:0, fontSize:18, fontWeight:700, color:'var(--content-text)', lineHeight:1.2 }}>Lineamientos Técnicos Ambientales</h1>
           </div>
         </div>

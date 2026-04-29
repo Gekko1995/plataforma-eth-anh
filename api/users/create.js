@@ -62,7 +62,7 @@ module.exports = async (req, res) => {
   if (enviarCorreo === true) {
     await sendEmail({
       to:      e,
-      subject: 'Bienvenido a la Plataforma ETH-ANH 2026 — Tus credenciales',
+      subject: 'Bienvenido a la Plataforma de Gestión y Viabilidad de Proyectos de Inversión — Tus credenciales',
       html:    bienvenidaHtml({ nombre: n, email: e, password, rol, grupo: g }),
     });
   }

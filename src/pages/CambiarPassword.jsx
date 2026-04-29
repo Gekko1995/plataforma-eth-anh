@@ -51,8 +51,8 @@ export default function CambiarPassword({ user, onChanged }) {
               fontWeight: 700,
               fontSize: '18px',
               color: '#0f1117',
-            }}>ETH</span>
-            <span style={{ color: '#e2e8f0', fontSize: '18px', fontWeight: 600 }}>ANH 2026</span>
+            }}>PGV</span>
+            <span style={{ color: '#e2e8f0', fontSize: '15px', fontWeight: 600 }}>Gestión & Viabilidad</span>
           </div>
         </div>
 

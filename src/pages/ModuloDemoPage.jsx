@@ -392,12 +392,12 @@ const MODULE_DESC = {
   1: [
     'Plataforma centralizada para la caracterización socioeconómica y ambiental de los territorios de intervención. Integra datos de encuestas de campo, fuentes oficiales del DANE e IGAC, y capas satelitales para construir un perfil territorial completo por municipio y región.',
     'Facilita el mapeo estratégico de actores: comunidades, operadoras, autoridades étnicas y gremios. Identifica variables de conflictividad, superposición de intereses y zonas de alta sensibilidad social, generando insumos para la toma de decisiones de intervención.',
-    'Los resultados se visualizan en dashboards interactivos y se exportan como reportes de diagnóstico para el supervisor técnico y la ANH.',
+    'Los resultados se visualizan en dashboards interactivos y se exportan como reportes de diagnóstico para el supervisor técnico y la entidad contratante.',
   ],
   2: [
     'Herramienta analítica para medir el avance y cierre de brechas en los KPIs estratégicos alineados a la cadena de valor del DNP. Opera bajo metodología MGA y genera semáforos de cumplimiento por componente, región y período de desembolso.',
     'Permite comparar línea base vs. situación actual, detectar rezagos en indicadores críticos y generar alertas tempranas antes de que se comprometa la meta del desembolso. Trazabilidad completa desde el indicador hasta el registro de campo que lo soporta.',
-    'Produce los reportes de impacto requeridos por ANH y los órganos de control, con firmas digitales y control de versiones.',
+    'Produce los reportes de impacto requeridos por la entidad contratante y los órganos de control, con firmas digitales y control de versiones.',
   ],
   3: [
     'Sistema de visualización geoespacial interactivo que superpone capas operativas sobre cartografía oficial del IGAC, DANE y Corporaciones Autónomas Regionales. Genera mapas de calor de concentración de inversión, zonas de riesgo social y cobertura de beneficiarios por municipio.',
@@ -405,7 +405,7 @@ const MODULE_DESC = {
     'Los mapas se exportan en formatos estándar (GeoJSON, KML, PDF) para presentaciones ante autoridades locales y nacionales.',
   ],
   4: [
-    'Inteligencia de mercados para evaluar el potencial exportador de los clústeres productivos regionales. Analiza costos operativos, matrices de competitividad y tendencias de demanda internacional para productos clave de la región hidrocarburífera.',
+    'Inteligencia de mercados para evaluar el potencial exportador de los clústeres productivos regionales. Analiza costos operativos, matrices de competitividad y tendencias de demanda internacional para productos clave de la región de intervención.',
     'Genera rankings de exportación por clúster, identifica aliados estratégicos en cadenas globales de valor y orienta la estructuración de planes de comercialización. Cruza datos de operadoras locales con inteligencia de mercados internacionales para detectar oportunidades de diversificación económica.',
     'Sirve de insumo directo para la Aceleradora Exportadora y los planes de negocio de los beneficiarios del programa.',
   ],
@@ -420,8 +420,8 @@ const MODULE_DESC = {
     'Cumple con los estándares de archivo requeridos por la ANLA, el MADS y las CARs de las 8 regiones del convenio.',
   ],
   7: [
-    'Herramienta para estructurar y hacer seguimiento a iniciativas de inversión social orientadas a la diversificación económica en comunidades productoras de hidrocarburos. Registra evidencias de ejecución en tiempo real: beneficiarios, desembolsos, productos entregados y registros audiovisuales.',
-    'Genera reportes con métricas de impacto territorial para respaldar la gestión de relaciones comunitarias, la rendición de cuentas ante la ANH y el cumplimiento de los compromisos de Responsabilidad Social Empresarial de las operadoras vinculadas.',
+    'Herramienta para estructurar y hacer seguimiento a iniciativas de inversión social orientadas a la diversificación económica en comunidades del territorio de intervención. Registra evidencias de ejecución en tiempo real: beneficiarios, desembolsos, productos entregados y registros audiovisuales.',
+    'Genera reportes con métricas de impacto territorial para respaldar la gestión de relaciones comunitarias, la rendición de cuentas ante la entidad contratante y el cumplimiento de los compromisos de Responsabilidad Social Empresarial de las operadoras vinculadas.',
     'Integra con Gestión Financiera para cruzar ejecución física con ejecución presupuestal por iniciativa y por región.',
   ],
   8: [
@@ -437,7 +437,7 @@ const MODULE_DESC = {
   10: [
     'Plataforma de aprendizaje modular con rutas de formación en emprendimiento, procesos de exportación, gestión financiera básica y asociatividad para beneficiarios directos del programa. Incluye cursos grabados, evaluaciones, biblioteca de recursos y certificación automática al superar el umbral de aprobación.',
     'Rastrea el progreso de cada usuario, genera reportes de graduación por cohorte y región, y permite personalizar el contenido por sector productivo. Los certificados digitales incluyen código QR de verificación y son reconocidos por aliados del ecosistema de emprendimiento.',
-    'Alimenta los indicadores del componente de formación requeridos en los informes de desembolso ante la ANH.',
+    'Alimenta los indicadores del componente de formación requeridos en los informes de desembolso ante la entidad contratante.',
   ],
   11: [
     'Plataforma de e-learning con enfoque diferencial para comunidades étnicas, centrada en derechos colectivos, transición energética justa, manejo ambiental comunitario y participación ciudadana. Los contenidos se adaptan a contextos culturales y lingüísticos con materiales audiovisuales accesibles.',
@@ -446,12 +446,12 @@ const MODULE_DESC = {
   ],
   12: [
     'Plataforma de inducción obligatoria y formación continua para todo el personal vinculado al convenio. Gestiona protocolos HSE, seguridad en campo, políticas de cumplimiento y procedimientos específicos por rol.',
-    'Bloquea el acceso a módulos sensibles de la plataforma hasta que el colaborador complete los cursos obligatorios de su perfil. Genera reportes de cumplimiento para el supervisor técnico de la ANH y los auditores de calidad, con evidencia de cada evaluación aprobada.',
+    'Bloquea el acceso a módulos sensibles de la plataforma hasta que el colaborador complete los cursos obligatorios de su perfil. Genera reportes de cumplimiento para el supervisor técnico del proyecto y los auditores de calidad, con evidencia de cada evaluación aprobada.',
     'Reduce la curva de aprendizaje del nuevo personal y garantiza que todos los integrantes del equipo operen bajo los mismos estándares de seguridad y calidad desde el primer día.',
   ],
   13: [
     'Gestión integral de planes de negocio, participación en ferias internacionales, trámites de exportación y comercialización de productos regionales. Acompaña a cada exportador a través del pipeline de aceleración: diagnóstico, formulación del plan, rueda de negocios, gestión aduanera y primera exportación.',
-    'Integra contactos de misiones de compradores, rondas de negocios y cámaras de comercio aliadas. Registra evidencia de cada hito del proceso exportador con documentos soporte que respaldan el cumplimiento de las metas de diversificación económica ante la ANH.',
+    'Integra contactos de misiones de compradores, rondas de negocios y cámaras de comercio aliadas. Registra evidencia de cada hito del proceso exportador con documentos soporte que respaldan el cumplimiento de las metas de diversificación económica ante la entidad contratante.',
     'Genera métricas de impacto: número de empresas exportadoras, valor FOB exportado, nuevos mercados abiertos y empleos generados por la actividad exportadora.',
   ],
   14: [
@@ -487,17 +487,17 @@ const MODULE_DESC = {
   20: [
     'Administración de usuarios con roles granulares, permisos por módulo, autenticación multifactor (MFA) y auditoría completa de todos los eventos del sistema. Implementa los protocolos de Habeas Data para tratamiento de datos personales y genera los registros de acceso requeridos por la normativa de ciberseguridad colombiana.',
     'Gestiona incidentes de seguridad, recuperación de cuentas y políticas de bloqueo automático por intentos fallidos. Permite configurar perfiles de acceso diferenciados por rol: coordinador regional, profesional temático, supervisor técnico y administrador del sistema.',
-    'Genera reportes de auditoría listos para presentar ante la ANH, la Contraloría o cualquier ente de control que requiera evidencia del control de accesos y la integridad de los datos del convenio.',
+    'Genera reportes de auditoría listos para presentar ante la entidad contratante, la Contraloría o cualquier ente de control que requiera evidencia del control de accesos y la integridad de los datos del convenio.',
   ],
   21: [
-    'Monitoreo en tiempo real del plan operativo del convenio: actividades, hitos, porcentaje de avance físico y semáforos de cumplimiento alineados a los cuatro desembolsos ANH (20/35/70/100%). Muestra el estado por componente, por región y por período, cruzando avance físico con ejecución financiera.',
-    'Activa alertas cuando una actividad está rezagada respecto a la meta del próximo desembolso, sugiriendo acciones de recuperación. Genera el cuadro de seguimiento al plan operativo en el formato exigido por la supervisión técnica de la ANH para cada informe de desembolso.',
+    'Monitoreo en tiempo real del plan operativo del convenio: actividades, hitos, porcentaje de avance físico y semáforos de cumplimiento alineados a los cuatro desembolsos del proyecto (20/35/70/100%). Muestra el estado por componente, por región y por período, cruzando avance físico con ejecución financiera.',
+    'Activa alertas cuando una actividad está rezagada respecto a la meta del próximo desembolso, sugiriendo acciones de recuperación. Genera el cuadro de seguimiento al plan operativo en el formato exigido por la supervisión técnica del proyecto para cada informe de desembolso.',
     'Es la vista ejecutiva principal del Comité Directivo para tomar decisiones de reasignación de recursos, ajuste de metas y gestión de riesgos de ejecución.',
   ],
   22: [
-    'Control total de la ejecución presupuestal en los 3 ítems de inversión más la contrapartida del convenio. Gestiona el flujo de desembolsos (20/30/40/10%), registra cada gasto con soporte documental, valida elegibilidad por ítem y genera los estados financieros para la ANH y los órganos de control.',
+    'Control total de la ejecución presupuestal en los 3 ítems de inversión más la contrapartida del convenio. Gestiona el flujo de desembolsos (20/30/40/10%), registra cada gasto con soporte documental, valida elegibilidad por ítem y genera los estados financieros para la entidad contratante y los órganos de control.',
     'Incluye herramientas de proyección presupuestal, alertas de sub-ejecución o sobre-ejecución por ítem, y conciliación automatizada de movimientos bancarios. Permite generar el informe financiero del desembolso con solo seleccionar el período y el componente.',
-    'Cumple con los estándares contables de las ESAL en Colombia y con los requisitos de transparencia financiera del Manual Operativo de la ANH.',
+    'Cumple con los estándares contables de las ESAL en Colombia y con los requisitos de transparencia financiera del Manual Operativo del proyecto.',
   ],
   23: [
     'Flujo de radicación y procesamiento mensual de cuentas de cobro con garantía de trámite en 5 días hábiles. Recibe documentos, valida automáticamente los aportes a seguridad social del prestador de servicios, enruta para revisión del supervisor financiero y genera la orden de pago.',
@@ -506,38 +506,38 @@ const MODULE_DESC = {
   ],
   24: [
     'Gestión integral de las sesiones mensuales del Comité Directivo: convocatoria, agenda, quórum, actas, compromisos adquiridos y seguimiento de cumplimiento. Administra también la aprobación de subcontratos y reportes especiales que requieren aval del Comité.',
-    'Archiva todos los documentos con firma digital de los miembros, gestiona los quórums decisorios y genera recordatorios automáticos a los integrantes. Proporciona el libro de actas digital del Comité como respaldo ante auditorías de la ANH o la Contraloría.',
+    'Archiva todos los documentos con firma digital de los miembros, gestiona los quórums decisorios y genera recordatorios automáticos a los integrantes. Proporciona el libro de actas digital del Comité como respaldo ante auditorías de la entidad contratante o la Contraloría.',
     'Agiliza la toma de decisiones del órgano máximo del convenio al mantener toda la información previa, los documentos soporte y el historial de decisiones en un solo lugar accesible para todos los miembros.',
   ],
   25: [
     'Gestión de las adquisiciones del convenio bajo el régimen de las ESAL colombianas: elaboración de términos de referencia, proceso de selección de contratistas, evaluación, contratación y seguimiento a la ejecución. Administra la biblioteca de minutas estándar para los tipos de contrato más frecuentes.',
     'El flujo de aprobación para contratos que superen los umbrales definidos se enruta automáticamente al Comité Directivo. Valida RUT, certificados de experiencia y estados de proveedor ante la DIAN antes de generar el contrato. Mantiene el registro de contratos activos, sus montos, plazos y productos entregables.',
-    'Genera el informe de adquisiciones requerido por la ANH para cada desembolso y facilita las auditorías al mantener toda la cadena documental de cada contratación.',
+    'Genera el informe de adquisiciones requerido por el contratante para cada desembolso y facilita las auditorías al mantener toda la cadena documental de cada contratación.',
   ],
   26: [
     'Matriz de riesgos bajo la metodología CONPES 3714 para la gestión de riesgos operacionales, regulatorios, comunitarios, ambientales y de fuerza mayor del convenio. Evalúa probabilidad e impacto, genera mapas de calor por categoría de riesgo y asigna propietarios y planes de mitigación a cada riesgo identificado.',
     'Monitorea la efectividad de los controles implementados y actualiza el riesgo residual con base en los avances reportados por los responsables. Genera alertas cuando un riesgo sube de categoría y activa el protocolo de escalamiento al Comité Directivo.',
-    'Produce el informe de gestión de riesgos requerido por la ANH en cada desembolso y facilita la actualización periódica de la matriz conforme evoluciona el contexto territorial y operativo del convenio.',
+    'Produce el informe de gestión de riesgos requerido por el contratante en cada desembolso y facilita la actualización periódica de la matriz conforme evoluciona el contexto territorial y operativo del convenio.',
   ],
   27: [
     'Flujo digital de radicación, revisión técnica y aprobación de los informes elaborados por los profesionales del convenio. Gestiona versiones de documentos, plazos de revisión y notificaciones en cada etapa del proceso editorial.',
     'El supervisor técnico puede aprobar, devolver con observaciones o rechazar cada informe directamente en la plataforma, dejando trazabilidad de cada decisión. Genera métricas de tiempo promedio de aprobación por profesional y por componente, facilitando la detección de cuellos de botella.',
-    'Reduce los tiempos de entrega de informes finales a la ANH al eliminar el intercambio de correos y versiones sueltas, manteniendo toda la cadena documental en un repositorio centralizado con control de acceso.',
+    'Reduce los tiempos de entrega de informes finales a la entidad contratante al eliminar el intercambio de correos y versiones sueltas, manteniendo toda la cadena documental en un repositorio centralizado con control de acceso.',
   ],
   28: [
-    'Compilador automático de los 4 informes de desembolso ante la ANH: D1 plan de trabajo, D2 al 35%, D3 al 70% y D4 informe final. Agrega la información física, financiera y narrativa de todos los módulos para generar la estructura documental requerida por el Manual Operativo de la ANH.',
-    'Valida la completitud de cada sección antes de permitir la generación del informe, alertando sobre componentes o regiones con información pendiente. Genera automáticamente la tabla de contenido, los anexos y los formatos estandarizados de la ANH.',
+    'Compilador automático de los 4 informes de desembolso ante la entidad contratante: D1 plan de trabajo, D2 al 35%, D3 al 70% y D4 informe final. Agrega la información física, financiera y narrativa de todos los módulos para generar la estructura documental requerida por el Manual Operativo del proyecto.',
+    'Valida la completitud de cada sección antes de permitir la generación del informe, alertando sobre componentes o regiones con información pendiente. Genera automáticamente la tabla de contenido, los anexos y los formatos estandarizados del proyecto.',
     'Elimina el proceso manual de consolidación que históricamente toma semanas, reduciendo el tiempo de preparación de cada informe de desembolso a horas y minimizando el riesgo de errores de compilación.',
   ],
   29: [
     'Repositorio institucional de metodologías validadas, casos de éxito documentados, buenas prácticas y lecciones aprendidas de todas las regiones del convenio. Permite búsqueda por tema, región, componente y tipo de intervención para facilitar la réplica de soluciones efectivas.',
     'Incluye un banco de herramientas con plantillas editables, guías técnicas y marcos metodológicos probados en campo. Cada caso de éxito registra el contexto, la intervención, los resultados y las condiciones de replicabilidad para que otros equipos puedan adoptarlo con las adaptaciones necesarias.',
-    'Construye la memoria institucional del convenio, garantizando que el conocimiento generado no se pierda con la rotación de personal y quede disponible para futuros proyectos de la Fundación y de la ANH.',
+    'Construye la memoria institucional del convenio, garantizando que el conocimiento generado no se pierda con la rotación de personal y quede disponible para futuros proyectos de la organización.',
   ],
   30: [
     'Gestión integral de todos los eventos territoriales del convenio: talleres, foros, ferias productivas, entregas de bienes y visitas de campo. Administra convocatorias, registro de asistentes, registro de asistencia con QR, actas de reunión y registros fotográficos geolocalizados.',
     'Genera el informe de cada evento con indicadores de cobertura: número de participantes desagregado por género, etnia y municipio. Integra con el módulo de Gestión Logística para el presupuesto asociado a cada actividad y con el Padrón de Beneficiarios para el registro de asistencia.',
-    'Produce las listas de asistencia firmadas, las actas de compromiso y los reportes de eventos requeridos como soportes en los informes de desembolso ante la ANH.',
+    'Produce las listas de asistencia firmadas, las actas de compromiso y los reportes de eventos requeridos como soportes en los informes de desembolso ante la entidad contratante.',
   ],
   31: [
     'Control de costos y gestión logística por evento y por región: transporte, alojamiento, refrigerios, equipos audiovisuales e insumos. Calcula el costo total de cada actividad con base en tarifas precargadas por región y genera los soportes de gasto por rubro presupuestal.',
@@ -547,7 +547,7 @@ const MODULE_DESC = {
   32: [
     'Gestión de piezas de comunicación por iniciativa: contenidos para redes sociales, comunicados de prensa, pendones de eventos y material audiovisual. Administra la campaña de comunicaciones del convenio en sus tres etapas: expectativa, cubrimiento de hitos y presencia digital continua.',
     'Rastrea métricas de impacto mediático: alcance, impresiones, clips de prensa y menciones en medios. Mantiene la biblioteca de activos digitales por región y actividad, con trazabilidad de derechos de imagen y autorización de uso de datos personales para cada pieza que incluya beneficiarios.',
-    'Cumple con los lineamientos de visibilidad de la ANH y genera el informe de comunicaciones requerido en cada desembolso con evidencias de la estrategia ejecutada.',
+    'Cumple con los lineamientos de visibilidad del proyecto y genera el informe de comunicaciones requerido en cada desembolso con evidencias de la estrategia ejecutada.',
   ],
   33: [
     'Gestión de protocolos de seguridad en campo, reporte de incidentes (casi accidentes, accidentes, emergencias ambientales) y administración del Plan de Emergencias SG-SST del convenio. Genera notificaciones automáticas al coordinador de área y al supervisor técnico cuando se registra un incidente.',
@@ -560,19 +560,19 @@ const MODULE_DESC = {
     'Cumple con la Ley 594 de 2000 (Ley General de Archivos) y los protocolos de gestión documental de la Función Pública colombiana.',
   ],
   35: [
-    'Gestión de los bienes adquiridos con recursos ANH: equipos, insumos, semillas, materiales de construcción y maquinaria entregada a comunidades. Utiliza escaneo QR y código de barras para el registro de entradas y salidas, y genera actas de entrega por beneficiario y comunidad con firma digital.',
-    'Mantiene trazabilidad completa de cada bien desde la compra hasta la entrega final, con fotografías, coordenadas GPS y datos del receptor. Genera el inventario periódico requerido por el contrato de supervisión de la ANH y facilita las visitas de verificación física de los activos.',
+    'Gestión de los bienes adquiridos con recursos del proyecto: equipos, insumos, semillas, materiales de construcción y maquinaria entregada a comunidades. Utiliza escaneo QR y código de barras para el registro de entradas y salidas, y genera actas de entrega por beneficiario y comunidad con firma digital.',
+    'Mantiene trazabilidad completa de cada bien desde la compra hasta la entrega final, con fotografías, coordenadas GPS y datos del receptor. Genera el inventario periódico requerido por el contrato de supervisión del proyecto y facilita las visitas de verificación física de los activos.',
     'Alertas automáticas para revisiones técnicas preventivas de maquinaria, renovación de garantías y seguimiento al estado de conservación de los bienes entregados a comunidades.',
   ],
   36: [
     'Monitoreo de las pólizas obligatorias del convenio: cumplimiento (20%), calidad (10%) y salarios (5%). Genera alertas automáticas 60, 30 y 15 días antes del vencimiento de cada póliza, enruta el flujo de renovación al área jurídica y mantiene el historial de versiones de cada póliza con sus respectivos certificados.',
-    'Valida la suficiencia de los amparos frente a los montos del convenio y registra cualquier siniestro o reclamación. Produce el reporte de estado de pólizas requerido como soporte en cada informe de desembolso ante la ANH.',
-    'Elimina el riesgo de que el convenio quede sin cobertura asegurada, situación que puede generar incumplimiento contractual y bloqueo de desembolsos por parte de la ANH.',
+    'Valida la suficiencia de los amparos frente a los montos del convenio y registra cualquier siniestro o reclamación. Produce el reporte de estado de pólizas requerido como soporte en cada informe de desembolso ante la entidad contratante.',
+    'Elimina el riesgo de que el convenio quede sin cobertura asegurada, situación que puede generar incumplimiento contractual y bloqueo de desembolsos por parte del contratante.',
   ],
   37: [
     'Checklist transversal para la liquidación ordenada del convenio: verificación de entregables por componente, balance financiero final, registro de pasivos pendientes, certificados de paz y salvo de aliados y proveedores, y generación del acta de liquidación oficial.',
-    'Guía al equipo de coordinación a través de cada paso del proceso en orden secuencial, bloqueando el avance hasta que cada requisito sea validado con su respectivo soporte documental. Genera el acta de liquidación final en el formato requerido por la ANH lista para firma digital de ambas partes.',
-    'Garantiza que el cierre del convenio se realice sin pasivos ocultos, cumpliendo todos los requisitos jurídicos, contables y técnicos para que la Fundación quede en paz y salvo ante la ANH y los órganos de control.',
+    'Guía al equipo de coordinación a través de cada paso del proceso en orden secuencial, bloqueando el avance hasta que cada requisito sea validado con su respectivo soporte documental. Genera el acta de liquidación final en el formato requerido por la entidad contratante lista para firma digital de ambas partes.',
+    'Garantiza que el cierre del convenio se realice sin pasivos ocultos, cumpliendo todos los requisitos jurídicos, contables y técnicos para que la organización quede en paz y salvo ante la entidad contratante y los órganos de control.',
   ],
   38: [
     'Sistema multicanal de soporte técnico (web, chat, correo) con gestión de tickets, monitoreo de SLA y base de conocimiento por rol de usuario. Clasifica los tickets por severidad, los asigna a agentes de soporte y activa alertas cuando el SLA está en riesgo de incumplirse.',

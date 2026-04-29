@@ -31,7 +31,7 @@ const MODULOS_PERMISOS = [
   { mod:'Gestión Financiera', ver:true, editar:true, aprobar:true, exportar:true },
   { mod:'Beneficiarios',ver:true,  editar:false, aprobar:false, exportar:false },
   { mod:'Personal',     ver:true,  editar:true,  aprobar:true,  exportar:true  },
-  { mod:'Informes ANH', ver:true,  editar:false, aprobar:true,  exportar:true  },
+  { mod:'Informes institucionales', ver:true, editar:false, aprobar:true, exportar:true },
 ];
 
 const IconBack = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;

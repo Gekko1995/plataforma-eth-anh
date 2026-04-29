@@ -1,6 +1,6 @@
 /**
  * SERVIDOR EXPRESS CON SEGURIDAD OBLIGATORIA
- * Plataforma ETH-ANH 2026
+ * Plataforma de Gestión y Viabilidad de Proyectos de Inversión
  * 
  * Este servidor implementa:
  * - CORS con whitelist de dominios

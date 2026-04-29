@@ -59,7 +59,7 @@ function QRCard({ ben, onClose }) {
     <Modal title="Tarjeta QR Beneficiario" onClose={onClose}>
       <div style={{ textAlign:'center' }}>
         <div style={{ background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:12, padding:24, display:'inline-block', marginBottom:16 }}>
-          <div style={{ fontSize:10, color:'#94a3b8', marginBottom:8 }}>CONVENIO ETH-ANH 2026</div>
+          <div style={{ fontSize:10, color:'#94a3b8', marginBottom:8 }}>PROYECTO DE INVERSIÓN</div>
           {/* Simulated QR */}
           <div style={{ width:120, height:120, background:'#fff', border:'2px solid #1e293b', borderRadius:4, margin:'0 auto 12px', display:'grid', gridTemplateColumns:'repeat(7,1fr)', padding:6, gap:1 }}>
             {Array.from({length:49}).map((_,i) => (

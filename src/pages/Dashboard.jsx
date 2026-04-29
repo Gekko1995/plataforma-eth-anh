@@ -79,7 +79,7 @@ export default function Dashboard() {
         </p>
         <p style={{ fontSize: '13px', color: 'var(--content-text-hint)', marginTop: '4px' }}>
           {new Date().toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          {' · '}Plataforma ETH-ANH 2026
+          {' · '}Plataforma de Gestión y Viabilidad de Proyectos de Inversión
         </p>
       </div>
 

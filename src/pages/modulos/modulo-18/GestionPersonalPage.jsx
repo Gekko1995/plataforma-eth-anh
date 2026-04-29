@@ -125,7 +125,7 @@ function TabNomina({ personal }) {
       </div>
       <div style={{ background:'#eff6ff', border:'1px solid #bfdbfe', borderRadius:10, padding:'12px 16px' }}>
         <div style={{ fontSize:12, fontWeight:700, color:COLOR, marginBottom:6 }}>Reporte de nómina — Desembolso D2 (35%)</div>
-        <p style={{ fontSize:12, color:'#475569', margin:0 }}>El reporte incluye planta activa, valor por persona, tipo de vinculación y estado de SS. Se genera en PDF según formato requerido por ANH. (demo)</p>
+        <p style={{ fontSize:12, color:'#475569', margin:0 }}>El reporte incluye planta activa, valor por persona, tipo de vinculación y estado de SS. Se genera en PDF según formato requerido por la entidad contratante. (demo)</p>
         <button style={{ marginTop:10, padding:'6px 14px', borderRadius:7, background:COLOR, color:'#fff', border:'none', fontSize:12, fontWeight:700, cursor:'pointer' }}>
           Descargar reporte PDF (demo)
         </button>

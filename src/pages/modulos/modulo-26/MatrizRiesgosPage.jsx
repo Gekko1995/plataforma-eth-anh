@@ -10,14 +10,14 @@ const PROB_LABELS = ['Raro','Improbable','Posible','Probable','Casi Seguro'];
 const IMP_LABELS  = ['Insignificante','Menor','Moderado','Mayor','Catastrófico'];
 
 const RIESGOS = [
-  { id:'R01', categoria:'Financiero',    descripcion:'Retraso en desembolso ANH',       prob:3, imp:4, mitigacion:'Reserva liquidez 15%', responsable:'Dir. Financiero', plan:'Gestión anticipada comunicación ANH', estado:'Activo' },
+  { id:'R01', categoria:'Financiero',    descripcion:'Retraso en desembolso del proyecto',prob:3, imp:4, mitigacion:'Reserva liquidez 15%', responsable:'Dir. Financiero', plan:'Gestión anticipada de comunicación con el contratante', estado:'Activo' },
   { id:'R02', categoria:'Financiero',    descripcion:'Variación cambiaria insumos',      prob:2, imp:3, mitigacion:'Contratos precio fijo',  responsable:'Dir. Financiero', plan:'Cláusula precio fijo en contratos', estado:'Mitigado' },
   { id:'R03', categoria:'Operativo',     descripcion:'Accidente personal de campo',      prob:2, imp:5, mitigacion:'HSE + ARL activo',        responsable:'Coord. HSE',      plan:'Protocolo emergencias activo', estado:'Activo' },
   { id:'R04', categoria:'Operativo',     descripcion:'Pérdida información digital',      prob:2, imp:4, mitigacion:'Backup diario nube',       responsable:'Coord. TI',       plan:'Política backup verificada', estado:'Mitigado' },
   { id:'R05', categoria:'Social',        descripcion:'Conflicto con comunidades',        prob:2, imp:5, mitigacion:'CIPRUNNA activa M16',      responsable:'Dir. Social',     plan:'Protocolo CIPRUNNA vigente', estado:'Activo' },
   { id:'R06', categoria:'Social',        descripcion:'Captura de proceso por actores',   prob:1, imp:5, mitigacion:'Transparencia + UARIV',    responsable:'Dir. General',    plan:'Auditorías externas semestrales', estado:'Activo' },
   { id:'R07', categoria:'Ambiental',     descripcion:'Daño ecosistemas por intervención',prob:2, imp:4, mitigacion:'Licencia ambiental CAR',   responsable:'Prof. Ambiental', plan:'Monitoreo CAR mensual', estado:'Activo' },
-  { id:'R08', categoria:'Institucional', descripcion:'Cambio normativo ANH',             prob:2, imp:3, mitigacion:'Asesoría jurídica permanente',responsable:'Asesor Legal', plan:'Monitoreo regulatorio', estado:'Activo' },
+  { id:'R08', categoria:'Institucional', descripcion:'Cambio normativo del contratante', prob:2, imp:3, mitigacion:'Asesoría jurídica permanente',responsable:'Asesor Legal', plan:'Monitoreo regulatorio', estado:'Activo' },
 ];
 
 const CAT_COLOR = { 'Financiero':'#DC2626', 'Operativo':'#B45309', 'Social':'#7C3AED', 'Ambiental':'#059669', 'Institucional':'#0369A1' };

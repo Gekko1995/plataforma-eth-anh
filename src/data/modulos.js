@@ -1,5 +1,5 @@
 /* =====================================================================
-   MÓDULOS ETH-ANH 2026 — Fuente única de datos
+   MÓDULOS — Plataforma de Gestión y Viabilidad de Proyectos de Inversión
    Cada módulo es un objeto independiente. Edita aquí sin tocar componentes.
    imagen: URL de Unsplash (800×400, temática por grupo)
    url:    Dejar vacío hasta tener el iframe real
@@ -64,7 +64,7 @@ export const modulos = [
     url: "",
   },
 
-  // ─── GRUPO B: Núcleo Estratégico ANH ─────────────────────────
+  // ─── GRUPO B: Núcleo Estratégico ─────────────────────────────
   {
     id: 6,
     grupo: "B",
@@ -137,7 +137,7 @@ export const modulos = [
     id: 12,
     grupo: "C",
     nombre: "Campus Virtual — Personal Convenio",
-    descripcion: "Inducción obligatoria ETH y certificación HSE para todo el personal del convenio (obligación 7 TdR ANH).",
+    descripcion: "Inducción obligatoria y certificación HSE para todo el personal del proyecto (obligación contractual del convenio).",
     puntosClave: ["Ruta de inducción obligatoria", "Certificación HSE con vigencia", "Bloqueo automático si HSE vencido"],
     stack: ["LMS Corporativo", "E-learning"],
     imagen: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&q=80&auto=format&fit=crop",
@@ -194,7 +194,7 @@ export const modulos = [
     id: 17,
     grupo: "D",
     nombre: "Reclutamiento y Selección",
-    descripcion: "Pipeline de selección con scoring automático ponderado, matriz de calificación editable por evaluador y generación de informe final del proceso para ANH.",
+    descripcion: "Pipeline de selección con scoring automático ponderado, matriz de calificación editable por evaluador y generación de informe final del proceso para la entidad contratante.",
     puntosClave: ["Scoring automático con pesos configurables", "Pipeline Kanban 4 etapas", "Informe del proceso descargable PDF"],
     stack: ["Workflows de Aprobación", "Scoring Automatizado"],
     imagen: "https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&q=80&auto=format&fit=crop",
@@ -205,8 +205,8 @@ export const modulos = [
     id: 18,
     grupo: "D",
     nombre: "Administración de Personal",
-    descripcion: "Gestión de planta vinculada con verificación de seguridad social, registro de novedades, alertas de vencimiento y reporte de nómina por desembolso ANH.",
-    puntosClave: ["Alertas SS 30/15/7 días antes", "Reporte nómina por desembolso ANH", "Dashboard planta activa por región"],
+    descripcion: "Gestión de planta vinculada con verificación de seguridad social, registro de novedades, alertas de vencimiento y reporte de nómina por desembolso del convenio.",
+    puntosClave: ["Alertas SS 30/15/7 días antes", "Reporte nómina por desembolso", "Dashboard planta activa por región"],
     stack: ["Data Grid Cloud", "Alertas de Vencimiento"],
     imagen: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80&auto=format&fit=crop",
     status: "adaptar",
@@ -240,7 +240,7 @@ export const modulos = [
     id: 21,
     grupo: "E",
     nombre: "Monitoreo Plan Operativo",
-    descripcion: "Dashboard ejecutivo de 1 página con 6 KPIs críticos, línea de tiempo de 4 desembolsos ANH y exportación mensual automática en PDF.",
+    descripcion: "Dashboard ejecutivo de 1 página con 6 KPIs críticos, línea de tiempo de 4 desembolsos del proyecto y exportación mensual automática en PDF.",
     puntosClave: ["Dashboard ejecutivo 1 página", "Línea de tiempo desembolsos 35/50/70/100%", "Exportación PDF automática mensual"],
     stack: ["Tablero de Indicadores", "Hitos Estratégicos"],
     imagen: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80&auto=format&fit=crop",
@@ -273,7 +273,7 @@ export const modulos = [
     id: 24,
     grupo: "E",
     nombre: "Secretaría de Comité",
-    descripcion: "Gestión de sesiones ETH+ANH con plantilla de actas numeradas automáticamente, tracker de compromisos y flujo de aprobación de subcontratos.",
+    descripcion: "Gestión de sesiones del comité directivo con plantilla de actas numeradas automáticamente, tracker de compromisos y flujo de aprobación de subcontratos.",
     puntosClave: ["Actas numeradas automáticamente", "Recordatorio 5 días antes de sesión", "Tracker de compromisos con semáforo"],
     stack: ["Repositorio Cloud Cifrado", "Gestión de Actas"],
     imagen: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80&auto=format&fit=crop",
@@ -318,8 +318,8 @@ export const modulos = [
   {
     id: 28,
     grupo: "F",
-    nombre: "Compilador Informes ANH",
-    descripcion: "Compilador automático que jala datos de 6 módulos para generar los informes de los 4 desembolsos ANH (D1/D2/D3/D4) con control de versiones y exportación PDF.",
+    nombre: "Compilador de Informes",
+    descripcion: "Compilador automático que jala datos de 6 módulos para generar los informes de los 4 desembolsos del proyecto (D1/D2/D3/D4) con control de versiones y exportación PDF.",
     puntosClave: ["Compilación automática desde 6 módulos", "Control de versiones con autor y fecha", "Validación de completitud por sección"],
     stack: ["Automatización Documental", "Serverless"],
     imagen: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=80&auto=format&fit=crop",
@@ -400,8 +400,8 @@ export const modulos = [
     id: 35,
     grupo: "H",
     nombre: "Control de Inventarios",
-    descripcion: "Trazabilidad de bienes conforme Resolución ANH 0532/2024 con QR único por bien, actas de entrega automáticas y alerta por bienes sin ubicación en 30 días.",
-    puntosClave: ["QR único por bien (Res. ANH 0532/2024)", "Acta de entrega PDF con firma digital", "Alerta bienes sin ubicación en 30 días"],
+    descripcion: "Trazabilidad de bienes con QR único por bien, actas de entrega automáticas y alerta por bienes sin ubicación en 30 días.",
+    puntosClave: ["QR único por bien", "Acta de entrega PDF con firma digital", "Alerta bienes sin ubicación en 30 días"],
     stack: ["Escaneo QR", "Trazabilidad de Activos"],
     imagen: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=800&q=80&auto=format&fit=crop",
     status: "adaptar",

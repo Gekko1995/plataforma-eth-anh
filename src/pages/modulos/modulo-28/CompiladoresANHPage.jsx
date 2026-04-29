@@ -141,11 +141,11 @@ function TabIndicadores() {
   );
 }
 
-const TABS = ['Desembolsos ANH','Documentos','Indicadores'];
+const TABS = ['Desembolsos','Documentos','Indicadores'];
 
 export default function CompiladoresANHPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState('Desembolsos ANH');
+  const [tab, setTab] = useState('Desembolsos');
   const [toast, setToast] = useState({ msg:'', ok:true });
   function showToast(msg, ok=true) { setToast({ msg, ok }); setTimeout(() => setToast({ msg:'', ok:true }), 3500); }
 
@@ -157,13 +157,13 @@ export default function CompiladoresANHPage() {
           <IconBack /> Módulos
         </button>
         <span style={{ color:'#cbd5e1' }}>/</span>
-        <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>Compiladores ANH</span>
+        <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>Compilador de Informes</span>
       </div>
       <ModuloInfoBanner meta={META} color={COLOR} />
       <div style={{ display:'flex', gap:0, borderBottom:'2px solid #e2e8f0', marginBottom:24 }} role="tablist">
         {TABS.map(t => <button key={t} role="tab" aria-selected={tab===t} onClick={() => setTab(t)} style={{ background:'none', border:'none', cursor:'pointer', padding:'10px 20px', fontSize:13, fontWeight:600, color:tab===t?COLOR:'#64748b', borderBottom:`2px solid ${tab===t?COLOR:'transparent'}`, marginBottom:-2 }}>{t}</button>)}
       </div>
-      {tab === 'Desembolsos ANH' && <TabDesembolsos showToast={showToast} />}
+      {tab === 'Desembolsos'     && <TabDesembolsos showToast={showToast} />}
       {tab === 'Documentos'      && <TabDocumentos showToast={showToast} />}
       {tab === 'Indicadores'     && <TabIndicadores />}
       <Toast {...toast} />

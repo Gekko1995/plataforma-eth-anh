@@ -15,7 +15,7 @@ const DESEMBOLSOS = [
 
 const GRUPOS_AVANCE = [
   { grupo:'A', nombre:'Diagnóstico y Territorio',   modulos:5, completados:4, pct:80, color:'#1B6B4A' },
-  { grupo:'B', nombre:'Núcleo Estratégico ANH',      modulos:4, completados:3, pct:75, color:'#B45309' },
+  { grupo:'B', nombre:'Núcleo Estratégico',          modulos:4, completados:3, pct:75, color:'#B45309' },
   { grupo:'C', nombre:'Formación y Capacitación',    modulos:4, completados:3, pct:75, color:'#7C3AED' },
   { grupo:'D', nombre:'Actores y Talento Humano',    modulos:6, completados:3, pct:50, color:'#0369A1' },
   { grupo:'E', nombre:'Financiero y Gobernanza',     modulos:7, completados:2, pct:29, color:COLOR },

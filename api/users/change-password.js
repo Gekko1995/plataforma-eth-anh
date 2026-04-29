@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
   if (enviarCorreo && target?.email) {
     await sendEmail({
       to:      target.email,
-      subject: 'Tu contraseña ha sido actualizada — ETH-ANH 2026',
+      subject: 'Tu contraseña ha sido actualizada — Plataforma de Gestión y Viabilidad de Proyectos de Inversión',
       html:    cambioPasswordHtml({ nombre: target.nombre || 'Usuario', email: target.email }),
     });
   }

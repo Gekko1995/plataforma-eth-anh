@@ -1,5 +1,5 @@
 /* =====================================================================
-   DATOS DEMO — ETH-ANH 2026
+   DATOS DEMO — Plataforma de Gestión y Viabilidad de Proyectos de Inversión
    Datos completamente ficticios para fines de demostración.
    Cada entrada: { kpis: [...], tabla: { columnas, filas } }
    ===================================================================== */
@@ -176,7 +176,7 @@ export const demos = {
     kpis: [
       { label: "Proyectos formulados", value: "14",   sub: "ciclo 2025-2026",    color: "#B45309" },
       { label: "Aprobados ante DNP",   value: "8",    sub: "en el MGA",          color: "#059669" },
-      { label: "En ejecución",         value: "5",    sub: "con recursos ANH",   color: "#0369A1" },
+      { label: "En ejecución",         value: "5",    sub: "con recursos del proyecto", color: "#0369A1" },
       { label: "Recursos totales ($M)",value: "$12.8",sub: "comprometidos",      color: "#7C3AED" },
     ],
     tabla: {
@@ -278,7 +278,7 @@ export const demos = {
       { label: "Beneficiarios registrados", value: "3.847",sub: "en base activa",    color: "#0369A1" },
       { label: "Activos",                   value: "3.412",sub: "88% del total",     color: "#059669" },
       { label: "Incorporados este mes",     value: "128",  sub: "+3.4% mes anterior",color: "#7C3AED" },
-      { label: "Puntaje promedio",          value: "68/100",sub: "escala ANH",       color: "#B45309" },
+      { label: "Puntaje promedio",          value: "68/100",sub: "escala del proyecto", color: "#B45309" },
     ],
     tabla: {
       columnas: ["Nombre", "Municipio", "Actividad productiva", "Puntaje", "Estado"],
@@ -310,7 +310,7 @@ export const demos = {
         ["CORPONOR",                      "CAR",         "N. de Santander",    "Dir. Ambiental",      "✅ Activo"],
         ["Resguardo Catalaura",           "Comunidad étnica","Tibú",           "Gobernador Indígena", "🔄 En proceso"],
         ["ASOCATIBÚ",                     "Asociación",  "Tibú",               "Presidenta Gómez, M.","✅ Activo"],
-        ["Agencia Nacional de Hidrocarburos","Ente contratante","Nacional",    "Coordinador ANH",     "✅ Activo"],
+        ["Entidad contratante",            "Ente contratante","Nacional",    "Supervisor del convenio",     "✅ Activo"],
       ],
     },
   },
@@ -427,7 +427,7 @@ export const demos = {
       columnas: ["Hito", "Responsable", "Fecha límite", "% Avance", "Semáforo", "Desembolso"],
       filas: [
         ["Plan operativo D1 aprobado",     "Dir. Convenio",     "28/02/2026", "100%", "🟢 Completado", "D1"],
-        ["1er informe técnico ANH",        "Coord. técnico",    "31/03/2026", "100%", "🟢 Completado", "D1"],
+        ["1er informe técnico del proyecto","Coord. técnico",    "31/03/2026", "100%", "🟢 Completado", "D1"],
         ["500 beneficiarios registrados",  "Coord. social",     "30/04/2026", "87%",  "🟡 En progreso","D2"],
         ["8 CARs vinculadas",              "Coord. ambiental",  "30/04/2026", "100%", "🟢 Completado", "D2"],
         ["Plataforma digital operativa",   "Coord. TI",         "15/05/2026", "60%",  "🔴 Atrasado",  "D2"],
@@ -438,7 +438,7 @@ export const demos = {
 
   22: {
     kpis: [
-      { label: "Presupuesto total",  value: "$18.4M",sub: "convenio ANH",        color: "#DC2626" },
+      { label: "Presupuesto total",  value: "$18.4M",sub: "convenio total",        color: "#DC2626" },
       { label: "Ejecutado",          value: "$7.2M", sub: "39% de ejecución",    color: "#059669" },
       { label: "Disponible",         value: "$11.2M",sub: "3 desembolsos pend.", color: "#0369A1" },
       { label: "% Ejecución",        value: "39%",   sub: "meta D2: 35%",        color: "#B45309" },
@@ -523,13 +523,13 @@ export const demos = {
     tabla: {
       columnas: ["Riesgo", "Tipo", "Probabilidad", "Impacto", "Nivel", "Plan de mitigación"],
       filas: [
-        ["Retrasos en desembolso ANH",     "Financiero",   "Media",  "Alto",    "🔴 Crítico",  "Fondo reserva operativo"],
+        ["Retrasos en desembolso del proyecto","Financiero","Media","Alto",    "🔴 Crítico",  "Fondo reserva operativo"],
         ["Bloqueos vías de acceso",        "Operacional",  "Alta",   "Medio",   "🔴 Crítico",  "Rutas alternas mapeadas"],
         ["Conflictividad social escalada", "Social",       "Baja",   "Alto",    "🟡 Moderado", "Mesa de diálogo activa"],
         ["Variabilidad climática",         "Natural",      "Alta",   "Medio",   "🔴 Crítico",  "Plan contingencia HSE"],
         ["Incumplimiento proveedores",     "Contractual",  "Media",  "Medio",   "🟡 Moderado", "Multas y garantías"],
         ["Falla sistema tecnológico",      "TI",           "Baja",   "Bajo",    "🟢 Bajo",     "Backup y redundancia"],
-        ["Cambios normativos ANH",         "Regulatorio",  "Baja",   "Alto",    "🟡 Moderado", "Monitoreo normativo"],
+        ["Cambios normativos del contratante","Regulatorio","Baja","Alto",    "🟡 Moderado", "Monitoreo normativo"],
       ],
     },
   },
@@ -557,13 +557,13 @@ export const demos = {
 
   28: {
     kpis: [
-      { label: "Informes ANH generados",value: "2",  sub: "de 4 desembolsos",     color: "#0891B2" },
+      { label: "Informes generados",   value: "2",  sub: "de 4 desembolsos",     color: "#0891B2" },
       { label: "Desembolsos procesados", value: "2",  sub: "D1 y preparando D2",  color: "#059669" },
       { label: "Módulos compilados",     value: "39", sub: "100% de componentes", color: "#0369A1" },
       { label: "Pendientes validación",  value: "12", sub: "secciones D2",        color: "#B45309" },
     ],
     tabla: {
-      columnas: ["Informe ANH", "Desembolso", "Fecha entrega", "Módulos incluidos", "Observaciones ANH", "Estado"],
+      columnas: ["Informe", "Desembolso", "Fecha entrega", "Módulos incluidos", "Observaciones", "Estado"],
       filas: [
         ["Informe D1 — Plan inicial",  "D1 (20%)", "28/02/2026", "39/39", "Aprobado sin observaciones", "✅ Aprobado"],
         ["Informe D2 — 35% avance",   "D2 (35%)", "31/05/2026", "32/39", "En preparación",             "🔄 En redacción"],
@@ -644,7 +644,7 @@ export const demos = {
     tabla: {
       columnas: ["Pieza / Campaña", "Tipo", "Canal", "Fecha lanzamiento", "Alcance", "Estado"],
       filas: [
-        ["Lanzamiento convenio ETH-ANH",    "Nota de prensa", "Medios escritos",  "20/01/2026", "15 medios",  "✅ Publicado"],
+        ["Lanzamiento del convenio",       "Nota de prensa", "Medios escritos",  "20/01/2026", "15 medios",  "✅ Publicado"],
         ["Campaña 'Campo Productivo'",      "Social media",   "FB, IG, TW",       "01/02/2026", "42.000 usr.","🔄 Activa"],
         ["Video feria Catatumbo",           "Video",          "YouTube, FB",      "25/03/2026", "8.300 views","✅ Publicado"],
         ["Infografía resultados Q1",        "Infografía",     "Web + redes",      "01/04/2026", "12.000 usr.","✅ Publicado"],
@@ -685,7 +685,7 @@ export const demos = {
     tabla: {
       columnas: ["Documento", "Tipo", "Región", "Fecha vencimiento", "Estado", "Acción IA"],
       filas: [
-        ["Póliza de cumplimiento ANH",     "Póliza",       "Nacional",          "30/06/2026","⚠️ Por vencer","Recordatorio enviado"],
+        ["Póliza de cumplimiento",        "Póliza",       "Nacional",          "30/06/2026","⚠️ Por vencer","Recordatorio enviado"],
         ["Convenio operativo ETH",         "Convenio",     "Nacional",          "31/12/2026","✅ Vigente",   "Sin acción"],
         ["Licencia ambiental Tibú",        "Licencia",     "N. de Santander",   "15/05/2026","⚠️ Por vencer","Alerta a coord."],
         ["Acta comité #04-2026",           "Acta",         "Nacional",          "N/A",        "🔄 En firma",  "Recordatorio coord."],
@@ -788,7 +788,7 @@ export const demos = {
       columnas: ["Servicio", "Tipo", "Uptime", "Último incidente", "Backup", "SLA"],
       filas: [
         ["Google Workspace",    "Colaboración", "99.9%","15/03/2026 (2h)","✅ Diario",  "✅ Cumple"],
-        ["Plataforma ETH-ANH",  "Aplicación",   "99.7%","10/04/2026 (1h)","✅ Diario",  "✅ Cumple"],
+        ["Plataforma PGV",      "Aplicación",   "99.7%","10/04/2026 (1h)","✅ Diario",  "✅ Cumple"],
         ["Supabase (BD)",       "Base de datos","99.8%","—",              "✅ Cada 6h", "✅ Cumple"],
         ["Drive repositorio",   "Almacenamiento","100%","—",              "✅ Semanal", "✅ Cumple"],
         ["Vercel (hosting)",    "Infraestructura","99.9%","—",            "N/A",        "✅ Cumple"],
